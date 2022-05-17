@@ -5,8 +5,7 @@ tags:
   - 反射
   - 注解
 categories: Java
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F9b678458d170f719906000842882a3f70ca25a04.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1655219268&t=247c6447fdebcdd2faa8a9fd3b6e1597
+cover: https://cdn.jsdelivr.net/gh/Deleter-D/mycdn/blog-image/covers/java-reflection-and-annotation.png
 abbrlink: 46441
 date: 2022-05-15 23:09:02
 ---
