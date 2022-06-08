@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>Vue-router路由（下） - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="重定向重定向在routes配置中完成，要从&#x2F;a重定向到&#x2F;b 123456789101112const routes &#x3D; [    &amp;#123;        path: &amp;#x27;&#x2F;&amp;#x27;,        name: &amp;#x27;Home&amp;#x27;,        component: Home    &amp;#125;,    &amp;#123;        path: &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue-router路由（下）">
+<meta property="og:url" content="https://deleter-d.github.io/posts/52120/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="重定向重定向在routes配置中完成，要从&#x2F;a重定向到&#x2F;b 123456789101112const routes &#x3D; [    &amp;#123;        path: &amp;#x27;&#x2F;&amp;#x27;,        name: &amp;#x27;Home&amp;#x27;,        component: Home    &amp;#125;,    &amp;#123;        path: &amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-17T16:13:10.000Z">
+<meta property="article:modified_time" content="2022-03-29T07:06:30.228Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Vue-Router">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677040154">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677040154">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677040154">
+    <link rel="stylesheet" href="/css/style.css?v=1654677040154">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F735847ace92d4e63c32f2a18b8716d81439726ef.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650125673&t=c1639822832cbb4ce4ea5c5bf14c0271" data-sizes="auto" alt="Vue-router路由（下）" class="lazyload">
+              <h1>Vue-router路由（下）</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年03月18日</a>
+</div>
+
+      
+
+      <h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><p>重定向在routes配置中完成，要从&#x2F;a重定向到&#x2F;b</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Home&#x27;</span>,<br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span><br>    &#125;,<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/home&#x27;</span>,<br>        <span class="hljs-attr">redirect</span>: <span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-comment">// 访问/home时重定向到根</span><br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span><br>    &#125;<br>]<br></code></pre></td></tr></table></figure>
+
+<p>也可以使用对象的形式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Home&#x27;</span>,<br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span><br>    &#125;,<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/home&#x27;</span>,<br>        <span class="hljs-attr">redirect</span>: &#123;<span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;HomeRoot&#x27;</span>&#125;, <span class="hljs-comment">// 访问/home时重定向到根</span><br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span><br>    &#125;<br>]<br></code></pre></td></tr></table></figure>
+
+<p>还支持将params类型的参数传递转换为query类型的，但一般不这样做</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;page/:id&#x27;</span>,<br>        <span class="hljs-attr">redirect</span>: <span class="hljs-function"><span class="hljs-params">to</span> =&gt;</span> &#123;<br>            <span class="hljs-keyword">return</span> &#123;<span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about/article&#x27;</span>, <span class="hljs-attr">query</span>: &#123;<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;li&#x27;</span>, <span class="hljs-attr">age</span>: to.<span class="hljs-property">params</span>.<span class="hljs-property">id</span>&#125;&#125;<br>        &#125;,<br>        <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;../views/Page&#x27;</span>)<br>    &#125;,<br>]<br></code></pre></td></tr></table></figure>
+
+<h2 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;About&#x27;</span>,<br>        <span class="hljs-attr">alias</span>: <span class="hljs-string">&#x27;/a&#x27;</span>, <span class="hljs-comment">// 可以通过/a访问到/about       </span><br>        <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;../views/About.vue&#x27;</span>), <br>    &#125;<br>]<br></code></pre></td></tr></table></figure>
+
+<p>可以起多个别名，以数组的形式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;About&#x27;</span>,<br>        <span class="hljs-attr">alias</span>: [<span class="hljs-string">&#x27;/a&#x27;</span>, <span class="hljs-string">&#x27;/b&#x27;</span>, <span class="hljs-string">&#x27;/c&#x27;</span>], <span class="hljs-comment">// 可以通过/a访问到/about       </span><br>        <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;../views/About.vue&#x27;</span>), <br>    &#125;<br>]<br></code></pre></td></tr></table></figure>
+
+<p>若路由中有params类型的参数传递，起别名时也要带上参数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;page/:id&#x27;</span>,<br>        <span class="hljs-attr">alias</span>: <span class="hljs-string">&#x27;p/:id&#x27;</span>,<br>        <span class="hljs-attr">component</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;../views/Page&#x27;</span>)<br>    &#125;,<br>]<br></code></pre></td></tr></table></figure>
+
+<h2 id="导航守卫"><a href="#导航守卫" class="headerlink" title="导航守卫"></a>导航守卫</h2><p>导航守卫主要用来通过跳转或取消的方式守卫导航</p>
+<p>有多种机会植入路由导航过程中：</p>
+<ol>
+<li><p>全局导航守卫：在index.js中添加</p>
+<p>前置守卫</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs js">router.<span class="hljs-title function_">beforeEach</span>(<span class="hljs-function">(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 处理</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>后置钩子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js">router.<span class="hljs-title function_">afterEach</span>(<span class="hljs-function">(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 处理</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>路由独享守卫：在单个路由下添加</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> routes = [<br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/users/:id&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">UserDetails</span>,<br>    <span class="hljs-attr">beforeEnter</span>: <span class="hljs-function">(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) =&gt;</span> &#123;<br>      <span class="hljs-comment">// reject the navigation</span><br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>    &#125;,<br>  &#125;,<br>]<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>组件内的守卫</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">UserDetails</span> = &#123;<br>  <span class="hljs-attr">template</span>: <span class="hljs-string">`...`</span>,<br>  <span class="hljs-title function_">beforeRouteEnter</span>(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) &#123;<br>    <span class="hljs-comment">// 在渲染该组件的对应路由被验证前调用</span><br>    <span class="hljs-comment">// 不能获取组件实例 `this` ！</span><br>    <span class="hljs-comment">// 因为当守卫执行时，组件实例还没被创建！</span><br>  &#125;,<br>  <span class="hljs-title function_">beforeRouteUpdate</span>(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) &#123;<br>    <span class="hljs-comment">// 在当前路由改变，但是该组件被复用时调用</span><br>    <span class="hljs-comment">// 举例来说，对于一个带有动态参数的路径 `/users/:id`，在 `/users/1` 和 `/users/2` 之间跳转的时候，</span><br>    <span class="hljs-comment">// 由于会渲染同样的 `UserDetails` 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span><br>    <span class="hljs-comment">// 因为在这种情况发生的时候，组件已经挂载好了，导航守卫可以访问组件实例 `this`</span><br>  &#125;,<br>  <span class="hljs-title function_">beforeRouteLeave</span>(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) &#123;<br>    <span class="hljs-comment">// 在导航离开渲染该组件的对应路由时调用</span><br>    <span class="hljs-comment">// 与 `beforeRouteUpdate` 一样，它可以访问组件实例 `this`</span><br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="lt-keep-alive-gt-与路由组合"><a href="#lt-keep-alive-gt-与路由组合" class="headerlink" title="&lt;keep-alive&gt;与路由组合"></a><code>&lt;keep-alive&gt;</code>与路由组合</h2><p>在Vue3.x中不再支持如下形式</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">keep-alive</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">router-view</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">keep-alive</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>而应该采用如下方式</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">router-view</span> <span class="hljs-attr">v-slot</span>=<span class="hljs-string">&quot;&#123; Component &#125;&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">transition</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">keep-alive</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">component</span> <span class="hljs-attr">:is</span>=<span class="hljs-string">&quot;Component&quot;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">keep-alive</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">transition</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">router-view</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><code>&lt;keep-alive&gt;</code>有两个可选属性</p>
+<p><code>include</code>选择缓存的页面，可填字符串或正则表达式</p>
+<p><code>exclude</code>选择不缓存的页面，可填字符串或正则表达式</p>
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/52120/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;52120&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;52120&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/Vue/" rel="tag">Vue</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/Vue-Router/" rel="tag">Vue-Router</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.</span> <span class="toc-text">重定向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%AB%E5%90%8D"><span class="toc-number">2.</span> <span class="toc-text">别名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BC%E8%88%AA%E5%AE%88%E5%8D%AB"><span class="toc-number">3.</span> <span class="toc-text">导航守卫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lt-keep-alive-gt-%E4%B8%8E%E8%B7%AF%E7%94%B1%E7%BB%84%E5%90%88"><span class="toc-number">4.</span> <span class="toc-text">&lt;keep-alive&gt;与路由组合</span></a></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677040156"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>

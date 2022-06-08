@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>设计模式——工厂方法模式 - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="简单工厂模式简单工厂模式（Simple Factory Pattern）又称静态工厂方法（Static Factory Method）模式，属于创建型模式。 简单工厂模式并非GoF 23种经典模式之一。 在简单工厂模式中，可以根据参数的不同返回不同的实例。简单工厂模式专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类。 角色 Factory（工厂角色） 工厂角色即工厂类，是简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式——工厂方法模式">
+<meta property="og:url" content="https://deleter-d.github.io/posts/3827/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="简单工厂模式简单工厂模式（Simple Factory Pattern）又称静态工厂方法（Static Factory Method）模式，属于创建型模式。 简单工厂模式并非GoF 23种经典模式之一。 在简单工厂模式中，可以根据参数的不同返回不同的实例。简单工厂模式专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类。 角色 Factory（工厂角色） 工厂角色即工厂类，是简单">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-08T08:10:27.000Z">
+<meta property="article:modified_time" content="2022-06-08T08:14:31.537Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="工厂模式">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677039963">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677039963">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677039964">
+    <link rel="stylesheet" href="/css/style.css?v=1654677039964">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fp2.itc.cn%2Fq_70%2Fimages03%2F20210827%2F52cee56ec18b40f5aace37b60e136cdd.jpeg&refer=http%3A%2F%2Fp2.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657268048&t=b637d542a37fb675a76d0a64b48beba6" data-sizes="auto" alt="设计模式——工厂方法模式" class="lazyload">
+              <h1>设计模式——工厂方法模式</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年06月08日</a>
+</div>
+
+      
+
+      <h1 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h1><p>简单工厂模式（Simple Factory Pattern）又称静态工厂方法（Static Factory Method）模式，属于创建型模式。</p>
+<p>简单工厂模式并非GoF 23种经典模式之一。</p>
+<p>在简单工厂模式中，可以根据参数的不同返回不同的实例。简单工厂模式专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类。</p>
+<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><ol>
+<li><p>Factory（工厂角色）</p>
+<p>工厂角色即工厂类，是简单工厂模式的核心，负责实现创建所有实例的内部逻辑；</p>
+<p>工厂类可以被外界直接调用，创建所需的产品对象；</p>
+<p>在工厂类中提供了静态的工厂方法<code>factoryMethod()</code>，它返回一个抽象产品类Product，所有的具体产品都是抽象产品的子类。</p>
+</li>
+<li><p>Product（抽象产品角色）</p>
+<p>抽象产品角色是简单工厂模式所创建的所有对象的父类，负责描述所有实例所共有的公共接口；</p>
+<p>它的引入将提高系统的灵活性，使得在工厂类中只需定义一个工厂方法，因为所有创建的具体产品对象都是其子类对象。</p>
+</li>
+<li><p>Concrete Product（具体产品角色）</p>
+<p>具体产品角色是简单工厂模式的创建目标，所有创建的对象都充当这个角色的某个具体类的实例；</p>
+<p>每个具体产品角色都继承了抽象产品角色，需要实现定义在抽象产品中的抽象方法。</p>
+</li>
+</ol>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>定义一个抽象产品角色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>定义两个具体产品，实现抽象产品接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Huawei</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;Get the Huawei phone.&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">iPhone</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;Get the iPhone.&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>再定义一个工厂类负责创建实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PhoneFactory</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Phone <span class="hljs-title function_">producePhone</span><span class="hljs-params">(String brand)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-keyword">if</span> (brand.equalsIgnoreCase(<span class="hljs-string">&quot;Huawei&quot;</span>)) &#123;<br>            System.out.println(<span class="hljs-string">&quot;A Huawei phone have been produced.&quot;</span>);<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Huawei</span>();<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (brand.equalsIgnoreCase(<span class="hljs-string">&quot;iPhone&quot;</span>)) &#123;<br>            System.out.println(<span class="hljs-string">&quot;An iPhone have been produced.&quot;</span>);<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">iPhone</span>();<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Exception</span>(<span class="hljs-string">&quot;Sorry,the product of this brand can not be produced.&quot;</span>);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>客户端测试类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">Phone</span> <span class="hljs-variable">phone</span> <span class="hljs-operator">=</span> PhoneFactory.producePhone(<span class="hljs-string">&quot;iphone&quot;</span>);<br>            phone.get();<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>此时运行结果为</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs erlang">An iPhone have been produced.<br>Get the iPhone.<br></code></pre></td></tr></table></figure>
+
+<p>若将品牌改为<code>huawei</code>，则结果如下</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs erlang">A Huawei phone have been produced.<br>Get the Huawei phone.<br></code></pre></td></tr></table></figure>
+
+<p>若改为一个不存在的品牌，如<code>boluo</code>，则结果如下</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">java<span class="hljs-selector-class">.lang</span><span class="hljs-selector-class">.Exception</span>: Sorry,the product of this brand can not be produced.<br>	at wyp<span class="hljs-selector-class">.CreationalPatterns</span><span class="hljs-selector-class">.SimpleFactoryPattern</span><span class="hljs-selector-class">.Factory</span><span class="hljs-selector-class">.PhoneFactory</span><span class="hljs-selector-class">.producePhone</span>(PhoneFactory<span class="hljs-selector-class">.java</span>:<span class="hljs-number">16</span>)<br>	at wyp<span class="hljs-selector-class">.CreationalPatterns</span><span class="hljs-selector-class">.SimpleFactoryPattern</span><span class="hljs-selector-class">.Client</span><span class="hljs-selector-class">.main</span>(Client<span class="hljs-selector-class">.java</span>:<span class="hljs-number">9</span>)<br></code></pre></td></tr></table></figure>
+
+<h2 id="模式优缺点"><a href="#模式优缺点" class="headerlink" title="模式优缺点"></a>模式优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>免除了客户端直接创建产品对象的责任，仅仅”消费“产品，实现了责任的分割；</li>
+<li>客户端无须知道所创建的具体产品类的类名，只需要知道具体产品类所对应的参数；</li>
+<li>可以引入配置文件，再不修改客户端代码的情况下更换和增加新的具体产品类。</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>工厂类集中了所有产品的创建逻辑，一旦不能正常工作，整个系统都要受到影响；</li>
+<li>使用该模式会增加系统中类的个数，一定程度上增加了系统的复杂度和理解难度；</li>
+<li>系统扩展困难，一旦添加新产品就不得不修改工厂逻辑，不利于系统的维护；</li>
+<li>该模式使用了静态工厂方法，造成工厂角色无法形成基于继承的等级结构，无法像产品类一样定义一个抽象层，也无法通过具体类进行扩展。</li>
+</ul>
+<h1 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h1><p>工厂方法模式（Factory Method Pattern）又称虚拟构造器（Virtual Constructor）模式或多态工厂（Polymorphic Factory）模式，属于创建型模式。</p>
+<p>工厂方法模式中，工厂父类负责定义创建产品对象的公共接口，而工厂子类负责生成具体的产品对象，将产品类的实例化操作延迟到工厂子类中完成，即通过工厂子类来确定究竟应该实例化哪个具体产品类。</p>
+<h2 id="角色-1"><a href="#角色-1" class="headerlink" title="角色"></a>角色</h2><ol>
+<li><p>Product（抽象产品）</p>
+<p>抽象产品是定义产品的接口，是工厂方法模式所创建对象的超类型，也就是产品对象的共同父类或接口。</p>
+</li>
+<li><p>Concrete Product（具体产品）</p>
+<p>具体产品实现了抽象产品接口，某种类型的具体产品由专门的具体工厂创建，它们之间一一对应。</p>
+</li>
+<li><p>Factory（抽象工厂）</p>
+<p>抽象工厂中声明了工厂方法，用于返回一个产品。抽象工厂是工厂方法模式的核心，它与程序无关。任何在模式中创建对象的工厂类都必须实现该接口。</p>
+</li>
+<li><p>Concrete Factory（具体工厂）</p>
+<p>具体工厂是抽象工厂的子类，实现了抽象工厂中定义的工厂方法，并可由客户调用，返回一个具体产品类的实例。具体工厂中包含与程序密切相关的逻辑，并接受程序调用以创建产品对象。</p>
+</li>
+</ol>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><p>定义抽象产品类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>定义两个具体产品类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Huawei</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;Get the Huawei phone.&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">iPhone</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">get</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;Get the iPhone.&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>定义抽象工厂类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">PhoneFactory</span> &#123;<br>    <span class="hljs-keyword">public</span> Phone <span class="hljs-title function_">producePhone</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>定义与具体产品类对应的具体工厂类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HuaweiFactory</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">PhoneFactory</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Phone <span class="hljs-title function_">producePhone</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;A Huawei phone have been produced.&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Huawei</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">iPhoneFactory</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">PhoneFactory</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Phone <span class="hljs-title function_">producePhone</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;An iPhone have been produced.&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">iPhone</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>客户端测试类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">HuaweiFactory</span> <span class="hljs-variable">huaweiFactory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HuaweiFactory</span>();<br>        <span class="hljs-type">Phone</span> <span class="hljs-variable">phone1</span> <span class="hljs-operator">=</span> huaweiFactory.producePhone();<br>        phone1.get();<br><br>        <span class="hljs-type">iPhoneFactory</span> <span class="hljs-variable">iPhoneFactory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">iPhoneFactory</span>();<br>        <span class="hljs-type">Phone</span> <span class="hljs-variable">phone2</span> <span class="hljs-operator">=</span> iPhoneFactory.producePhone();<br>        phone2.get();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>此时运行结果为</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs erlang">A Huawei phone have been produced.<br>Get the Huawei phone.<br>An iPhone have been produced.<br>Get the iPhone.<br></code></pre></td></tr></table></figure>
+
+<p>若要增加新产品，只需创建一个新的具体产品类实现抽象产品接口，并创建与之对应的具体工厂类实现抽象工厂接口即可。</p>
+<h2 id="模式优缺点-1"><a href="#模式优缺点-1" class="headerlink" title="模式优缺点"></a>模式优缺点</h2><h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>在该模式中，工厂方法用来创建客户所需的产品，同时向客户隐藏了哪种具体产品将被实例化这一细节，用户只需关心所需产品对应的工厂，无须关心创建细节与具体产品类的类名；</li>
+<li>基于工厂角色和产品角色的多态性设计是该模式的关键，能够使工厂自主确定创建何种产品对象。</li>
+<li>在加入新产品时，无须修改抽象工厂和抽象产品提供的接口，无须修改客户端，也无须修改其他的具体工厂和具体产品，只要添加一个具体工厂和具体产品即可。这样增强了系统的扩展性，完全符合开闭原则。</li>
+</ul>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>添加新产品时需要编写新的具体产品类和与之对应的具体工厂类，系统中类的个数将成对增加，一定程度上增加了系统的复杂度，有额外的类需要编译和运行，给系统带来了额外的开销；</li>
+<li>由于考虑到系统的可扩展性，需要引入抽象层，在客户端代码中均使用抽象层进行定义，增加了系统的抽象性和理解难度，且在实现时可能需要用到DOM、反射等技术，增加了系统的实现难度。</li>
+</ul>
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/3827/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;3827&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;3827&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" rel="tag">工厂模式</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">简单工厂模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2"><span class="toc-number">1.1.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">工厂方法模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2-1"><span class="toc-number">2.1.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B-1"><span class="toc-number">2.2.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9-1"><span class="toc-number">2.3.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677039989"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>

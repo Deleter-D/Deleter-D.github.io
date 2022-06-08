@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>算法练习——二叉树 - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="二叉树二叉树的遍历144. 二叉树的前序遍历（简单）递归方式 1234567891011121314public List&lt;Integer&gt; preorderTraversal(TreeNode root) &amp;#123;    List&lt;Integer&gt; res &#x3D; new ArrayList&lt;&gt;();    preOrder(root, res);    re">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法练习——二叉树">
+<meta property="og:url" content="https://deleter-d.github.io/posts/41828/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="二叉树二叉树的遍历144. 二叉树的前序遍历（简单）递归方式 1234567891011121314public List&lt;Integer&gt; preorderTraversal(TreeNode root) &amp;#123;    List&lt;Integer&gt; res &#x3D; new ArrayList&lt;&gt;();    preOrder(root, res);    re">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-03T09:18:40.000Z">
+<meta property="article:modified_time" content="2022-05-23T15:10:47.585Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="二叉树">
+<meta property="article:tag" content="力扣">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677040024">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677040024">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677040024">
+    <link rel="stylesheet" href="/css/style.css?v=1654677040024">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fcn.best-wallpaper.net%2Fwallpaper%2F2560x1440%2F1202%2FBattlefield-3-Air-Combat_2560x1440.jpg&refer=http%3A%2F%2Fcn.best-wallpaper.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654161459&t=5d418b5127ac29d5d1e5dc09c5635a99" data-sizes="auto" alt="算法练习——二叉树" class="lazyload">
+              <h1>算法练习——二叉树</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年05月03日</a>
+</div>
+
+      
+
+      <h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><h2 id="二叉树的遍历"><a href="#二叉树的遍历" class="headerlink" title="二叉树的遍历"></a>二叉树的遍历</h2><h3 id="144-二叉树的前序遍历（简单）"><a href="#144-二叉树的前序遍历（简单）" class="headerlink" title="144. 二叉树的前序遍历（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-preorder-traversal/">144. 二叉树的前序遍历</a>（简单）</h3><p>递归方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">preorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    preOrder(root, res);<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">preOrder</span><span class="hljs-params">(TreeNode root, List&lt;Integer&gt; res)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root != <span class="hljs-literal">null</span>) &#123;<br>        res.add(root.val);<br>        preOrder(root.left, res);<br>        preOrder(root.right, res);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>迭代方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">preorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Stack&lt;TreeNode&gt; stack = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stack</span>&lt;&gt;();<br>    stack.push(root);<br>    <span class="hljs-keyword">while</span> (!stack.isEmpty()) &#123;<br>        <span class="hljs-type">TreeNode</span> <span class="hljs-variable">node</span> <span class="hljs-operator">=</span> stack.pop();<br>        res.add(node.val);<br>        <span class="hljs-keyword">if</span> (node.right != <span class="hljs-literal">null</span>) &#123;<br>            stack.push(node.right);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (node.left != <span class="hljs-literal">null</span>) &#123;<br>            stack.push(node.left);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="94-二叉树的中序遍历（简单）"><a href="#94-二叉树的中序遍历（简单）" class="headerlink" title="94. 二叉树的中序遍历（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-inorder-traversal/">94. 二叉树的中序遍历</a>（简单）</h3><p>递归方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">inorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    inOrder(root, res);<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">inOrder</span><span class="hljs-params">(TreeNode root, List&lt;Integer&gt; res)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root != <span class="hljs-literal">null</span>) &#123;<br>        inOrder(root.left, res);<br>        res.add(root.val);<br>        inOrder(root.right, res);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>迭代方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">inorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Stack&lt;TreeNode&gt; stack = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stack</span>&lt;&gt;();<br>    <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> root;<br>    <span class="hljs-keyword">while</span> (pointer != <span class="hljs-literal">null</span> || !stack.isEmpty()) &#123;<br>        <span class="hljs-keyword">if</span> (pointer != <span class="hljs-literal">null</span>) &#123;<br>            stack.push(pointer);<br>            pointer = pointer.left;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            pointer = stack.pop();<br>            res.add(pointer.val);<br>            pointer = pointer.right;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="145-二叉树的后序遍历（简单）"><a href="#145-二叉树的后序遍历（简单）" class="headerlink" title="145. 二叉树的后序遍历（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-postorder-traversal/">145. 二叉树的后序遍历</a>（简单）</h3><p>递归方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">postorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    postOrder(root, res);<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">postOrder</span><span class="hljs-params">(TreeNode root, List&lt;Integer&gt; res)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root != <span class="hljs-literal">null</span>) &#123;<br>        postOrder(root.left, res);<br>        postOrder(root.right, res);<br>        res.add(root.val);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>迭代方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">postorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Stack&lt;TreeNode&gt; stack = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stack</span>&lt;&gt;();<br>    <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> root;<br>    <span class="hljs-type">TreeNode</span> <span class="hljs-variable">record</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TreeNode</span>();<br>    <span class="hljs-keyword">while</span> (pointer != <span class="hljs-literal">null</span> || !stack.isEmpty()) &#123;<br>        <span class="hljs-keyword">if</span> (pointer != <span class="hljs-literal">null</span>) &#123;<br>            stack.push(pointer);<br>            pointer = pointer.left;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            pointer = stack.peek();<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span> &amp;&amp; pointer.right != record) &#123;<br>                pointer = pointer.right;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                pointer = stack.pop();<br>                res.add(pointer.val);<br>                record = pointer;<br>                pointer = <span class="hljs-literal">null</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="102-二叉树的层序遍历（中等）"><a href="#102-二叉树的层序遍历（中等）" class="headerlink" title="102. 二叉树的层序遍历（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/">102. 二叉树的层序遍历</a>（中等）</h3><p>递归方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="hljs-title function_">levelOrder</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;List&lt;Integer&gt;&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    lOrder(root, <span class="hljs-number">0</span>, res);<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">lOrder</span><span class="hljs-params">(TreeNode root, <span class="hljs-type">int</span> deep, List&lt;List&lt;Integer&gt;&gt; res)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span>;<br>    deep++;<br>    <span class="hljs-comment">// deep随着递归深度增加而增加，当res的size小于deep时表明当前层已访问完毕</span><br>    <span class="hljs-keyword">if</span> (res.size() &lt; deep) &#123;<br>        List&lt;Integer&gt; level = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        res.add(level);<br>    &#125;<br>    res.get(deep - <span class="hljs-number">1</span>).add(root.val);<br>    lOrder(root.left, deep, res);<br>    lOrder(root.right, deep, res);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>迭代方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="hljs-title function_">levelOrder</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;List&lt;Integer&gt;&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        List&lt;Integer&gt; level = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-comment">// 利用size记录本层结点数</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-comment">// 当size==0时表示该层结点访问完毕</span><br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            level.add(pointer.val);<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>        res.add(level);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="层序遍历衍生题目"><a href="#层序遍历衍生题目" class="headerlink" title="层序遍历衍生题目"></a>层序遍历衍生题目</h2><h3 id="107-二叉树的层序遍历-II（中等）"><a href="#107-二叉树的层序遍历-II（中等）" class="headerlink" title="107. 二叉树的层序遍历 II（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii/">107. 二叉树的层序遍历 II</a>（中等）</h3><p>正常将二叉树层序遍历，最后将遍历结果数组逆置即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="hljs-title function_">levelOrderBottom</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;List&lt;Integer&gt;&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        List&lt;Integer&gt; level = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            level.add(pointer.val);<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>        res.add(level);<br>    &#125;<br>    List&lt;List&lt;Integer&gt;&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> res.size() - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) &#123;<br>        result.add(res.get(i));<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="199-二叉树的右视图（中等）"><a href="#199-二叉树的右视图（中等）" class="headerlink" title="199. 二叉树的右视图（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-right-side-view/">199. 二叉树的右视图</a>（中等）</h3><p>层序遍历二叉树时，判断当前元素是否为本层最后一个元素，若是则放入结果集。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">rightSideView</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-comment">// 判断是否为本层最后一个元素</span><br>            <span class="hljs-keyword">if</span> (size==<span class="hljs-number">1</span>) res.add(pointer.val);<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="637-二叉树的层平均值（简单）"><a href="#637-二叉树的层平均值（简单）" class="headerlink" title="637. 二叉树的层平均值（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/average-of-levels-in-binary-tree/">637. 二叉树的层平均值</a>（简单）</h3><p>在层序遍历的同时，计算出每层结点的和，遍历完当前层后将该层的平均值放入结果集。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Double&gt; <span class="hljs-title function_">averageOfLevels</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Double&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> queue.size();<span class="hljs-comment">// 多记录一个size作为计算平均值的除数</span><br>        <span class="hljs-type">double</span> <span class="hljs-variable">levelSum</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            levelSum += pointer.val;<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>        res.add(levelSum / count);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="429-N-叉树的层序遍历（中等）"><a href="#429-N-叉树的层序遍历（中等）" class="headerlink" title="429. N 叉树的层序遍历（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/">429. N 叉树的层序遍历</a>（中等）</h3><p>与二叉树层序遍历类似，只需要在遍历当前结点的孩子结点时改为for循环，以保证遍历到该结点的每一个孩子节点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="hljs-title function_">levelOrder</span><span class="hljs-params">(Node root)</span> &#123;<br>    List&lt;List&lt;Integer&gt;&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;Node&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        List&lt;Integer&gt; level = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">Node</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            level.add(pointer.val);<br>            <span class="hljs-keyword">for</span> (Node child : pointer.children) &#123;<br>                <span class="hljs-keyword">if</span> (child != <span class="hljs-literal">null</span>) queue.offer(child);<br>            &#125;<br>            size--;<br>        &#125;<br>        res.add(level);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="515-在每个树行中找最大值（中等）"><a href="#515-在每个树行中找最大值（中等）" class="headerlink" title="515. 在每个树行中找最大值（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row/">515. 在每个树行中找最大值</a>（中等）</h3><p>层序遍历二叉树的过程中，找出每层的最大值放入结果集即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">largestValues</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">max</span> <span class="hljs-operator">=</span> queue.peek().val;<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-keyword">if</span> (pointer.val &gt; max) max = pointer.val;<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>        res.add(max);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="116-填充每个节点的下一个右侧节点指针（中等）"><a href="#116-填充每个节点的下一个右侧节点指针（中等）" class="headerlink" title="116. 填充每个节点的下一个右侧节点指针（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/">116. 填充每个节点的下一个右侧节点指针</a>（中等）</h3><p>层序遍历过程中，判断当前遍历结点在本层是否有后继结点，若有则将next指向它的后继结点，若没有则置为null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Node <span class="hljs-title function_">connect</span><span class="hljs-params">(Node root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br><br>    Queue&lt;Node&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">Node</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-keyword">if</span> (size == <span class="hljs-number">1</span>) pointer.next = <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">else</span> pointer.next = queue.peek();<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> root;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="117-填充每个节点的下一个右侧节点指针-II（中等）"><a href="#117-填充每个节点的下一个右侧节点指针-II（中等）" class="headerlink" title="117. 填充每个节点的下一个右侧节点指针 II（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii/">117. 填充每个节点的下一个右侧节点指针 II</a>（中等）</h3><p>与<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/">116. 填充每个节点的下一个右侧节点指针</a>题没有任何差别。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Node <span class="hljs-title function_">connect</span><span class="hljs-params">(Node root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br><br>    Queue&lt;Node&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">Node</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-keyword">if</span> (size == <span class="hljs-number">1</span>) pointer.next = <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">else</span> pointer.next = queue.peek();<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> root;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="二叉树的属性"><a href="#二叉树的属性" class="headerlink" title="二叉树的属性"></a>二叉树的属性</h2><h3 id="101-对称二叉树（简单）"><a href="#101-对称二叉树（简单）" class="headerlink" title="101. 对称二叉树（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/symmetric-tree/">101. 对称二叉树</a>（简单）</h3><p>递归方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSymmetric</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">return</span> compare(root.left, root.right);<br>&#125;<br><br><span class="hljs-comment">// 此处传入的left和right指的是镜像对称的两个结点，并非一个结点的左右孩子</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">compare</span><span class="hljs-params">(TreeNode left, TreeNode right)</span> &#123;<br>    <span class="hljs-keyword">if</span> (left == <span class="hljs-literal">null</span> &amp;&amp; right != <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (left != <span class="hljs-literal">null</span> &amp;&amp; right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (left == <span class="hljs-literal">null</span> &amp;&amp; right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-comment">// 以上处理了存在空结点的情况</span><br>    <span class="hljs-comment">// 下面一行处理了两个结点都不为空，但数值不等的情况</span><br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (left.val != right.val) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-comment">// 剩下的就是结点都存在且数值相等的情况，则递归的向下判断</span><br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> compare(left.left, right.right) &amp;&amp; compare(left.right, right.left);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>迭代方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSymmetric</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<span class="hljs-comment">// 此处也可以用栈</span><br>    queue.offer(root.left);<br>    queue.offer(root.right);<br><br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-comment">// 此处的left和right与递归方法中参数的意义一致，是镜像对称的两个结点</span><br>        <span class="hljs-type">TreeNode</span> <span class="hljs-variable">left</span> <span class="hljs-operator">=</span> queue.poll();<br>        <span class="hljs-type">TreeNode</span> <span class="hljs-variable">right</span> <span class="hljs-operator">=</span> queue.poll();<br>        <span class="hljs-comment">// 左右两个结点均为空，则返回true</span><br>        <span class="hljs-keyword">if</span> (left == <span class="hljs-literal">null</span> &amp;&amp; right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">continue</span>;<br>        <span class="hljs-comment">// 若左右有一个结点不为空，或都不为空但数值不等，则返回false</span><br>        <span class="hljs-keyword">if</span> (left == <span class="hljs-literal">null</span> || right == <span class="hljs-literal">null</span> || left.val != right.val) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br><br>        queue.offer(left.left);<span class="hljs-comment">// 左结点的左孩子入队</span><br>        queue.offer(right.right);<span class="hljs-comment">// 右结点的右孩子入队</span><br>        queue.offer(left.right);<span class="hljs-comment">// 左结点的右孩子入队</span><br>        queue.offer(right.left);<span class="hljs-comment">// 右结点的左孩子入队</span><br>    &#125;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="104-二叉树的最大深度（简单）"><a href="#104-二叉树的最大深度（简单）" class="headerlink" title="104. 二叉树的最大深度（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/">104. 二叉树的最大深度</a>（简单）</h3><p>利用递归后序遍历的思想：</p>
+<ul>
+<li>递归终止条件为访问到叶子结点，叶子结点的高度为1</li>
+<li>先递归求得左、右子树的高度，取较大者再加一得到根结点的高度</li>
+</ul>
+<p>整体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">maxDepth</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (root.left == <span class="hljs-literal">null</span> &amp;&amp; root.right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + Math.max(maxDepth(root.left), maxDepth(root.right));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>将最后一句的逻辑拆开即为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">int</span> <span class="hljs-variable">leftDepth</span> <span class="hljs-operator">=</span> maxDepth(root.left);<span class="hljs-comment">// 左</span><br><span class="hljs-type">int</span> <span class="hljs-variable">rightDepth</span> <span class="hljs-operator">=</span> maxDepth(root.left);<span class="hljs-comment">// 右</span><br><span class="hljs-type">int</span> <span class="hljs-variable">depth</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span> + Math.max(leftDepth, rightDepth);<span class="hljs-comment">// 根</span><br></code></pre></td></tr></table></figure>
+
+<p>当然也可以利用前序遍历来解决，涉及到回溯的思想</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> res;<br><br><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">maxDepth</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    res = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> res;<br>    getDepth(root, <span class="hljs-number">1</span>);<br><br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">getDepth</span><span class="hljs-params">(TreeNode root, <span class="hljs-type">int</span> depth)</span> &#123;<br>    res = Math.max(depth, res);<span class="hljs-comment">// 根</span><br>    <span class="hljs-keyword">if</span> (root.left == <span class="hljs-literal">null</span> &amp;&amp; root.right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span>;<br>    <span class="hljs-comment">// 若左右孩子不为null，则继续访问，故深度需加一</span><br>    <span class="hljs-keyword">if</span> (root.left != <span class="hljs-literal">null</span>) getDepth(root.left, depth + <span class="hljs-number">1</span>);<span class="hljs-comment">// 左</span><br>    <span class="hljs-keyword">if</span> (root.right != <span class="hljs-literal">null</span>) getDepth(root.right, depth + <span class="hljs-number">1</span>);<span class="hljs-comment">// 右</span><br><br>    <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>也可利用层序遍历思想，层序遍历过程中每遍历完一层深度加一，最后返回深度即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">maxDepth</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">depth</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> depth;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            size--;<br>        &#125;<br>        depth++;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> depth;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="111-二叉树的最小深度（简单）"><a href="#111-二叉树的最小深度（简单）" class="headerlink" title="111. 二叉树的最小深度（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/">111. 二叉树的最小深度</a>（简单）</h3><p>与上题类似，利用后序遍历的思想，值得注意的是：</p>
+<ul>
+<li>当左子树为空时，最小深度为右子树的最小深度</li>
+<li>当右子树为空时，最小深度为左子树的最小深度</li>
+<li>当左右子树都不空时，最小深度为左、右子树最小深度的较小者</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">minDepth</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 左子树空但右子树不空</span><br>    <span class="hljs-keyword">if</span> (root.left == <span class="hljs-literal">null</span> &amp;&amp; root.right != <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + minDepth(root.right);<br>    <span class="hljs-comment">// 左子树不空但右子树空</span><br>    <span class="hljs-keyword">if</span> (root.left != <span class="hljs-literal">null</span> &amp;&amp; root.right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + minDepth(root.left);<br>    <span class="hljs-comment">// 左右子树均不空</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + Math.min(minDepth(root.left), minDepth(root.right));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>也可以利用层序遍历的思想，在层序遍历过程中若碰到了叶子结点，即左右孩子均为null的情况，则说明该结点就是层序遍历中碰到的第一个叶子节点，返回当前深度即为最小深度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">minDepth</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">minDepth</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> minDepth;<br><br>    Queue&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>    queue.offer(root);<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>        minDepth++;<br>        <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pointer</span> <span class="hljs-operator">=</span> queue.poll();<br>            <span class="hljs-keyword">if</span> (pointer.left != <span class="hljs-literal">null</span>) queue.offer(pointer.left);<br>            <span class="hljs-keyword">if</span> (pointer.right != <span class="hljs-literal">null</span>) queue.offer(pointer.right);<br>            <span class="hljs-keyword">if</span> (pointer.left == <span class="hljs-literal">null</span> &amp;&amp; pointer.right == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> minDepth;<br>            size--;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> minDepth;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="二叉树的修改与构造"><a href="#二叉树的修改与构造" class="headerlink" title="二叉树的修改与构造"></a>二叉树的修改与构造</h2><h3 id="226-翻转二叉树（简单）"><a href="#226-翻转二叉树（简单）" class="headerlink" title="226. 翻转二叉树（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/invert-binary-tree/">226. 翻转二叉树</a>（简单）</h3><p>递归的将每个结点的左右孩子都互换即可完成对整个树的翻转。</p>
+<p>值得注意的是，本题可以用前序或后序遍历，但不可以使用中序遍历，因为中序遍历先将左孩子的孩子调换，再将根节点孩子调换，最后再调换右孩子时，其实调换的是原来的左孩子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> TreeNode <span class="hljs-title function_">invertTree</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>    TreeNode temp= root.left;<br>    root.left= root.right;<br>    root.right=temp;<br>    invertTree(root.left);<br>    invertTree(root.right);<br><br>    <span class="hljs-keyword">return</span> root;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/41828/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;41828&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;41828&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" rel="tag">二叉树</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E5%8A%9B%E6%89%A3/" rel="tag">力扣</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86"><span class="toc-number">1.1.</span> <span class="toc-text">二叉树的遍历</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#144-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">144. 二叉树的前序遍历（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#94-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">94. 二叉树的中序遍历（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#145-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.1.3.</span> <span class="toc-text">145. 二叉树的后序遍历（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#102-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.1.4.</span> <span class="toc-text">102. 二叉树的层序遍历（中等）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86%E8%A1%8D%E7%94%9F%E9%A2%98%E7%9B%AE"><span class="toc-number">1.2.</span> <span class="toc-text">层序遍历衍生题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#107-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86-II%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">107. 二叉树的层序遍历 II（中等）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#199-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%8F%B3%E8%A7%86%E5%9B%BE%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">199. 二叉树的右视图（中等）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#637-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%B9%B3%E5%9D%87%E5%80%BC%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">637. 二叉树的层平均值（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#429-N-%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.4.</span> <span class="toc-text">429. N 叉树的层序遍历（中等）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#515-%E5%9C%A8%E6%AF%8F%E4%B8%AA%E6%A0%91%E8%A1%8C%E4%B8%AD%E6%89%BE%E6%9C%80%E5%A4%A7%E5%80%BC%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">515. 在每个树行中找最大值（中等）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#116-%E5%A1%AB%E5%85%85%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E7%9A%84%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%8F%B3%E4%BE%A7%E8%8A%82%E7%82%B9%E6%8C%87%E9%92%88%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.6.</span> <span class="toc-text">116. 填充每个节点的下一个右侧节点指针（中等）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#117-%E5%A1%AB%E5%85%85%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E7%9A%84%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%8F%B3%E4%BE%A7%E8%8A%82%E7%82%B9%E6%8C%87%E9%92%88-II%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.2.7.</span> <span class="toc-text">117. 填充每个节点的下一个右侧节点指针 II（中等）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">二叉树的属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#101-%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">101. 对称二叉树（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#104-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">104. 二叉树的最大深度（简单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#111-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">111. 二叉树的最小深度（简单）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%BF%AE%E6%94%B9%E4%B8%8E%E6%9E%84%E9%80%A0"><span class="toc-number">1.4.</span> <span class="toc-text">二叉树的修改与构造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#226-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">226. 翻转二叉树（简单）</span></a></li></ol></li></ol></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677040063"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>

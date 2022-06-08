@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>算法练习——字符串 - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="字符串344. 反转字符串（简单）简简单单的数组原地逆置，不多解释。 12345678public void reverseString(char[] s) &amp;#123;    char temp;    for (int i &#x3D; 0; i &lt; s.length &#x2F; 2; i++) &amp;#123;        temp &#x3D; s[i];        s[i] &#x3D; s[s.length - i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法练习——字符串">
+<meta property="og:url" content="https://deleter-d.github.io/posts/12452/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="字符串344. 反转字符串（简单）简简单单的数组原地逆置，不多解释。 12345678public void reverseString(char[] s) &amp;#123;    char temp;    for (int i &#x3D; 0; i &lt; s.length &#x2F; 2; i++) &amp;#123;        temp &#x3D; s[i];        s[i] &#x3D; s[s.length - i">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-18T08:43:35.000Z">
+<meta property="article:modified_time" content="2022-03-29T07:06:30.236Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="力扣">
+<meta property="article:tag" content="字符串">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677040074">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677040074">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677040074">
+    <link rel="stylesheet" href="/css/style.css?v=1654677040074">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimgs.aixifan.com%2Fo_1ce3jtepb3oa1004n1dvlm1vl62b.jpg&refer=http%3A%2F%2Fimgs.aixifan.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650185057&t=80a497a512f5bb329271977acc551925" data-sizes="auto" alt="算法练习——字符串" class="lazyload">
+              <h1>算法练习——字符串</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年03月18日</a>
+</div>
+
+      
+
+      <h1 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h1><h2 id="344-反转字符串（简单）"><a href="#344-反转字符串（简单）" class="headerlink" title="344. 反转字符串（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/reverse-string/">344. 反转字符串</a>（简单）</h2><p>简简单单的数组原地逆置，不多解释。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseString</span><span class="hljs-params">(<span class="hljs-type">char</span>[] s)</span> &#123;<br>    <span class="hljs-type">char</span> temp;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; s.length / <span class="hljs-number">2</span>; i++) &#123;<br>        temp = s[i];<br>        s[i] = s[s.length - i - <span class="hljs-number">1</span>];<br>        s[s.length - i - <span class="hljs-number">1</span>] = temp;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当然还可以用异或运算实现逆置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseString</span><span class="hljs-params">(<span class="hljs-type">char</span>[] s)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">end</span> <span class="hljs-operator">=</span> s.length - <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (start &lt; end) &#123;<br>        s[start] ^= s[end];  <span class="hljs-comment">//构造 a ^ b 的结果，并放在 a 中</span><br>        s[end] ^= s[start];  <span class="hljs-comment">//将 a ^ b 这一结果再 ^ b ，存入b中，此时 b = a, a = a ^ b</span><br>        s[start] ^= s[end];  <span class="hljs-comment">//a ^ b 的结果再 ^ a ，存入 a 中，此时 b = a, a = b 完成交换</span><br>        start++;<br>        end--;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="541-反转字符串-II（简单）"><a href="#541-反转字符串-II（简单）" class="headerlink" title="541. 反转字符串 II（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/reverse-string-ii/">541. 反转字符串 II</a>（简单）</h2><p>将字符串转化为数组处理，遍历一次数组，用<code>i</code>做遍历指针，用<code>j</code>做计数器，每当<code>j == 2*k</code>时则认为此时<code>i</code>之前有2k个元素，则将前k个元素逆置；遍历结束后判断j与k的关系，若<code>j &lt; k</code>则逆置剩余所有元素，若<code>j &gt;= k</code>则逆置最后一组的前k个元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseStr</span><span class="hljs-params">(String s, <span class="hljs-type">int</span> k)</span> &#123;<br>    <span class="hljs-type">char</span>[] chars = s.toCharArray();<br>    <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, j = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (i &lt; chars.length) &#123;<br>        i++;<br>        <span class="hljs-keyword">if</span> (i == chars.length) <span class="hljs-keyword">break</span>;<br>        j++;<br>        <span class="hljs-keyword">if</span> (j == <span class="hljs-number">2</span> * k) &#123;<br>            reverseString(chars, i - <span class="hljs-number">2</span> * k + <span class="hljs-number">1</span>, i - k);<br>            j = <span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br>    i--;<br>    <span class="hljs-keyword">if</span> (j &lt; k) &#123;<br>        reverseString(chars, i - j + <span class="hljs-number">1</span>, i);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        reverseString(chars, i - j + <span class="hljs-number">1</span>, i - j + k);<br>    &#125;<br>    <span class="hljs-type">StringBuffer</span> <span class="hljs-variable">buffer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuffer</span>();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span> item : chars) &#123;<br>        buffer.append(item);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> buffer.toString();<br>&#125;<br><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseString</span><span class="hljs-params">(<span class="hljs-type">char</span>[] s, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<br>    <span class="hljs-type">char</span> temp;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">len</span> <span class="hljs-operator">=</span> end - start + <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; len / <span class="hljs-number">2</span>; i++) &#123;<br>        temp = s[start + i];<br>        s[start+i] = s[end - i];<br>        s[end - i] = temp;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="剑指-Offer-05-替换空格（简单）"><a href="#剑指-Offer-05-替换空格（简单）" class="headerlink" title="剑指 Offer 05. 替换空格（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/">剑指 Offer 05. 替换空格</a>（简单）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">replaceSpace</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-type">StringBuffer</span> <span class="hljs-variable">buffer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuffer</span>();<br>    <span class="hljs-keyword">for</span> (Character item : s.toCharArray()) &#123;<br>        <span class="hljs-keyword">if</span> (item == <span class="hljs-string">&#x27; &#x27;</span>) &#123;<br>            buffer.append(<span class="hljs-string">&quot;%20&quot;</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            buffer.append(item);<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> buffer.toString();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="剑指-Offer-58-II-左旋转字符串（简单）"><a href="#剑指-Offer-58-II-左旋转字符串（简单）" class="headerlink" title="剑指 Offer 58 - II. 左旋转字符串（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof/">剑指 Offer 58 - II. 左旋转字符串</a>（简单）</h2><p>本题先将给定的字符串推入一个<code>StringBuilder</code>中，再将前n个字符从头到尾推入<code>StringBuilder</code>的末尾，最后返回区间<code>[n,builder.length()]</code>的内容即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseLeftWords</span><span class="hljs-params">(String s, <span class="hljs-type">int</span> n)</span> &#123;<br>    <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span> item : s.toCharArray()) &#123;<br>        builder.append(item);<br>    &#125;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        builder.append(builder.charAt(i));<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> builder.subSequence(n, builder.length()).toString();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当然也可以利用三次逆置解决，即先将前n个字符和剩余字符分别逆置，再将整个字符串逆置就得到了结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseLeftWords</span><span class="hljs-params">(String s, <span class="hljs-type">int</span> n)</span> &#123;<br>    <span class="hljs-type">int</span> len=s.length();<br>    <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span><span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>(s);<br>    reverseString(builder,<span class="hljs-number">0</span>,n-<span class="hljs-number">1</span>);<br>    reverseString(builder,n,len-<span class="hljs-number">1</span>);<br>    <span class="hljs-keyword">return</span> builder.reverse().toString();<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseString</span><span class="hljs-params">(StringBuilder builder, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<br>    <span class="hljs-keyword">while</span> (start &lt; end) &#123;<br>        <span class="hljs-type">char</span> <span class="hljs-variable">temp</span> <span class="hljs-operator">=</span> builder.charAt(start);<br>        builder.setCharAt(start, builder.charAt(end));<br>        builder.setCharAt(end, temp);<br>        start++;<br>        end--;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="28-实现-strStr-（简单）"><a href="#28-实现-strStr-（简单）" class="headerlink" title="28. 实现 strStr()（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/implement-strstr/">28. 实现 strStr()</a>（简单）</h2><p>抖机灵解法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">strStr</span><span class="hljs-params">(String haystack, String needle)</span> &#123;<br>    <span class="hljs-keyword">return</span> haystack.indexOf(needle);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>KMP算法：但next数组是暴力法求得的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">strStr</span><span class="hljs-params">(String haystack, String needle)</span> &#123;<br>    <span class="hljs-keyword">if</span> (needle.length() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (haystack.length() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span>[] next = getNext(needle.toCharArray());<br>    <span class="hljs-type">char</span>[] hayArr = haystack.toCharArray();<br>    <span class="hljs-type">char</span>[] neeArr = needle.toCharArray();<br>    <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, j = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (i &lt; hayArr.length &amp;&amp; j &lt; neeArr.length) &#123;<br>        <span class="hljs-keyword">if</span> (hayArr[i] == neeArr[j]) &#123;<br>            i++;<br>            j++;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            j = next[j];<br>            <span class="hljs-keyword">if</span> (j == -<span class="hljs-number">1</span>) &#123;<br>                i++;<br>                j++;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (j == neeArr.length) &#123;<br>        <span class="hljs-keyword">return</span> i - neeArr.length;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] getNext(<span class="hljs-type">char</span>[] chars) &#123;<br>    <span class="hljs-type">int</span> i, j, len;<br>    <span class="hljs-type">int</span>[] next = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[chars.length];<br>    next[<span class="hljs-number">0</span>] = -<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span> (j = <span class="hljs-number">1</span>; j &lt; chars.length; j++) &#123;<br>        <span class="hljs-keyword">for</span> (len = j - <span class="hljs-number">1</span>; len &gt;= <span class="hljs-number">1</span>; len--) &#123;<br>            <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; len; i++) &#123;<br>                <span class="hljs-keyword">if</span> (chars[i] != chars[j - len + i]) <span class="hljs-keyword">break</span>;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (i == len) &#123;<br>                next[j] = len;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (len &lt; <span class="hljs-number">1</span>) &#123;<br>            next[j] = <span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> next;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>以下给出KMP求next数组的优化</p>
+<p>该优化思路是利用了之前求得的next值，根据模式串前后缀的匹配以及next数组的值求得新的next数组的值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">strStr</span><span class="hljs-params">(String haystack, String needle)</span> &#123;<br>    <span class="hljs-keyword">if</span> (needle.length() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span>[] next = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[needle.length()];<br>    getNext(next, needle);<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<span class="hljs-comment">// 指向模式串</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; haystack.length(); i++) &#123;<span class="hljs-comment">// 遍历主串</span><br>        <span class="hljs-keyword">while</span> (j &gt; <span class="hljs-number">0</span> &amp;&amp; needle.charAt(j) != haystack.charAt(i))<span class="hljs-comment">// 冲突</span><br>            j = next[j - <span class="hljs-number">1</span>];<span class="hljs-comment">// 根据next回溯</span><br>        <span class="hljs-keyword">if</span> (needle.charAt(j) == haystack.charAt(i))<span class="hljs-comment">// 未冲突</span><br>            j++;<span class="hljs-comment">// 继续向后检测</span><br>        <span class="hljs-keyword">if</span> (j == needle.length())<span class="hljs-comment">// 若模式串被遍历完成，说明全部匹配</span><br>            <span class="hljs-keyword">return</span> i - needle.length() + <span class="hljs-number">1</span>;<span class="hljs-comment">// 返回本次匹配的开头</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<span class="hljs-comment">// 否则不存在匹配，返回-1</span><br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">getNext</span><span class="hljs-params">(<span class="hljs-type">int</span>[] next, String s)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<span class="hljs-comment">// j指向前缀的末尾</span><br>    next[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<span class="hljs-comment">// 初始化next[0]</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt; s.length(); i++) &#123;<span class="hljs-comment">// i指向后缀的末尾</span><br>        <span class="hljs-comment">// 若i与j所指的字符不同，则需要利用j所指的前一位字符的next值寻找最大相同前后缀字符数</span><br>        <span class="hljs-comment">// 并要注意回溯是一个不断循环的过程，一次回溯不满足条件就需要继续回溯</span><br>        <span class="hljs-keyword">while</span> (j &gt; <span class="hljs-number">0</span> &amp;&amp; s.charAt(j) != s.charAt(i))<br>            j = next[j - <span class="hljs-number">1</span>];<br>        <span class="hljs-comment">// 若i与j所指的字符相同，则j++，即前后缀相同的字符比上次比较多一个</span><br>        <span class="hljs-keyword">if</span> (s.charAt(j) == s.charAt(i))<br>            j++;<br>        next[i] = j;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="459-重复的子字符串（简单）"><a href="#459-重复的子字符串（简单）" class="headerlink" title="459. 重复的子字符串（简单）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/repeated-substring-pattern/">459. 重复的子字符串</a>（简单）</h2><p><code>next</code>数组中，若<code>next[len - 1] != 0</code>则表明字符串有最长相同前后缀。</p>
+<p>如果<code>len % (len - (next[len - 1] + 1)) == 0 </code>，则说明 (数组长度-最长相等前后缀的长度) 正好可以被数组的长度整除，说明有该字符串有重复的子字符串。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">repeatedSubstringPattern</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-keyword">if</span> (s.length() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-type">int</span>[] next = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[s.length()];<br>    getNext(next, s);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">len</span> <span class="hljs-operator">=</span> s.length();<br><br>    <span class="hljs-comment">// len - (next[len - 1])表示最长相同前后缀的长度</span><br>    <span class="hljs-comment">// 若len能够整除该长度，则说明整个字符串是以最长相等前后缀为周期循环的</span><br>    <span class="hljs-keyword">return</span> next[len - <span class="hljs-number">1</span>] != <span class="hljs-number">0</span> &amp;&amp; len % (len - (next[len - <span class="hljs-number">1</span>])) == <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-comment">// 计算next数组，与KMP算法中的计算方式一致</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">getNext</span><span class="hljs-params">(<span class="hljs-type">int</span>[] next, String s)</span> &#123;<br>    next[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt; s.length(); i++) &#123;<br>        <span class="hljs-keyword">while</span> (j &gt; <span class="hljs-number">0</span> &amp;&amp; s.charAt(i) != s.charAt(j)) &#123;<br>            j = next[j - <span class="hljs-number">1</span>];<br>        &#125;<br>        <span class="hljs-keyword">if</span> (s.charAt(i) == s.charAt(j)) &#123;<br>            j++;<br>        &#125;<br>        next[i] = j;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="151-颠倒字符串中的单词（中等）"><a href="#151-颠倒字符串中的单词（中等）" class="headerlink" title="151. 颠倒字符串中的单词（中等）"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/reverse-words-in-a-string/">151. 颠倒字符串中的单词</a>（中等）</h2><p>先遍历字符串，若当前字符不是空格则将该字符推入<code>StringBuilder</code>中，若当前字符是空格则将<code>StringBuilder</code>中现有的字符作为一个单词存入一个字符串数组中，遍历结束后再遍历字符串数组，将每个不为空的元素放入空的<code>StringBuilder</code>中，每推入一个元素就推入一个空格，最后再删除末尾的空格即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseWords</span><span class="hljs-params">(String s)</span> &#123;<br>    List&lt;String&gt; split = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; s.length(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (s.charAt(i) != <span class="hljs-string">&#x27; &#x27;</span>) &#123;<br>            builder.append(s.charAt(i));<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            split.add(builder.toString());<br>            builder.delete(<span class="hljs-number">0</span>, builder.length());<br>        &#125;<br>    &#125;<br>    split.add(builder.toString());<br>    builder.delete(<span class="hljs-number">0</span>, builder.length());<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> split.size() - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) &#123;<br>        <span class="hljs-keyword">if</span> (!split.get(i).equals(<span class="hljs-string">&quot;&quot;</span>)) &#123;<br>            builder.append(split.get(i));<br>            builder.append(<span class="hljs-string">&quot; &quot;</span>);<br>        &#125;<br>    &#125;<br>    builder.deleteCharAt(builder.length() - <span class="hljs-number">1</span>);<br><br>    <span class="hljs-keyword">return</span> builder.toString();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>BUT：这样解决会让本题变成一道水题！</p>
+<p>可以采用如下方法，先将整个字符串中的冗余空格去除，冗余空格指的是字符串开头和末尾的所有空格，以及单词之间多于一个的空格；然后再将整个字符串逆置，再分别将每个单词逆置，即可得到最后的结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseWords</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> removeSpace(s);<br>    reverseString(builder, <span class="hljs-number">0</span>, builder.length() - <span class="hljs-number">1</span>);<br>    reverseEachWords(builder);<br>    <span class="hljs-keyword">return</span> builder.toString();<br>&#125;<br><br><span class="hljs-keyword">public</span> StringBuilder <span class="hljs-title function_">removeSpace</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, end = s.length() - <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (s.charAt(start) == <span class="hljs-string">&#x27; &#x27;</span>) start++;<span class="hljs-comment">// 去除开头的多余空格</span><br>    <span class="hljs-keyword">while</span> (s.charAt(end) == <span class="hljs-string">&#x27; &#x27;</span>) end--;<span class="hljs-comment">// 去除末尾的多余空格</span><br>    <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>();<br>    <span class="hljs-keyword">while</span> (start &lt;= end) &#123;<br>        <span class="hljs-type">char</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> s.charAt(start);<br>        <span class="hljs-keyword">if</span> (c != <span class="hljs-string">&#x27; &#x27;</span> || builder.charAt(builder.length() - <span class="hljs-number">1</span>) != <span class="hljs-string">&#x27; &#x27;</span>) &#123;<br>            builder.append(c);<br>        &#125;<br>        start++;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> builder;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseString</span><span class="hljs-params">(StringBuilder builder, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<span class="hljs-comment">// 逆置字符串</span><br>    <span class="hljs-keyword">while</span> (start &lt; end) &#123;<br>        <span class="hljs-type">char</span> <span class="hljs-variable">temp</span> <span class="hljs-operator">=</span> builder.charAt(start);<br>        builder.setCharAt(start, builder.charAt(end));<br>        builder.setCharAt(end, temp);<br>        start++;<br>        end--;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverseEachWords</span><span class="hljs-params">(StringBuilder builder)</span> &#123;<span class="hljs-comment">// 逆置每个单词</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, end = <span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> builder.length();<br>    <span class="hljs-keyword">while</span> (start &lt; n) &#123;<br>        <span class="hljs-keyword">while</span> (end &lt; n &amp;&amp; builder.charAt(end) != <span class="hljs-string">&#x27; &#x27;</span>) &#123;<span class="hljs-comment">// 将end往后移动找到一个完整单词</span><br>            end++;<br>        &#125;<br>        reverseString(builder, start, end - <span class="hljs-number">1</span>);<br>        start = end + <span class="hljs-number">1</span>;<br>        end = start + <span class="hljs-number">1</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上述解法可以对思维加以锻炼，但依然有更好的方法，以下给出空间复杂度为$O(n)$的方法。</p>
+<p>利用一个新的数组进行填充，从末尾遍历原数组，先跳过末尾的空格，然后每次从原数组的末尾取一个单词放入新数组中，再加一个空格，直到所有单词都放入新数组中，最后返回新数组中除最后一个空格外的部分。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseWords</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-type">char</span>[] chars = s.toCharArray();<br>    <span class="hljs-type">char</span>[] newArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[chars.length + <span class="hljs-number">1</span>];<span class="hljs-comment">// 每次取的都是单词后加一个空格，最后一个单词后面也会有空格，故长度+1</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> chars.length - <span class="hljs-number">1</span>;<span class="hljs-comment">// 用i从后往前遍历原始数组</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<span class="hljs-comment">// 用j遍历新数组</span><br>    <span class="hljs-keyword">while</span> (i &gt;= <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">while</span> (i &gt;= <span class="hljs-number">0</span> &amp;&amp; chars[i] == <span class="hljs-string">&#x27; &#x27;</span>) &#123;<span class="hljs-comment">// 跳过末尾空格</span><br>            i--;<br>        &#125;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">right</span> <span class="hljs-operator">=</span> i;<span class="hljs-comment">// 记录下i的位置，此时i指向从后往前第一个不为空格的字符，即该单词的首字母</span><br>        <span class="hljs-keyword">while</span> (i &gt;= <span class="hljs-number">0</span> &amp;&amp; chars[i] != <span class="hljs-string">&#x27; &#x27;</span>) &#123;<span class="hljs-comment">// 再将i向前移动到最末尾一个单词前的空格处</span><br>            i--;<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> i + <span class="hljs-number">1</span>; k &lt;= right; k++) &#123;<span class="hljs-comment">// 取出该单词并放入新数组中</span><br>            newArray[j] = chars[k];<br>            j++;<br>            <span class="hljs-keyword">if</span> (k == right) &#123;<br>                newArray[j] = <span class="hljs-string">&#x27; &#x27;</span>;<br>                j++;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (j == <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(newArray, <span class="hljs-number">0</span>, j - <span class="hljs-number">1</span>);<span class="hljs-comment">// 最后返回[0,j-1]，即将最后一个空格去掉不返回</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>本题还可以再优化，可以优化到空间复杂度为$O(1)$，即利用双反转+移位的操作。</p>
+<p>详细思路见注释</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverseWords</span><span class="hljs-params">(String s)</span> &#123;<br>    <span class="hljs-type">char</span>[] chars = s.toCharArray();<br>    reverse(chars, <span class="hljs-number">0</span>, s.length() - <span class="hljs-number">1</span>);<span class="hljs-comment">// 整体反转</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; chars.length; i++) &#123;<br>        <span class="hljs-keyword">if</span> (chars[i] == <span class="hljs-string">&#x27; &#x27;</span>) &#123;<span class="hljs-comment">// 跳过开头冗余空格</span><br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">current</span> <span class="hljs-operator">=</span> i;<span class="hljs-comment">// 记录下第一个非空格字符的位置</span><br>        <span class="hljs-keyword">while</span> (i &lt; chars.length &amp;&amp; chars[i] != <span class="hljs-string">&#x27; &#x27;</span>) &#123;<span class="hljs-comment">// 继续移动i找到一个完整单词</span><br>            i++;<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> current; j &lt; i; j++) &#123;<br>            <span class="hljs-keyword">if</span> (j == current) &#123;<br>                reverse(chars, current, i - <span class="hljs-number">1</span>);<span class="hljs-comment">// 反转该单词得到正确的字母顺序</span><br>            &#125;<br>            chars[k] = chars[j];<span class="hljs-comment">// 将该单词移动到开头位置</span><br>            k++;<br>            <span class="hljs-keyword">if</span> (j == i - <span class="hljs-number">1</span>) &#123;<span class="hljs-comment">// 遍历结束</span><br>                <span class="hljs-keyword">if</span> (k &lt; chars.length) &#123;<span class="hljs-comment">// 防止越界</span><br>                    chars[k] = <span class="hljs-string">&#x27; &#x27;</span>;<br>                    k++;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (k == <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">// 第三个参数是为了防止出现正好凑满不需要省略空格的情况，如&quot;hello world&quot; =&gt; &quot;world hello&quot;</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(chars, <span class="hljs-number">0</span>, (k == chars.length) &amp;&amp; (chars[k - <span class="hljs-number">1</span>] != <span class="hljs-string">&#x27; &#x27;</span>) ? k : k - <span class="hljs-number">1</span>);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reverse</span><span class="hljs-params">(<span class="hljs-type">char</span>[] chars, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> start, j = end;<br>    <span class="hljs-keyword">while</span> (i &lt; j) &#123;<br>        chars[i] ^= chars[j];<br>        chars[j] ^= chars[i];<br>        chars[i] ^= chars[j];<br>        i++;<br>        j--;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/12452/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;12452&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;12452&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E5%8A%9B%E6%89%A3/" rel="tag">力扣</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="tag">字符串</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.</span> <span class="toc-text">字符串</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#344-%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">344. 反转字符串（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#541-%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2-II%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">541. 反转字符串 II（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87-Offer-05-%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">剑指 Offer 05. 替换空格（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87-Offer-58-II-%E5%B7%A6%E6%97%8B%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">剑指 Offer 58 - II. 左旋转字符串（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#28-%E5%AE%9E%E7%8E%B0-strStr-%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">28. 实现 strStr()（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#459-%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">459. 重复的子字符串（简单）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#151-%E9%A2%A0%E5%80%92%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E5%8D%95%E8%AF%8D%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89"><span class="toc-number">1.7.</span> <span class="toc-text">151. 颠倒字符串中的单词（中等）</span></a></li></ol></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677040091"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>

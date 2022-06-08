@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>面向对象设计原则及设计模式简介 - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="面向对象设计原则单一职责原则（Single Responsibility Principle, SRP）定义一：一个对象应该只包含单一的职责，并且该职责被完整的封装在一个类中。 定义二：就一个类而言，应该仅有一个引起它变化的原因。 开闭原则（Open-Closed Principle, OCP）定义：一个软件实体应当对扩展开放，对修改关闭。 里氏代换原则（Liskov Substitution P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面向对象设计原则及设计模式简介">
+<meta property="og:url" content="https://deleter-d.github.io/posts/23116/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="面向对象设计原则单一职责原则（Single Responsibility Principle, SRP）定义一：一个对象应该只包含单一的职责，并且该职责被完整的封装在一个类中。 定义二：就一个类而言，应该仅有一个引起它变化的原因。 开闭原则（Open-Closed Principle, OCP）定义：一个软件实体应当对扩展开放，对修改关闭。 里氏代换原则（Liskov Substitution P">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-07T09:35:10.000Z">
+<meta property="article:modified_time" content="2022-06-08T06:18:25.185Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="面向对象">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677040016">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677040016">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677040016">
+    <link rel="stylesheet" href="/css/style.css?v=1654677040016">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fae0923734c9c8950b3a503eca73b1c5bb0d2255a.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657186687&t=919aed3e19136809661b8043cf9a0b60" data-sizes="auto" alt="面向对象设计原则及设计模式简介" class="lazyload">
+              <h1>面向对象设计原则及设计模式简介</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年06月07日</a>
+</div>
+
+      
+
+      <h1 id="面向对象设计原则"><a href="#面向对象设计原则" class="headerlink" title="面向对象设计原则"></a>面向对象设计原则</h1><h2 id="单一职责原则（Single-Responsibility-Principle-SRP）"><a href="#单一职责原则（Single-Responsibility-Principle-SRP）" class="headerlink" title="单一职责原则（Single Responsibility Principle, SRP）"></a>单一职责原则（Single Responsibility Principle, SRP）</h2><p>定义一：一个对象应该只包含单一的职责，并且该职责被完整的封装在一个类中。</p>
+<p>定义二：就一个类而言，应该仅有一个引起它变化的原因。</p>
+<h2 id="开闭原则（Open-Closed-Principle-OCP）"><a href="#开闭原则（Open-Closed-Principle-OCP）" class="headerlink" title="开闭原则（Open-Closed Principle, OCP）"></a>开闭原则（Open-Closed Principle, OCP）</h2><p>定义：一个软件实体应当对扩展开放，对修改关闭。</p>
+<h2 id="里氏代换原则（Liskov-Substitution-Principle-LSP）"><a href="#里氏代换原则（Liskov-Substitution-Principle-LSP）" class="headerlink" title="里氏代换原则（Liskov Substitution Principle, LSP）"></a>里氏代换原则（Liskov Substitution Principle, LSP）</h2><p>定义一：如果对每一个类型为<code>S</code>的对象<code>o1</code>，都有类型为<code>T</code>的对象<code>o2</code>，使得以<code>T</code>定义的所有程序<code>P</code>在所有的对象<code>o1</code>都代换<code>o2</code>时，程序<code>P</code>的行为没有变化，那么类型<code>S</code>是类型<code>T</code>的子类型。</p>
+<p>定义二：所有引用基类（父类）的地方必须能透明地使用其子类的对象。</p>
+<p>通俗表达：在软件中如果能够使用基类对象，那么一定能够使用其子类对象。把基类都替换成它的子类，程序将不会产生任何错误和异常；反之不成立，即如果软件实体中使用的是子类，则它不一定能够使用基类。</p>
+<h3 id="使用里氏代换原则时的注意事项"><a href="#使用里氏代换原则时的注意事项" class="headerlink" title="使用里氏代换原则时的注意事项"></a>使用里氏代换原则时的注意事项</h3><ul>
+<li>子类的所有方法必须在父类中声明，或子类必须实现父类中声明的所有方法；</li>
+<li>在运用里氏代换原则时，尽量把父类设计为抽象类或接口，让子类继承父类或实现父接口，并实现在父类中声明的方法。</li>
+</ul>
+<h2 id="依赖倒转原则（Dependence-Inversion-Principle-DIP）"><a href="#依赖倒转原则（Dependence-Inversion-Principle-DIP）" class="headerlink" title="依赖倒转原则（Dependence Inversion Principle, DIP）"></a>依赖倒转原则（Dependence Inversion Principle, DIP）</h2><p>定义一：高层模块不应该依赖低层模块，它们都应该依赖抽象。抽象不应该依赖于细节，细节应该依赖于抽象。</p>
+<p>定义二：要针对接口编程，不要针对实现编程。</p>
+<h3 id="依赖倒转原则中的两个概念"><a href="#依赖倒转原则中的两个概念" class="headerlink" title="依赖倒转原则中的两个概念"></a>依赖倒转原则中的两个概念</h3><h4 id="类之间的耦合"><a href="#类之间的耦合" class="headerlink" title="类之间的耦合"></a>类之间的耦合</h4><ul>
+<li>零耦合：两个类之间没有任何耦合关系。</li>
+<li>具体耦合：发生在两个具体类（可实例化的类）之间，由一个类对另一个具体类实例的直接引用产生。</li>
+<li>抽象耦合：发生在一个具体类和一个抽象类之间或两个抽象类之间，使两个发生关系的类之间存有最大的灵活性。由于抽象耦合中至少有一端是抽象的，故可以通过不同的具体实现来进行扩展。</li>
+</ul>
+<h4 id="依赖注入（Dependence-Injection-DI）"><a href="#依赖注入（Dependence-Injection-DI）" class="headerlink" title="依赖注入（Dependence Injection, DI）"></a>依赖注入（Dependence Injection, DI）</h4><p>依赖注入就是将一个类的对象传入另一个类，注入时应该尽量注入父类对象，在程序运行时再通过子类对象来覆盖父类对象。</p>
+<p>依赖注入的三种方式：</p>
+<ul>
+<li>构造注入（Constructor Injection）：通过构造函数注入实例变量。</li>
+<li>设值注入（Setter Injection）：通过Setter方法注入实例变量。</li>
+<li>接口注入（Interface Injection）：通过接口方法注入实例变量。</li>
+</ul>
+<h2 id="接口隔离原则（Interface-Segregation-Principle-ISP）"><a href="#接口隔离原则（Interface-Segregation-Principle-ISP）" class="headerlink" title="接口隔离原则（Interface Segregation Principle, ISP）"></a>接口隔离原则（Interface Segregation Principle, ISP）</h2><p>定义一：客户端不应该依赖那些它不需要的接口。</p>
+<p>定义二：一旦一个接口太大，则需要将它分割成一些更细小的接口，使用该接口的客户端仅需知道与之相关的方法即可。</p>
+<h2 id="合成复用原则（Composite-Reuse-Principle-CRP）"><a href="#合成复用原则（Composite-Reuse-Principle-CRP）" class="headerlink" title="合成复用原则（Composite Reuse Principle, CRP）"></a>合成复用原则（Composite Reuse Principle, CRP）</h2><p>又称组合&#x2F;聚合复用原则（Composite&#x2F; Aggregate Reuse Principle, CARP）</p>
+<p>定义：尽量使用对象组合，而不是继承来达到复用的目的。</p>
+<p>简言之就是，要尽量使用组合&#x2F;聚合关系，少用继承。在软件开发中，一般首选使用组合&#x2F;聚合来实现复用，其次才考虑继承。使用继承时应严格遵循里氏代换原则，有效使用继承有助于解决问题，降低复杂度，而滥用继承反而会增加系统的构建和维护的难度。</p>
+<h2 id="迪米特法则（Law-of-Demeter-LoD）"><a href="#迪米特法则（Law-of-Demeter-LoD）" class="headerlink" title="迪米特法则（Law of Demeter, LoD）"></a>迪米特法则（Law of Demeter, LoD）</h2><p>又称最少知识原则（Least Knowledge Principle, LKP）</p>
+<p>定义一：不要和“陌生人”说话。</p>
+<p>定义二：只与你的直接朋友通信。</p>
+<p>定义三：每个软件单元对其他的单元都只有最少的知识，而且局限于那些与本单元密切相关的软件单元。</p>
+<h3 id="在迪米特法则中，对于一个对象，它的朋友包括"><a href="#在迪米特法则中，对于一个对象，它的朋友包括" class="headerlink" title="在迪米特法则中，对于一个对象，它的朋友包括"></a>在迪米特法则中，对于一个对象，它的朋友包括</h3><ul>
+<li>当前对象本身（unit）；</li>
+<li>以参数形式传入到当前对象方法中的对象；</li>
+<li>当前对象的成员对象；</li>
+<li>如果当前对象的成员对象是一个集合，那么集合中的元素也都是朋友；</li>
+<li>当前对象所创建的对象。</li>
+</ul>
+<h3 id="使用迪米特法则时的注意事项"><a href="#使用迪米特法则时的注意事项" class="headerlink" title="使用迪米特法则时的注意事项"></a>使用迪米特法则时的注意事项</h3><ul>
+<li>在类的划分上，应当尽量创建松耦合的类，类之间的耦合度越低，就越有利于复用，一个处在松耦合中的类一旦被修改，不会对关联的类造成太大波及；</li>
+<li>在类的结构设计上，每一个类都应当尽量降低其成员变量和成员函数的访问权限；</li>
+<li>在类的设计上，只要有可能，一个类型应当设计成不变类；</li>
+<li>在对其他类的引用上，一个对象对其他对象的引用应当降到最低。</li>
+</ul>
+<h1 id="GoF设计模式简介"><a href="#GoF设计模式简介" class="headerlink" title="GoF设计模式简介"></a>GoF设计模式简介</h1><table>
+<thead>
+<tr>
+<th>范围&#x2F;目的</th>
+<th>创建型模式</th>
+<th>结构型模式</th>
+<th>行为型模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>类模式</td>
+<td>工厂方法模式</td>
+<td>适配器模式（类）</td>
+<td>解释器模式<br />模板方法模式</td>
+</tr>
+<tr>
+<td>对象模式</td>
+<td>抽象工厂模式<br />建造者模式<br />原型模式<br />单例模式</td>
+<td>适配器模式（对象）<br />桥接模式<br />组合模式<br />装饰模式<br />外观模式<br />享元模式<br />代理模式</td>
+<td>职责链模式<br />命令模式<br />迭代器模式<br />中介者模式<br />备忘录模式<br />观察者模式<br />状态模式<br />策略模式<br />访问者模式</td>
+</tr>
+</tbody></table>
+<p><strong>创建型模式</strong>：主要用于创建对象。</p>
+<p><strong>结构型模式</strong>：主要用于处理类或对象的组合。</p>
+<p><strong>行为型模式</strong>：主要用于描述对类或对象怎样交互和怎样分配职责。</p>
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/23116/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;23116&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;23116&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">面向对象</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-number">1.</span> <span class="toc-text">面向对象设计原则</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3%E5%8E%9F%E5%88%99%EF%BC%88Single-Responsibility-Principle-SRP%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">单一职责原则（Single Responsibility Principle, SRP）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%EF%BC%88Open-Closed-Principle-OCP%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">开闭原则（Open-Closed Principle, OCP）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8C%E6%B0%8F%E4%BB%A3%E6%8D%A2%E5%8E%9F%E5%88%99%EF%BC%88Liskov-Substitution-Principle-LSP%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">里氏代换原则（Liskov Substitution Principle, LSP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E9%87%8C%E6%B0%8F%E4%BB%A3%E6%8D%A2%E5%8E%9F%E5%88%99%E6%97%B6%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">使用里氏代换原则时的注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E5%8E%9F%E5%88%99%EF%BC%88Dependence-Inversion-Principle-DIP%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">依赖倒转原则（Dependence Inversion Principle, DIP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E5%8E%9F%E5%88%99%E4%B8%AD%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.1.</span> <span class="toc-text">依赖倒转原则中的两个概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E4%B9%8B%E9%97%B4%E7%9A%84%E8%80%A6%E5%90%88"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">类之间的耦合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88Dependence-Injection-DI%EF%BC%89"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">依赖注入（Dependence Injection, DI）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E9%9A%94%E7%A6%BB%E5%8E%9F%E5%88%99%EF%BC%88Interface-Segregation-Principle-ISP%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">接口隔离原则（Interface Segregation Principle, ISP）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%88%90%E5%A4%8D%E7%94%A8%E5%8E%9F%E5%88%99%EF%BC%88Composite-Reuse-Principle-CRP%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">合成复用原则（Composite Reuse Principle, CRP）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AA%E7%B1%B3%E7%89%B9%E6%B3%95%E5%88%99%EF%BC%88Law-of-Demeter-LoD%EF%BC%89"><span class="toc-number">1.7.</span> <span class="toc-text">迪米特法则（Law of Demeter, LoD）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E8%BF%AA%E7%B1%B3%E7%89%B9%E6%B3%95%E5%88%99%E4%B8%AD%EF%BC%8C%E5%AF%B9%E4%BA%8E%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%AE%83%E7%9A%84%E6%9C%8B%E5%8F%8B%E5%8C%85%E6%8B%AC"><span class="toc-number">1.7.1.</span> <span class="toc-text">在迪米特法则中，对于一个对象，它的朋友包括</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%BF%AA%E7%B1%B3%E7%89%B9%E6%B3%95%E5%88%99%E6%97%B6%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.7.2.</span> <span class="toc-text">使用迪米特法则时的注意事项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GoF%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">GoF设计模式简介</span></a></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677040022"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>

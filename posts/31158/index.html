@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>算法学习——贪心 - 亦初</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" type="image/png" />
+    <meta name="description" content="贪心经典算法埃及分数12345678910111213141516public static void EgyptFrac(int A, int B) &amp;#123;    int E, R;    System.out.println(A + &quot;&#x2F;&quot; + B + &quot;&#x3D;&quot;);    do &amp;#123;        E &#x3D; B &#x2F; A + 1;&#x2F;&#x2F; 求A&#x2F;B包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法学习——贪心">
+<meta property="og:url" content="https://deleter-d.github.io/posts/31158/index.html">
+<meta property="og:site_name" content="亦初">
+<meta property="og:description" content="贪心经典算法埃及分数12345678910111213141516public static void EgyptFrac(int A, int B) &amp;#123;    int E, R;    System.out.println(A + &quot;&#x2F;&quot; + B + &quot;&#x3D;&quot;);    do &amp;#123;        E &#x3D; B &#x2F; A + 1;&#x2F;&#x2F; 求A&#x2F;B包">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-13T11:11:13.000Z">
+<meta property="article:modified_time" content="2022-03-29T07:06:30.234Z">
+<meta property="article:author" content="亦初">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="贪心">
+<meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1654677040204">
+    
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1654677040204">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1654677040204">
+    <link rel="stylesheet" href="/css/style.css?v=1654677040204">
+     
+    
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fac07b1dfcc9e25c7c88d2f97a1537713f47491bb.jpg&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750563&amp;t=016975ecf0f22cd9137d3f9f8728534d)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="亦初" class="mdui-btn mdui-btn-icon"><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="亦初">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5169e88ec2bdb7ce3d1af9eaad64886e3ede6b2c.png&amp;refer=http%3A%2F%2Fi0.hdslb.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=auto?sec=1649750163&amp;t=886764981b3150ffee4111d89921d7ec" alt="亦初" alt="亦初">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>32</div>
+        <div><span>标签</span>41</div>
+        <div><span>分类</span>6</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/archive.html" title="文章归档">
+            <i class="mdui-list-item-icon nexmoefont icon-container"></i>
+            <div class="mdui-list-item-content">
+                文章归档
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <h3 class="nexmoe-widget-title">文章分类</h3>
+    <div class="nexmoe-widget">
+
+      <ul class="category-list">
+
+        
+
+
+        
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Hexo/">Hexo</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Java/">Java</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/Linux/">Linux</a>
+          <span class="category-list-count">1</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/前端/">前端</a>
+          <span class="category-list-count">15</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/算法/">算法</a>
+          <span class="category-list-count">11</span>
+        </li>
+
+        
+
+        <li class="category-list-item">
+          <a class="category-list-link" href="/categories/设计模式/">设计模式</a>
+          <span class="category-list-count">2</span>
+        </li>
+
+        
+      </ul>
+
+    </div>
+  </div>
+
+
+    
+    
+  <div class="nexmoe-widget-wrap">
+    <div id="randomtagcloud" class="nexmoe-widget tagcloud nexmoe-rainbow">
+      <a href="/tags/Composition-API/" style="font-size: 10px;">Composition API</a> <a href="/tags/GC/" style="font-size: 10px;">GC</a> <a href="/tags/Gitalk/" style="font-size: 10px;">Gitalk</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/RESTFul/" style="font-size: 10px;">RESTFul</a> <a href="/tags/Vue/" style="font-size: 18px;">Vue</a> <a href="/tags/Vue-Router/" style="font-size: 12px;">Vue-Router</a> <a href="/tags/Vue-CLI/" style="font-size: 10px;">Vue_CLI</a> <a href="/tags/Vuex/" style="font-size: 10px;">Vuex</a> <a href="/tags/Vue%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">Vue组件</a> <a href="/tags/axios/" style="font-size: 14px;">axios</a> <a href="/tags/node-js/" style="font-size: 10px;">node.js</a> <a href="/tags/npm/" style="font-size: 10px;">npm</a> <a href="/tags/package-json/" style="font-size: 10px;">package.json</a> <a href="/tags/promise/" style="font-size: 10px;">promise</a> <a href="/tags/v-%E6%8C%87%E4%BB%A4/" style="font-size: 10px;">v-指令</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 10px;">二叉树</a> <a href="/tags/%E5%87%8F%E6%B2%BB/" style="font-size: 10px;">减治</a> <a href="/tags/%E5%88%86%E6%B2%BB/" style="font-size: 10px;">分治</a> <a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 16px;">力扣</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 10px;">动态规划</a> <a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 10px;">反射</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 10px;">哈希表</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 10px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">工厂模式</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/tags/%E7%BB%84%E5%90%88%E5%BC%8FAPI/" style="font-size: 10px;">组合式API</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E8%B4%AA%E5%BF%83/" style="font-size: 10px;">贪心</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 12px;">配置文件</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a> <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 10px;">面向对象</a>
+    </div>
+    
+  </div>
+
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://github.com/Deleter-D" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a><a class="mdui-ripple" href="https://gitee.com/yichu12138" target="_blank" mdui-tooltip="{content: 'Gitee'}" style="color: rgb(199, 29, 35);background-color: rgba(199, 29, 35, .15);">
+            <i class="nexmoefont icon-gitee"></i>
+        </a><a class="mdui-ripple" href="https://music.163.com/#/user/home?id=340121051" target="_blank" mdui-tooltip="{content: '网易云'}" style="color: rgb(216, 30, 6);background-color: rgba(216, 30, 6, .15);">
+            <i class="nexmoefont icon-wangyiyunyinle"></i>
+        </a><a class="mdui-ripple" href="https://tuchong.com/15944353/" target="_blank" mdui-tooltip="{content: '图虫'}" style="color: rgb(75, 123, 215);background-color: rgba(75, 123, 215, .15);">
+            <i class="nexmoefont icon-tuchong_tuchong"></i>
+        </a><a class="mdui-ripple" href="https://500px.com.cn/yichuphoto" target="_blank" mdui-tooltip="{content: '500px'}" style="color: rgb(89, 89, 89);background-color: rgba(89, 89, 89, .15);">
+            <i class="nexmoefont icon-px"></i>
+        </a>
+    </div>
+</div>
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 亦初
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img data-src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F201223%2F12-2012231A441.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649761923&t=8da3929aefb042692ba6ed225943f25b" data-sizes="auto" alt="算法学习——贪心" class="lazyload">
+              <h1>算法学习——贪心</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年03月13日</a>
+</div>
+
+      
+
+      <h1 id="贪心"><a href="#贪心" class="headerlink" title="贪心"></a>贪心</h1><h2 id="经典算法"><a href="#经典算法" class="headerlink" title="经典算法"></a>经典算法</h2><h3 id="埃及分数"><a href="#埃及分数" class="headerlink" title="埃及分数"></a>埃及分数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">EgyptFrac</span><span class="hljs-params">(<span class="hljs-type">int</span> A, <span class="hljs-type">int</span> B)</span> &#123;<br>    <span class="hljs-type">int</span> E, R;<br>    System.out.println(A + <span class="hljs-string">&quot;/&quot;</span> + B + <span class="hljs-string">&quot;=&quot;</span>);<br>    <span class="hljs-keyword">do</span> &#123;<br>        E = B / A + <span class="hljs-number">1</span>;<span class="hljs-comment">// 求A/B包含的最大埃及分数</span><br>        System.out.println(<span class="hljs-string">&quot;1/&quot;</span> + E + <span class="hljs-string">&quot;+&quot;</span>);<br>        A = A * E - B;<span class="hljs-comment">// 本行及下一行求A/B - 1/E</span><br>        B = B * E;<br>        R = CommFactor.getCommFactor(B, A);<span class="hljs-comment">// 求A，B最大公约数</span><br>        <span class="hljs-keyword">if</span> (R &gt; <span class="hljs-number">1</span>) &#123;<span class="hljs-comment">// 化简A/B</span><br>            A = A / R;<br>            B = B / R;<br>        &#125;<br>    &#125; <span class="hljs-keyword">while</span> (A &gt; <span class="hljs-number">1</span>);<span class="hljs-comment">// 当A/B不是埃及分数时继续循环</span><br>    System.out.println(<span class="hljs-string">&quot;1/&quot;</span> + B);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>欧几里得法求公约数（即辗转相除法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getCommFactor</span><span class="hljs-params">(<span class="hljs-type">int</span> m, <span class="hljs-type">int</span> n)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> m % n;<br>    <span class="hljs-keyword">while</span> (r != <span class="hljs-number">0</span>) &#123;<br>        m = n;<br>        n = r;<br>        r = m % n;<br>    &#125;<br>    <span class="hljs-keyword">return</span> n;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="TSP问题"><a href="#TSP问题" class="headerlink" title="TSP问题"></a>TSP问题</h3><p>最近邻点策略（类似Prim算法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">TSP1</span><span class="hljs-params">(<span class="hljs-type">int</span>[][] arc, <span class="hljs-type">int</span> w)</span> &#123;<span class="hljs-comment">// arc为邻接矩阵，w为出发顶点</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">edgeCount</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, TSPLength = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> min, u, v = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> arc.length;<br>        <span class="hljs-type">int</span>[] flag = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<span class="hljs-comment">// 标记顶点是否在哈密顿回路中</span><br>        u = w;<br>        flag[w] = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">while</span> (edgeCount &lt; n - <span class="hljs-number">1</span>) &#123;<span class="hljs-comment">// 哈密顿回路中只有n-1条边</span><br>            min = <span class="hljs-number">1000</span>;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; j &lt; n; j++) &#123;<span class="hljs-comment">// 求整个邻接矩阵中的最小值</span><br>                <span class="hljs-keyword">if</span> ((flag[j] == <span class="hljs-number">0</span>) &amp;&amp; (arc[u][j] != <span class="hljs-number">0</span>) &amp;&amp; (arc[u][j] &lt; min)) &#123;<br>                    v = j;<br>                    min = arc[u][j];<br>                &#125;<br>            &#125;<br>            TSPLength += arc[u][v];<br>            flag[v] = <span class="hljs-number">1</span>;<span class="hljs-comment">// 将顶点加入哈密顿回路</span><br>            edgeCount++;<br>            System.out.println(u + <span class="hljs-string">&quot;---&gt;&quot;</span> + v);<br>            u = v;<span class="hljs-comment">// 更新下次出发的顶点</span><br>        &#125;<br>        System.out.println(v + <span class="hljs-string">&quot;---&gt;&quot;</span> + w);<br>        <span class="hljs-keyword">return</span> TSPLength + arc[u][w];<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>最短链接策略（类似Kruskal算法）（待解决）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><br></code></pre></td></tr></table></figure>
+
+<h3 id="图着色问题"><a href="#图着色问题" class="headerlink" title="图着色问题"></a>图着色问题</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span>[] color;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">ColorGraph</span><span class="hljs-params">(<span class="hljs-type">int</span>[][] arc)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> arc.length;<br>    color = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">flag</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;<span class="hljs-comment">// flag为true表示图中还有顶点未着色</span><br>    <span class="hljs-keyword">while</span> (flag) &#123;<br>        k++;<br>        flag = <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>            <span class="hljs-keyword">if</span> (color[i] == <span class="hljs-number">0</span>) &#123;<br>                color[i] = k;<span class="hljs-comment">// 顶点i着色k</span><br>                <span class="hljs-keyword">if</span> (!Ok(arc, i)) &#123;<span class="hljs-comment">// 发生冲突，取消着色</span><br>                    color[i] = <span class="hljs-number">0</span>;<br>                    flag = <span class="hljs-literal">true</span>;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    System.out.println(Arrays.toString(color));<br><br>    <span class="hljs-keyword">return</span> k;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">Ok</span><span class="hljs-params">(<span class="hljs-type">int</span>[][] arc, <span class="hljs-type">int</span> i)</span> &#123;<span class="hljs-comment">// 判断顶点i的着色是否发生冲突</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; j &lt; arc.length; j++) &#123;<span class="hljs-comment">// 考察其他所有顶点</span><br>        <span class="hljs-keyword">if</span> (arc[i][j] == <span class="hljs-number">1</span> &amp;&amp; color[i] == color[j])<span class="hljs-comment">// arc矩阵为无向图的邻接矩阵，1表示连通，0表示不连通</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="最小生成树问题"><a href="#最小生成树问题" class="headerlink" title="最小生成树问题"></a>最小生成树问题</h3><p>Prim算法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">Prim</span><span class="hljs-params">(<span class="hljs-type">int</span>[][] arc, <span class="hljs-type">int</span> w)</span> &#123;<span class="hljs-comment">// 从顶点w出发，初始集合U=&#123;&#125;</span><br>    <span class="hljs-type">int</span> i, j, k = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> min;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> arc.length;<br>    ShortEdge[] shortEdges = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortEdge</span>[n];<span class="hljs-comment">// 存储候选的边集合</span><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        shortEdges[i] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortEdge</span>();<br>    &#125;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<span class="hljs-comment">// 初始化辅助数组</span><br>        shortEdges[i].setLowcost(arc[w][i]);<br>        shortEdges[i].setAdjvex(w);<br>    &#125;<br>    shortEdges[w].setLowcost(<span class="hljs-number">0</span>);<span class="hljs-comment">// 将顶点w加入集合U</span><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n - <span class="hljs-number">1</span>; i++) &#123;<br>        min = <span class="hljs-number">1000</span>;<span class="hljs-comment">// 设权值不超过1000</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; n; j++) &#123;<span class="hljs-comment">// 寻找最短边的邻接点k</span><br>            <span class="hljs-keyword">if</span> ((shortEdges[j].getLowcost() != <span class="hljs-number">0</span>) &amp;&amp; (shortEdges[j].getLowcost() &lt; min)) &#123;<br>                min = shortEdges[j].getLowcost();<br>                k = j;<br>            &#125;<br>        &#125;<br>        System.out.println(shortEdges[k].getAdjvex() + <span class="hljs-string">&quot;---&quot;</span> + k);<span class="hljs-comment">// 输出最小生成树的边</span><br>        shortEdges[k].setLowcost(<span class="hljs-number">0</span>);<span class="hljs-comment">// 将顶点k加入集合U中</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; n; j++) &#123;<span class="hljs-comment">// 调整数组shortEdge[n]</span><br>            <span class="hljs-keyword">if</span> (arc[k][j] &lt; shortEdges[j].getLowcost()) &#123;<br>                shortEdges[j].setLowcost(arc[k][j]);<br>                shortEdges[j].setAdjvex(k);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Kruskal算法（待解决）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><br></code></pre></td></tr></table></figure>
+
+<h3 id="背包问题"><a href="#背包问题" class="headerlink" title="背包问题"></a>背包问题</h3><p>注意：不同于0&#x2F;1背包问题，背包问题中的物品无需整个放入，可以只放一个物品的一部分</p>
+<p>为了方便，默认物品是按照单位价值降序排列的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">double</span> <span class="hljs-title function_">KnapSack</span><span class="hljs-params">(<span class="hljs-type">int</span>[] w, <span class="hljs-type">int</span>[] v, <span class="hljs-type">int</span> C)</span> &#123;<br>    <span class="hljs-type">double</span>[] x = <span class="hljs-keyword">new</span> <span class="hljs-title class_">double</span>[w.length];<span class="hljs-comment">// 记录物品装入的部分</span><br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-type">double</span> <span class="hljs-variable">maxValue</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; w[i] &lt; C; i++) &#123;<br>        x[i] = <span class="hljs-number">1</span>;<br>        maxValue += v[i];<br>        C = C - w[i];<br>    &#125;<br>    x[i] = (<span class="hljs-type">double</span>) C / w[i];<br>    maxValue += x[i] * v[i];<br>    <span class="hljs-keyword">return</span> maxValue;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="活动安排问题"><a href="#活动安排问题" class="headerlink" title="活动安排问题"></a>活动安排问题</h3><p>将活动按照结束时间非降序排列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">ActiveManage</span><span class="hljs-params">(<span class="hljs-type">int</span>[] s, <span class="hljs-type">int</span>[] f)</span> &#123;<br>    <span class="hljs-type">int</span> i, j, count;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> s.length;<br>    <span class="hljs-type">int</span>[] B = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<br>    B[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>;<span class="hljs-comment">// 安排活动1</span><br>    j = <span class="hljs-number">0</span>;<br>    count = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; n; i++) &#123;<span class="hljs-comment">// 依次考察每个活动</span><br>        <span class="hljs-keyword">if</span> (s[i] &gt;= f[j]) &#123;<span class="hljs-comment">// 活动i与集合B中最后结束的活动j相容</span><br>            B[i] = <span class="hljs-number">1</span>;<span class="hljs-comment">// 安排活动i</span><br>            j = i;<span class="hljs-comment">// j是目前可以安排的最后一个活动</span><br>            count++;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            B[i] = <span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br><br>    System.out.println(Arrays.toString(B));<br>    <span class="hljs-keyword">return</span> count;<span class="hljs-comment">// 返回已经安排的活动数</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="多机调度问题"><a href="#多机调度问题" class="headerlink" title="多机调度问题"></a>多机调度问题</h3><p>将作业处理时间按非升序排列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">MultiMachine</span><span class="hljs-params">(<span class="hljs-type">int</span>[] t, <span class="hljs-type">int</span>[] d)</span> &#123;<span class="hljs-comment">// t存储n个作业的处理时间，d存储m台机器的已占用时间</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> t.length, m = d.length;<span class="hljs-comment">// m台机器，n个任务</span><br>    <span class="hljs-type">int</span>[][] S = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[m][n];<span class="hljs-comment">// S[i]存储机器i处理作业的队列，rear[i]为队尾下标</span><br>    <span class="hljs-type">int</span>[] rear = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[m];<br>    <span class="hljs-type">int</span> i, j, k;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; m; i++) &#123;<span class="hljs-comment">// 初始化S</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; n; j++) &#123;<br>            S[i][j] = -<span class="hljs-number">1</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; m; i++) &#123;<span class="hljs-comment">// 安排前m个作业</span><br>        S[i][<span class="hljs-number">0</span>] = i;<br>        rear[i] = <span class="hljs-number">0</span>;<br>        d[i] = t[i];<br>    &#125;<br>    <span class="hljs-keyword">for</span> (i = m; i &lt; n; i++) &#123;<span class="hljs-comment">// 依次安排余下的作业</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>, k = <span class="hljs-number">1</span>; k &lt; m; k++) &#123;<span class="hljs-comment">// 查找最先空闲的机器</span><br>            <span class="hljs-keyword">if</span> (d[k] &lt; d[j])<br>                j = k;<br>        &#125;<br>        rear[j]++;<br>        S[j][rear[j]] = i;<span class="hljs-comment">// 将作业i插入队列S[j]</span><br>        d[j] = d[j] + t[i];<br>    &#125;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; m; i++) &#123;<br>        System.out.println(<span class="hljs-string">&quot;机器&quot;</span> + i + <span class="hljs-string">&quot;:&quot;</span>);<br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; S[i][j] &gt;= <span class="hljs-number">0</span>; j++) &#123;<br>            System.out.println(<span class="hljs-string">&quot;---作业&quot;</span> + S[i][j]);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>亦初<br>
+        <strong>本文链接：</strong><a href="https://deleter-d.github.io/posts/31158/" title="https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;31158&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;deleter-d.github.io&#x2F;posts&#x2F;31158&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+        <a class="nexmoefont icon-appstore-fill -link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+    
+    
+        <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a> <a class="nexmoefont icon-tag-fill -none-link" href="/tags/%E8%B4%AA%E5%BF%83/" rel="tag">贪心</a>
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: 'd0194124d91614aeed82',
+        clientSecret: '13620eee98e6f3c9023f67b62c72998e959bd6b6',
+        id: window.location.pathname,
+        repo: 'Deleter-D.github.io',
+        owner: 'Deleter-D',
+        admin: 'Deleter-D'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                        
+                          
+                          
+                              <button class="mdui-fab catalog" style="overflow:unset;">
+                                  <i class="nexmoefont icon-i-catalog"></i>
+                                  <div class="nexmoe-toc">
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B4%AA%E5%BF%83"><span class="toc-number">1.</span> <span class="toc-text">贪心</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%8F%E5%85%B8%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">经典算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%83%E5%8F%8A%E5%88%86%E6%95%B0"><span class="toc-number">1.1.1.</span> <span class="toc-text">埃及分数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TSP%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.2.</span> <span class="toc-text">TSP问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%9D%80%E8%89%B2%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.3.</span> <span class="toc-text">图着色问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.4.</span> <span class="toc-text">最小生成树问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.5.</span> <span class="toc-text">背包问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B4%BB%E5%8A%A8%E5%AE%89%E6%8E%92%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.6.</span> <span class="toc-text">活动安排问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%9C%BA%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.7.</span> <span class="toc-text">多机调度问题</span></a></li></ol></li></ol></li></ol>
+                                  </div>
+                              </button>
+                          
+                          
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/combine/npm/lazysizes@5.1.0/lazysizes.min.js,npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1654677040208"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>
