@@ -20,18 +20,18 @@
 <meta property="og:description" content="单例模式对于系统中的某些类来说，只有一个实例很重要。单例模式就是让类自身负责保存它的唯一实例，这个类可以保证没有其他实例被创建，并且它可以提供一个访问该实例的方法。 角色 Singleton（单例角色） 在单例类的内部实现只生成一个实例，同时提供一个静态的getInstance()工厂方法，让客户可以使用它的唯一实例；为了防止在外部对其实例化，构造方法设为私有；在单例类内部定义了一个Singlet">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-06-21T12:01:15.000Z">
-<meta property="article:modified_time" content="2022-06-21T13:08:23.844Z">
+<meta property="article:modified_time" content="2022-06-21T13:09:30.622Z">
 <meta property="article:author" content="亦初">
-<meta property="article:tag" content="设计模式">
 <meta property="article:tag" content="单例模式">
+<meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655816922845">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655817051876">
     
         <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
     
-    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655816922845">
-    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655816922845">
-    <link rel="stylesheet" href="/css/style.css?v=1655816922845">
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655817051876">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655817051876">
+    <link rel="stylesheet" href="/css/style.css?v=1655817051876">
      
     
 <meta name="generator" content="Hexo 6.1.0"></head>
@@ -223,7 +223,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">IDCardNumber</span> <span class="hljs-variable">card_1</span> <span class="hljs-operator">=</span> IDCardNumber.getInstance();<br>        <span class="hljs-type">IDCardNumber</span> <span class="hljs-variable">card_2</span> <span class="hljs-operator">=</span> IDCardNumber.getInstance();<br>        System.out.println(<span class="hljs-string">&quot;Are the id cards the same: &quot;</span> + ((card_1 == card_2) ? <span class="hljs-string">&quot;yes&quot;</span> : <span class="hljs-string">&quot;no&quot;</span>));<br><br>        <span class="hljs-type">String</span> <span class="hljs-variable">id_1</span> <span class="hljs-operator">=</span> card_1.getNumber();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">id_2</span> <span class="hljs-operator">=</span> card_2.getNumber();<br>        System.out.println(<span class="hljs-string">&quot;The first number: &quot;</span> + id_1);<br>        System.out.println(<span class="hljs-string">&quot;The second number: &quot;</span> + id_2);<br>        System.out.println(<span class="hljs-string">&quot;Are the id numbers the same: &quot;</span> + ((id_1.equals(id_2)) ? <span class="hljs-string">&quot;yes&quot;</span> : <span class="hljs-string">&quot;no&quot;</span>));<br>        System.out.println(<span class="hljs-string">&quot;Are these two String objects the same: &quot;</span> + ((id_1 == id_2) ? <span class="hljs-string">&quot;yes&quot;</span> : <span class="hljs-string">&quot;no&quot;</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>运行结果为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">First Application <span class="hljs-keyword">for</span> id card, get a <span class="hljs-keyword">new</span> <span class="hljs-title class_">number</span>.<br>Duplicate application <span class="hljs-keyword">for</span> id card, get the old number.<br>Are the id cards the same: yes<br>The first number: No10086<br>The second number: No10086<br>Are the id numbers the same: yes<br>Are these two String objects the same: yes<br></code></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">First Application <span class="hljs-keyword">for</span> id card, <span class="hljs-built_in">get</span> <span class="hljs-keyword">a</span> <span class="hljs-built_in">new</span> <span class="hljs-built_in">number</span>.<br>Duplicate application <span class="hljs-keyword">for</span> id card, <span class="hljs-built_in">get</span> <span class="hljs-keyword">the</span> old <span class="hljs-built_in">number</span>.<br>Are <span class="hljs-keyword">the</span> id cards <span class="hljs-keyword">the</span> same: yes<br>The <span class="hljs-keyword">first</span> <span class="hljs-built_in">number</span>: No10086<br>The <span class="hljs-keyword">second</span> <span class="hljs-built_in">number</span>: No10086<br>Are <span class="hljs-keyword">the</span> id numbers <span class="hljs-keyword">the</span> same: yes<br>Are these <span class="hljs-literal">two</span> String objects <span class="hljs-keyword">the</span> same: yes<br></code></pre></td></tr></table></figure>
 
 <h2 id="实现单例模式的几种方式"><a href="#实现单例模式的几种方式" class="headerlink" title="实现单例模式的几种方式"></a>实现单例模式的几种方式</h2><h3 id="懒汉式（线程不安全）"><a href="#懒汉式（线程不安全）" class="headerlink" title="懒汉式（线程不安全）"></a>懒汉式（线程不安全）</h3><p>上述实例中看到的即为懒汉式，且线程不安全，所以不能算作真正意义上的单例。</p>
 <p>是否懒（Lazy）初始化：是</p>
@@ -360,7 +360,7 @@
 
  
 
-<script async src="/js/app.js?v=1655816922854"></script>
+<script async src="/js/app.js?v=1655817051885"></script>
 
 
 
