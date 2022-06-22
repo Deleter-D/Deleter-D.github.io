@@ -19,19 +19,21 @@
 <meta property="og:site_name" content="亦初">
 <meta property="og:description" content="代理模式在某些情况下，一个客户不想或不能直接引用一个对象，此时可以通过一个称之为“代理”的第三者来实现间接引用。 角色 Subject（抽象主题角色） 抽象主题角色声明了真实主题和代理主题的共同接口，在任何使用真实主题的地方都可以使用代理主题。客户端需要针对抽象主题角色进行编程。  Proxy（代理主题角色） 代理主题角色包含对真实主题的引用，在代理主题角色中提供一个与真实主题角色相同的接口，以便">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/06/22/sFtMNEKJlY9WIZu.png">
 <meta property="article:published_time" content="2022-06-22T07:24:11.000Z">
-<meta property="article:modified_time" content="2022-06-22T07:26:29.651Z">
+<meta property="article:modified_time" content="2022-06-22T10:47:15.834Z">
 <meta property="article:author" content="亦初">
 <meta property="article:tag" content="代理模式">
 <meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655894334977">
+<meta name="twitter:image" content="https://s2.loli.net/2022/06/22/sFtMNEKJlY9WIZu.png">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655896235414">
     
         <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
     
-    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655894334977">
-    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655894334977">
-    <link rel="stylesheet" href="/css/style.css?v=1655894334977">
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655896235414">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655896235414">
+    <link rel="stylesheet" href="/css/style.css?v=1655896235414">
      
     
 <meta name="generator" content="Hexo 6.1.0"></head>
@@ -223,6 +225,7 @@
 <p>真实主题角色定义了代理角色所代表的真实对象，在真实主题角色中实现了真实的业务操作。</p>
 </li>
 </ol>
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><img data-fancybox="gallery" data-sizes="auto" data-src="https://s2.loli.net/2022/06/22/sFtMNEKJlY9WIZu.png" alt="image.png" class="lazyload"></p>
 <h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>定义一个抽象主题角色</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Image</span> &#123;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">display</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -312,7 +315,7 @@
                               <button class="mdui-fab catalog" style="overflow:unset;">
                                   <i class="nexmoefont icon-i-catalog"></i>
                                   <div class="nexmoe-toc">
-                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">代理模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2"><span class="toc-number">1.1.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="toc-number">1.3.</span> <span class="toc-text">代理模式的种类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">远程代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E4%BB%A3%E7%90%86"><span class="toc-number">1.3.2.</span> <span class="toc-text">虚拟代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E6%8A%A4%E4%BB%A3%E7%90%86%EF%BC%88Protect-or-Access%EF%BC%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">保护代理（Protect or Access）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%99%BA%E8%83%BD%E5%BC%95%E7%94%A8%E4%BB%A3%E7%90%86%EF%BC%88Smart-Reference%EF%BC%89"><span class="toc-number">1.3.4.</span> <span class="toc-text">智能引用代理（Smart Reference）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li></ol>
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">代理模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2"><span class="toc-number">1.1.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9B%BE"><span class="toc-number">1.2.</span> <span class="toc-text">类图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="toc-number">1.4.</span> <span class="toc-text">代理模式的种类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">远程代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E4%BB%A3%E7%90%86"><span class="toc-number">1.4.2.</span> <span class="toc-text">虚拟代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E6%8A%A4%E4%BB%A3%E7%90%86%EF%BC%88Protect-or-Access%EF%BC%89"><span class="toc-number">1.4.3.</span> <span class="toc-text">保护代理（Protect or Access）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%99%BA%E8%83%BD%E5%BC%95%E7%94%A8%E4%BB%A3%E7%90%86%EF%BC%88Smart-Reference%EF%BC%89"><span class="toc-number">1.4.4.</span> <span class="toc-text">智能引用代理（Smart Reference）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.5.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li></ol>
                                   </div>
                               </button>
                           
@@ -344,7 +347,7 @@
 
  
 
-<script async src="/js/app.js?v=1655894334983"></script>
+<script async src="/js/app.js?v=1655896235421"></script>
 
 
 

@@ -19,19 +19,21 @@
 <meta property="og:site_name" content="亦初">
 <meta property="og:description" content="抽象工厂模式抽象工厂模式是工厂方法模式的泛化版，在工厂方法模式中，每个具体的工厂类只能生产一种具体产品，而在抽象工厂方法模式中，每个具体的工厂可以生产多个具体产品。 引入两个概念 产品等级结构：即产品的继承结构，如一个抽象类是手机，其子类有iPhone、Huawei等，则抽象手机与具体品牌的手机之间构成了一个产品等级结构。 产品族：在抽象工厂模式中，产品族是指同一个工厂生产的，位于不同产品等级结构">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/06/22/2FNovjY4WTBVucw.png">
 <meta property="article:published_time" content="2022-06-21T08:40:15.000Z">
-<meta property="article:modified_time" content="2022-06-21T13:01:27.729Z">
+<meta property="article:modified_time" content="2022-06-22T11:07:07.724Z">
 <meta property="article:author" content="亦初">
 <meta property="article:tag" content="设计模式">
 <meta property="article:tag" content="抽象工厂模式">
 <meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655894334993">
+<meta name="twitter:image" content="https://s2.loli.net/2022/06/22/2FNovjY4WTBVucw.png">
+    <link rel="stylesheet" href="/lib/jquery.fancybox.min.css?v=1655896235428">
     
         <link rel="stylesheet" href="//at.alicdn.com/t/font_3242835_391wlbxd1l.css">
     
-    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655894334993">
-    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655894334993">
-    <link rel="stylesheet" href="/css/style.css?v=1655894334993">
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1655896235428">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1655896235428">
+    <link rel="stylesheet" href="/css/style.css?v=1655896235428">
      
     
 <meta name="generator" content="Hexo 6.1.0"></head>
@@ -230,6 +232,7 @@
 <p>具体产品定义具体工厂生产的具体产品对象，实现抽象产品接口中定义的业务方法。</p>
 </li>
 </ol>
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><img data-fancybox="gallery" data-sizes="auto" data-src="https://s2.loli.net/2022/06/22/2FNovjY4WTBVucw.png" alt="image.png" class="lazyload"></p>
 <h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>定义抽象产品手机</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Phone</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">powerOn</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -325,7 +328,7 @@
                               <button class="mdui-fab catalog" style="overflow:unset;">
                                   <i class="nexmoefont icon-i-catalog"></i>
                                   <div class="nexmoe-toc">
-                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">抽象工厂模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%B8%A4%E4%B8%AA%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">引入两个概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2"><span class="toc-number">1.2.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li></ol>
+                                      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">抽象工厂模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%B8%A4%E4%B8%AA%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">引入两个概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%92%E8%89%B2"><span class="toc-number">1.2.</span> <span class="toc-text">角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9B%BE"><span class="toc-number">1.3.</span> <span class="toc-text">类图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.4.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">模式优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.5.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li></ol>
                                   </div>
                               </button>
                           
@@ -357,7 +360,7 @@
 
  
 
-<script async src="/js/app.js?v=1655894335002"></script>
+<script async src="/js/app.js?v=1655896235436"></script>
 
 
 
