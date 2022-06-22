@@ -50,9 +50,9 @@ menu:
 
 widgets:
 - search
+- social
 - category
 - tagcloud
-- social
 # - archive #settings: widgetAchive
 # - recent_posts
 # - link #settings: widgetLink
