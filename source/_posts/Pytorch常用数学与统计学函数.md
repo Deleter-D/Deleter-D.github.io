@@ -76,7 +76,7 @@ $$
 
 函数图像如下：
 
-![image.png](https://s2.loli.net/2022/10/03/Rtxfb3E8kYcyIK1.png)
+![](https://user-images.githubusercontent.com/56388518/193826314-a1866ffc-5162-4937-a5a5-4b38ab0c78b2.jpg)
 
 ### `sigmoid()`函数
 
@@ -97,7 +97,7 @@ S(x)=\frac{1}{1+e^{-x}}
 $$
 函数图像如下：
 
-![image.png](https://s2.loli.net/2022/10/03/HkAseW7c5EIhqzj.png)
+![](https://user-images.githubusercontent.com/56388518/193827200-c3fd9d2f-3511-4db1-a1c3-f2efb9ece469.jpg)
 
 ### `erf()`与`erfc()`函数
 
@@ -114,7 +114,7 @@ $$
 
 红色曲线为误差函数$erf$，蓝色曲线为互补误差函数$erfc$
 
-![image.png](https://s2.loli.net/2022/10/03/wxGckfQ59iThmLY.png)
+![](https://user-images.githubusercontent.com/56388518/193827832-a410358a-aab9-46f3-a189-1b7f5c5ec85b.jpg)
 
 ### `erfinv()`函数
 

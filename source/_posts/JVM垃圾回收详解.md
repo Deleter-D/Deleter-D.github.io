@@ -115,7 +115,7 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 **G1** ：JDK 1.9以后默认，G1采用物理上分区（Region），逻辑上分代的概念；
 
-![202205181634584.png](https://s2.loli.net/2022/06/22/nuowgebz4xl8t2d.png)
+![](https://user-images.githubusercontent.com/56388518/193824809-46168ade-a248-4d4f-9dc2-173e3f0f4c75.png)
 
 所有的区域都可以动态的指定所属代
 
@@ -133,7 +133,7 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 三色标记法利用三种颜色对所有对象进行标记，标记规则如图所示：
 
-![202205181516263.png](https://s2.loli.net/2022/06/22/9IDLiVvJ13nPyGl.png)
+![](https://user-images.githubusercontent.com/56388518/193825078-3ef3faf4-d7d6-480e-a442-6396999f2802.png)
 
 但这种标记存在两种情况，会使得所标记的颜色与对象的实际状态不符合，这种现象会发生在垃圾回收线程暂停，业务线程运行的过程中。
 
@@ -141,7 +141,7 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 在业务线程运行过程中，B->C消失了，则垃圾回收线程回来继续工作的时候，会发现C找不到了。
 
-![202205181529014.png](https://s2.loli.net/2022/06/22/2Y3lTK8AnEoSOFJ.png)
+![](https://user-images.githubusercontent.com/56388518/193825169-6303a3af-f5da-4c5d-945c-122631c95aba.png)
 
 此时的C成为浮动垃圾，虽然本次GC无法将其回收，但当GC再次发生时，C会由于根不可达而被标记为垃圾。
 
@@ -153,7 +153,7 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 在业务线程运行过程中，B->C消失了，但增加了A->C，但此时A已经被标记为黑色，垃圾线程回来后不会再从A开始标记，而通过B已经找不到C了，在垃圾回收线程的视角C是根不可达的，所以C会被垃圾回收线程视作垃圾。
 
-![202205181545554.png](https://s2.loli.net/2022/06/22/YvDmp1IJFadH8iL.png)
+![](https://user-images.githubusercontent.com/56388518/193825241-f3667c8d-9ee2-4d63-9f8e-1411b31e9744.png)
 
 **这种情况是真正根源的问题，必须解决该问题，并行垃圾回收才有意义。**
 
@@ -163,21 +163,21 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 > 写屏障：它主要实现让当前线程写入高速缓存中的最新数据更新写入到内存，让其他线程也可见。
 
-![202205181552668.png](https://s2.loli.net/2022/06/22/aA3NjWi1s7pHb5D.png)
+![](https://user-images.githubusercontent.com/56388518/193825307-7eb03a89-6a26-454a-89cf-11673e1418d2.png)
 
 但该方案有一个严重且隐蔽的问题：
 
 假设有两个垃圾回收线程`m1`、`m2`，一个业务线程`t1`。开始时m1将A及其的孩子1标记，则此时在m1视角中A是灰色的；
 
-![202205181559428.png](https://s2.loli.net/2022/06/22/FuZHTAU31p2Qxzf.png)
+![](https://user-images.githubusercontent.com/56388518/193825358-3d2e35e9-527d-4bb8-9831-c2655ab1b649.png)
 
 此时发生了情况二，即B->C消失了，但增加了A->C，则通过写屏障将A标记为灰色（A此时本来就是灰色）；
 
-![202205181603893.png](https://s2.loli.net/2022/06/22/BGDzZpWj5dXPH8Y.png)
+![](https://user-images.githubusercontent.com/56388518/193825427-589c2c1a-8102-42b5-93ac-57146121dd39.png)
 
 然后m1回来继续工作，此时m1的视角下，A是灰色，但它只直到A的孩子2还没有标记，故m1将孩子2标记，此时对于m1来说，A的所有孩子已经标记完成，故会将A标记为黑色，此时出现了漏标C的情况。
 
-![202205181607612.png](https://s2.loli.net/2022/06/22/CuAD26ivIxtgSPj.png)
+![](https://user-images.githubusercontent.com/56388518/193825480-8d72f116-2d29-49e7-b0be-dbd8ba551095.png)
 
 为了解决这个问题，CMS在最后有一个阶段叫做remark，在remark阶段会将引用链从头扫描一次，这个阶段必须STW，虽然这个阶段的STW没有原来想象中的那么长，但在业务逻辑非常复杂的情况下，STW的时间可能非常长。
 
@@ -185,5 +185,5 @@ Eden与Survivor属于年轻代，Tenured属于老年代：
 
 当灰色对象指向白色对象的引用消失时，将这个引用的信息推到GC的堆栈，保证白色对象还能被GC扫描到。
 
-![202205181620470.png](https://s2.loli.net/2022/06/22/LkcDIHlG2jgEteJ.png)
+![](https://user-images.githubusercontent.com/56388518/193825534-c8157e10-4062-40bd-8462-4adbba434b09.png)
 
