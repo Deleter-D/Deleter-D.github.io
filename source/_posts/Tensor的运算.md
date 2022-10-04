@@ -24,10 +24,10 @@ b = torch.Tensor([[3, 2, 1], [3, 2, 1]])
 ### 加法
 
 ```python
-print(a + b)
-print(torch.add(a, b))
-print(a.add(b))
-print(a.add_(b))
+a + b
+torch.add(a, b)
+a.add(b)
+a.add_(b)
 ```
 
 > 最后一种in-place函数的方式同之前提到的`uniform_()`函数类似，会将a的值改变为做完加法后的结果 
@@ -35,10 +35,10 @@ print(a.add_(b))
 ### 减法
 
 ```python
-print(a - b)
-print(torch.sub(a, b))
-print(a.sub(b))
-print(a.sub_(b))
+a - b
+torch.sub(a, b)
+a.sub(b)
+a.sub_(b)
 ```
 
 ### 乘法
@@ -46,19 +46,19 @@ print(a.sub_(b))
 这里的乘法结果是哈达玛积，即对应元素相乘
 
 ```python
-print(a * b)
-print(torch.mul(a, b))
-print(a.mul(b))
-print(a.mul_(b))
+a * b
+torch.mul(a, b)
+a.mul(b)
+a.mul_(b)
 ```
 
 ### 除法
 
 ```python
-print(a / b)
-print(torch.div(a, b))
-print(a.div(b))
-print(a.div_(b))
+a / b
+torch.div(a, b)
+a.div(b)
+a.div_(b)
 ```
 
 ## 矩阵运算
@@ -71,11 +71,11 @@ b = torch.eye(3, 2)
 ```
 
 ```python
-print(a @ b)
-print(torch.matmul(a, b))
-print(torch.mm(a, b))
-print(a.matmul(b))
-print(a.mm(b))
+a @ b
+torch.matmul(a, b)
+torch.mm(a, b)
+a.matmul(b)
+a.mm(b)
 ```
 
 对于高维的Tensor，只要求最后两个维度满足矩阵乘法的维度要求
@@ -86,7 +86,7 @@ b = torch.ones(1, 2, 4, 3)
 ```
 
 ```python
-print(a @ b)
+a @ b
 ```
 
 ### 幂运算
@@ -98,10 +98,10 @@ a = torch.tensor([1, 2])
 ```
 
 ```python
-print(a ** 3)
-print(torch.pow(a, 3))
-print(a.pow(3))
-print(a.pow_(3))
+a ** 3
+torch.pow(a, 3)
+a.pow(3)
+a.pow_(3)
 ```
 
 对于指数为e的幂运算，有单独的函数可以实现
@@ -113,10 +113,10 @@ a = torch.tensor([1, 2], dtype=torch.float32)
 类型定义为float是因为`exp_()`函数不支持long类型的Tensor
 
 ```python
-print(torch.exp(a))
-print(torch.exp_(a))
-print(a.exp())
-print(a.exp_())
+torch.exp(a)
+torch.exp_(a)
+a.exp()
+a.exp_()
 ```
 
 ### 对数运算
@@ -131,14 +131,14 @@ a = torch.tensor([10, 2], dtype=torch.float32)
 
 ```python
 # 以e为底的对数
-print(torch.log(a))
-print(torch.log_(a))
+torch.log(a)
+torch.log_(a)
 # 以2为底的对数
-print(torch.log2(a))
-print(torch.log2_(a))
+torch.log2(a)
+torch.log2_(a)
 # 以10为底的对数
-print(torch.log10(a))
-print(torch.log10_(a))
+torch.log10(a)
+torch.log10_(a)
 ```
 
 ### 开方运算
@@ -150,10 +150,10 @@ a = torch.tensor([1, 2], dtype=torch.float32)
 ```
 
 ```python
-print(torch.sqrt(a))
-print(torch.sqrt_(a))
-print(a.sqrt())
-print(a.sqrt_())
+torch.sqrt(a)
+torch.sqrt_(a)
+a.sqrt()
+a.sqrt_()
 ```
 
 # in-place与广播机制
@@ -204,42 +204,42 @@ a = torch.rand(2, 2) * 10
 向下取整
 
 ```python
-print(torch.floor(a))
-print(torch.floor_(a))
+torch.floor(a)
+torch.floor_(a)
 ```
 
 向上取整
 
 ```python
-print(torch.ceil(a))
-print(torch.ceil_(a))
+torch.ceil(a)
+torch.ceil_(a)
 ```
 
 四舍五入取整
 
 ```python
-print(torch.round(a))
-print(torch.round_(a))
+torch.round(a)
+torch.round_(a)
 ```
 
 裁剪，只取整数部分
 
 ```python
-print(torch.trunc(a))
-print(torch.trunc_(a))
+torch.trunc(a)
+torch.trunc_(a)
 ```
 
 裁剪，只取小数部分
 
 ```python
-print(torch.frac(a))
-print(torch.frac_(a))
+torch.frac(a)
+torch.frac_(a)
 ```
 
 取余
 
 ```python
-print(a % 2)
+a % 2
 ```
 
 ## Tensor的比较运算
@@ -249,20 +249,20 @@ print(a % 2)
 a = torch.ones(2, 2)
 b = torch.eye(2, 2)
 # 对应位置的元素进行比较，返回一个由布尔类型构成的Tensor
-print(torch.eq(a, b))
+torch.eq(a, b)
 # 比较整个Tensor，若所有对应元素相同则返回Ture，否则返回False
-print(torch.equal(a, b))
+torch.equal(a, b)
 # 以下函数均返回一个由布尔类型构成的Tensor
 # a > b
-print(torch.gt(a, b))
+torch.gt(a, b)
 # a >= b
-print(torch.ge(a, b))
+torch.ge(a, b)
 # a < b
-print(torch.lt(a, b))
+torch.lt(a, b)
 # a <= b
-print(torch.le(a, b))
+torch.le(a, b)
 # a != b
-print(torch.ne(a, b))
+torch.ne(a, b)
 ```
 
 ## Tensor的排序
@@ -379,4 +379,3 @@ print(torch.isnan(a))
 ```
 tensor([False, False,  True])
 ```
-
