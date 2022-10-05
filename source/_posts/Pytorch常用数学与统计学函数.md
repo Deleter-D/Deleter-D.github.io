@@ -4,8 +4,7 @@ tags:
   - 机器学习
   - Pytorch
 categories: 机器学习
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.3dmgame.com%2Fuploads%2Fimages%2Fnews%2F20191102%2F1572700049_684934.jpg&refer=http%3A%2F%2Fimg.3dmgame.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1667476549&t=829608744a8f681e3f43131111abac21
+cover: https://user-images.githubusercontent.com/56388518/193995325-c9392df5-b759-41c5-8772-7a69700d148e.png
 abbrlink: 47260
 mathjax: true
 date: 2022-10-04 17:10:37

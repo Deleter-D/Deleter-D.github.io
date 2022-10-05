@@ -4,8 +4,7 @@ tags:
   - Vue
   - Vuex
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhive.indienova.com%2Franch%2Fgamedb%2F2019%2F02%2Fassets%2Fa1549879439UrKz.jpg&refer=http%3A%2F%2Fhive.indienova.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650125824&t=d6e971ee2de09bcf38584d85903f8136
+cover: https://user-images.githubusercontent.com/56388518/193992384-179d45b4-705d-4a45-842a-512ad67d7b3d.png
 abbrlink: 33216
 date: 2022-03-18 00:15:19
 ---
@@ -14,7 +13,7 @@ date: 2022-03-18 00:15:19
 
 Vuex就相当于一个全局的状态管理，项目不复杂的情况下不建议引入Vuex
 
-![vuex](https://vuex.vuejs.org/vuex.png)
+![vuex](https://user-images.githubusercontent.com/56388518/193992464-b6c699e2-eacd-4340-96ce-8591888b995d.png)
 
 由Vue Components分发一个Action，然后与后端进行交互，由Actions提交到Mutations，通过Mutations修改状态，这样修改可以通过Devtools记录下操作，再由State的改变渲染Vue Components
 

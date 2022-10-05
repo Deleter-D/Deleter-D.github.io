@@ -5,8 +5,7 @@ tags:
   - promise
   - RESTFul
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F9aff9d61ec0a5ebf7838dffcfb4c8ab73e33ae1f.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649844179&t=03edac0474f15bb73be0b501395b7d9as
+cover: https://user-images.githubusercontent.com/56388518/193991448-54f2eff8-11e0-404e-b1f7-7104725bcb52.png
 abbrlink: 4623
 date: 2022-03-14 17:57:39
 ---

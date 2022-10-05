@@ -3,8 +3,7 @@ title: axios基础
 tags:
   - axios
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F7b12e1eebb7b3895e66d98d796bdc7cecb96fdf7.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649844199&t=aed3a92a676ea1e197a465b2399803d4
+cover: https://user-images.githubusercontent.com/56388518/193991506-22eabcad-4648-47d5-aa9b-a928df18297e.png
 abbrlink: 63440
 date: 2022-03-14 17:58:40
 ---

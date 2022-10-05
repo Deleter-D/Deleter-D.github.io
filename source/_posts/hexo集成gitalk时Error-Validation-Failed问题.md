@@ -4,7 +4,7 @@ tags:
   - Hexo
   - Gitalk
 categories: Hexo
-cover: https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fb32faf6317f7d3d225a866b7e2c4823dcaff7b50.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649848692&t=59070cc0a222e2d4a5ed8f2abe0f602c
+cover: https://user-images.githubusercontent.com/56388518/193991837-c0116f55-3ac1-4173-97ec-e63a584c66f8.png
 abbrlink: 64660
 date: 2022-03-14 19:08:09
 ---

@@ -3,8 +3,7 @@ title: Vue生命周期钩子详解
 tags:
   - Vue
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fefe0ab1540ebbf56916339c304dfc18cff304403.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650125391&t=81c961cfc8d9b938f96db666d90ccafc
+cover: https://user-images.githubusercontent.com/56388518/193992164-23bf98cc-5c31-4a37-a916-0121cf40b31e.png
 abbrlink: 27624
 date: 2022-03-18 00:07:56
 ---

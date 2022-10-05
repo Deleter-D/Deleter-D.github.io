@@ -4,8 +4,7 @@ tags:
   - Vue
   - v-指令
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F75647487e3d4e123b63d0bb2c0322322f94b12a0.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649934443&t=cedb45702944561d5147bc8da44e7119
+cover: https://user-images.githubusercontent.com/56388518/193991999-72eab280-1d5f-4681-8811-c22a7f97277b.png
 abbrlink: 37641
 date: 2022-03-15 19:06:25
 ---

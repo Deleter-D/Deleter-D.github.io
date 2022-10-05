@@ -1,11 +1,10 @@
 ---
-title: Tensor的属性及稀疏张量
+title: Pytorch中Tensor的属性及稀疏张量
 tags:
   - 机器学习
   - Pytorch
 categories: 机器学习
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F0f2b3ad5a078ab2946498a5c0b6ddf9c56051576.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1665912800&t=bfac89c27eafd3bea8e1826b5cac4851
+cover: https://user-images.githubusercontent.com/56388518/193995083-dc7bdef0-cc48-4825-ba4f-3b659425f652.png
 abbrlink: 42093
 date: 2022-09-16 17:32:22
 ---

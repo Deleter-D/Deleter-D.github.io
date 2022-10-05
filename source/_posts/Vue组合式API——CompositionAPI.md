@@ -5,8 +5,7 @@ tags:
   - Composition API
   - 组合式API
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F4db00167217092c4223bfb15d752395606af6e1e.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650126023&t=471e2107dd61e943be0e0d74a3c6db4e
+cover: https://user-images.githubusercontent.com/56388518/193992571-90879f64-0a1a-41d7-b5bf-40c47ed459a2.png
 abbrlink: 12922
 date: 2022-03-18 00:17:36
 ---

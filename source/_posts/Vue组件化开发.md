@@ -4,8 +4,7 @@ tags:
   - Vue
   - Vue组件
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F9a2547d0679797c527ffec3e374282c514ac668c.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649934630&t=ca1b506f166cd8adbfb18dc33d252354
+cover: https://user-images.githubusercontent.com/56388518/193992093-afdfc04a-59e9-4f6e-8849-f56062508265.png
 abbrlink: 61428
 date: 2022-03-15 19:08:07
 ---

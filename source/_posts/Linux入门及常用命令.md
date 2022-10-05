@@ -4,8 +4,7 @@ tags:
   - Linux
   - 操作系统
 categories: Linux
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F8c5520d95bffa2f5a61fc69c74074731d1b0a4c1.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650167683&t=8d84e0f8f209c9ac81e5477d196d3ddb
+cover: https://user-images.githubusercontent.com/56388518/193992644-7172a82a-aa6d-43fa-8b56-0eded8388984.png
 abbrlink: 50125
 date: 2022-03-18 11:53:14
 ---
@@ -18,7 +17,7 @@ date: 2022-03-18 11:53:14
 
 操作系统会控制其他程序运行，管理系统资源，提供最基本的计算功能，如管理及配置内存、决定系统资源供需的优先次序等，同时还提供一些基本的服务程序。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c17c21686f21413085f3e32c85a19443~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image.png](https://user-images.githubusercontent.com/56388518/193992745-6798cce5-a3dd-447e-b2c8-01094f22f28b.png)
 
 ## 什么是 Linux
 
@@ -50,7 +49,9 @@ date: 2022-03-18 11:53:14
 
 ## 终端连接阿里云服务器
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2111613d8ba40059f7351e21f158847~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp) 通过执行 `ssh root@121.42.11.34` 命令，然后输入服务器连接密码就可以顺利登陆远程服务器。从现在开始我们就可以在本地电脑操作远程服务器。
+![image](https://user-images.githubusercontent.com/56388518/193992837-c01e58cc-adee-40a2-99da-d4c0c59d0012.png) 
+
+通过执行 `ssh root@121.42.11.34` 命令，然后输入服务器连接密码就可以顺利登陆远程服务器。从现在开始我们就可以在本地电脑操作远程服务器。
 
 1. 这个黑色的面板就是终端也就是 `Shell` （命令行环境）。
 2. `ssh root@xxx` 这是一条命令，必须要在 `Shell` 中才能执行。
@@ -151,7 +152,7 @@ command parameters（命令 参数）
 
 ### 文件的组织
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/226f8a87a9804141802d5ba0a55bd1f1~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193992902-83374099-aaf6-49a4-abc2-af2e0a650bc4.png)
 
 ### 查看路径
 
@@ -159,7 +160,7 @@ command parameters（命令 参数）
 
 显示当前目录的路径
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6fc89d9816a54a428d122abd7616c566~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193992958-bf36c3e1-afc6-45b8-bec9-be45304eea04.png)
 
 #### which
 
@@ -167,7 +168,7 @@ command parameters（命令 参数）
 
 总的来说一个命令就是一个可执行程序。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9c0c60677e574aff82a0009339f72fb5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993010-3c637662-f622-42d0-b145-a33bba745eff.png)
 
 ### 浏览和切换目录
 
@@ -183,7 +184,7 @@ command parameters（命令 参数）
 - `-t` 按文件最近一次修改时间排序
 - `-i` 显示文件的 `inode` （ `inode` 是文件内容的标识）
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/015b1a4af3c14631a45b92c0f8755ea3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993039-49061bff-69d8-4809-bcf8-c08a7f598efc.png)
 
 #### cd
 
@@ -354,7 +355,7 @@ Linux 下有两种链接类型：硬链接和软链接。
 ln file1 file2 	--> 创建 file2 为 file1 的硬链接
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a7460133e014a629fd09bbd6416ba6a~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993096-4f8a40fb-c5fe-4fcb-9496-e974517941da.png)
 
 如果我们用 `rm file1` 来删除 `file1` ，对 `file2` 没有什么影响，对于硬链接来说，删除任意一方的文件，共同指向的文件内容并不会从硬盘上删除。只有同时删除了 `file1` 与 `file2` 后，它们共同指向的文件内容才会消失。
 
@@ -366,7 +367,7 @@ ln file1 file2 	--> 创建 file2 为 file1 的硬链接
 ln -s file1 file2
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/529e1c254dfd489dafbf82326c89abbc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993133-c354f7fb-2de1-4429-9963-c3b6993e65ef.png)
 
 执行 `ls -l` 命名查看当前目录下文件的具体信息
 
@@ -384,7 +385,7 @@ lrwxrwxrwx 1 root root 5 Jan 14 06:42 file2 -> file1  # 表示file2 指向 file1
 
 `Linux` 是一个多用户的操作系统。在 `Linux` 中，理论上来说，我们可以创建无数个用户，但是这些用户是被划分到不同的群组里面的，有一个用户，名叫 `root` ，是一个很特殊的用户，它是超级用户，拥有最高权限。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57aa4de6dc7b4bf8839080fbc4fc65ed~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993164-e76c919d-161d-401f-a326-c938b67619f7.png)
 
 自己创建的用户是有限权限的用户，这样大大提高了 `Linux` 系统的安全性，有效防止误操作或是病毒攻击，但是我们执行的某些命令需要更高权限时可以使用 `sudo` 命令。
 
@@ -520,7 +521,7 @@ lrwxrwxrwx 1 root root    7 Jan 14 06:41 hello2.c -> hello.c
 
 权限的整体是按用户来划分的，如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c70007a2d274cfe8e370fa1d66c7560~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993212-32f10dd3-1949-4690-9ed9-4b4cda0d651b.png)
 
 现在再来理解这句权限 `drwxr-xr-x` 的意思：
 
@@ -878,7 +879,7 @@ cut -c 2-4 name.txt # 剪切每一行第二到第四个字符
 ## 重定向 管道 流
 
 在 `Linux` 中一个命令的去向可以有3个地方：终端、文件、作为另外一个命令的入参。
-![未命名文件 (4).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fd7a380444dc46ab9b934ec8a2533625~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993270-294d5479-e10b-4fac-b354-df8ce0d29c47.png)
 命令一般都是通过键盘输入，然后输出到终端、文件等地方，它的标准用语是 `stdin` 、 `stdout` 以及 `stderr` 。
 
 - 标准输入 `stdin` ，终端接收键盘输入的命令，会产生两种输出；
@@ -886,7 +887,7 @@ cut -c 2-4 name.txt # 剪切每一行第二到第四个字符
 - 标准错误输出 `stderr` ，终端输出的错误信息。
 
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/524ef66fc56a4feb8a0ee4c0d5dab1d4~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993352-171b7ee5-0e15-440f-8ba4-927e1f8133ee.png)
 
 ### 重定向
 
@@ -971,7 +972,7 @@ cat not_exist_file.csv >> res.txt 2>&1 # 追加输出
 
 目前为止，我们接触的命令的输入都来自命令的参数，其实命令的输入还可以来自文件或者键盘的输入。
 
-![未命名文件 (2).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d10f05e0cdbb413a9ed436ba54af2d60~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993404-dbd3d136-0d00-4e48-9699-03dd6d0fbf2c.png)
 
 #### 输入重定向 `<` 
 
@@ -1000,7 +1001,7 @@ wc -m << END # 统计输入的单词
 
 把两个命令连起来使用，一个命令的输出作为另外一个命令的输入，英文是 `pipeline` ，可以想象一个个水管连接起来，管道算是重定向流的一种。
 
-![未命名文件 (1).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d46b974834864da2a734b42f5703d65c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993436-895924fc-d6b4-49d0-9424-3b1216889129.png)
 
 举几个实际用法案例：
 
@@ -1194,7 +1195,7 @@ bg %1 # 不加任何参数的情况下，bg命令会默认作用于最近的一�
 
 我们用一张图来表示前后台进程切换：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/81d8117fea314ddcb70754e15e4b25ad~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993474-a184136f-f953-45bd-a557-708303542c5b.png)
 
 我们可以使程序在后台运行，成为后台进程，这样在当前终端中我们就可以做其他事情了，而不必等待此进程运行结束。
 
@@ -1238,7 +1239,7 @@ systemctl list-unit-files --type=service # 查看各个级别下服务的启动�
 
 我们常常使用 `tar` 将多个文件归档为一个总的文件，称为 `archive` 。 然后用 `gzip` 或 `bzip2` 命令将 `archive` 压缩为更小的文件。
 
-![未命名文件.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d87434a4c414defb180b05d9bfca4c4~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993523-fc69088a-2eb9-44f2-b3b1-9073201dc5f5.png)
 
 ### tar
 
@@ -1628,7 +1629,7 @@ reboot
 为了进入命令模式，首先要进入交互模式，再按下冒号键。
 
 用一张图表示三种模式如何切换：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a06645b200354e56b8295751c8abac3f~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp)
+![image](https://user-images.githubusercontent.com/56388518/193993584-c9a9b0e0-7a7e-43f8-aa18-f96c333f53a6.png)
 
 ## 基本操作
 

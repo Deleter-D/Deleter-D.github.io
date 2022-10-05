@@ -4,8 +4,7 @@ tags:
   - npm
   - node.js
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fa6824d8dfdde8731187cb90d639ba72b1625b32e.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649844124&t=519509d871e238b98b5be6df83639892
+cover: https://user-images.githubusercontent.com/56388518/193991269-25bd57bf-12fb-41b1-bbde-1c6b56d3983d.png
 abbrlink: 34123
 date: 2022-03-14 17:54:57
 ---

@@ -4,8 +4,7 @@ tags:
   - axios
   - 配置文件
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5f19b48f172a28685271b29d88accd468861c037.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649844225&t=2b6f98a3b9c2e90d35fee05c8958ff7fs
+cover: https://user-images.githubusercontent.com/56388518/193991589-a181c95d-a206-4c02-b353-ab14c5f1846b.png
 abbrlink: 65179
 date: 2022-03-14 17:59:24
 ---

@@ -4,8 +4,7 @@ tags:
   - Vue
   - Vue-Router
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F736b3d2c3ee9832291342e0c2c800a5f9d1c39a1.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650125576&t=4d8d05d4ea1715ee8317f07cc62bdf2a
+cover: https://user-images.githubusercontent.com/56388518/193992250-d10a551b-e10e-4341-9cc7-3845ed4d93ec.png
 abbrlink: 14233
 date: 2022-03-18 00:11:10
 ---

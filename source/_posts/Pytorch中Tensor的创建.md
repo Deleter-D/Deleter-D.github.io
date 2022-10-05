@@ -1,11 +1,10 @@
 ---
-title: Tensor的创建
+title: Pytorch中Tensor的创建
 tags:
   - 机器学习
   - Pytorch
 categories: 机器学习
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F1657136d7d631b3e8d70f7816776b470bdcf244a.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1665912697&t=8ae6eb8b9c0873c0b3c426da22bf9432
+cover: https://user-images.githubusercontent.com/56388518/193994974-2751204b-86b3-4c32-abe3-19024142beeb.png
 abbrlink: 44567
 date: 2022-09-16 17:29:03
 ---

@@ -3,8 +3,7 @@ title: axios封装
 tags:
   - axios
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F5ddd9a0db56a3113a54a45cb8f311d9c2089812e.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649844258&t=853be73f0faddbb966af18c46e86052e
+cover: https://user-images.githubusercontent.com/56388518/193991763-81023062-d085-4994-9c55-56e5e3d094ae.png
 abbrlink: 30201
 date: 2022-03-14 18:00:45
 ---

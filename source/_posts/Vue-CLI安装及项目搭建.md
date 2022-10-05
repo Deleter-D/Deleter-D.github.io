@@ -4,8 +4,7 @@ tags:
   - Vue
   - Vue_CLI
 categories: 前端
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fae3f2cf7a3a026e00e18d12ef1a27dbb6e8d5d42.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649934350&t=e7df522ff25d35cbc6f964ce2b6f32f8
+cover: https://user-images.githubusercontent.com/56388518/193991926-8ea40b7a-4fb9-4d88-ba2e-c9a10b8176ba.png
 abbrlink: 8559
 date: 2022-03-15 19:02:57
 ---

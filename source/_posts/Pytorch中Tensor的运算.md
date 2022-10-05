@@ -1,11 +1,10 @@
 ---
-title: Tensor的运算
+title: Pytorch中Tensor的运算
 tags:
   - 机器学习
   - Pytorch
 categories: 机器学习
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fmod.3dmgame.com%2Fstatic%2Fupload%2Fmod%2F202010%2FMOD5f83a16d23609.jpeg&refer=http%3A%2F%2Fmod.3dmgame.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1667106682&t=843feab65e68dd2aeef7250e5c6c8e65
+cover: https://user-images.githubusercontent.com/56388518/193995226-d9bfc448-55e7-42d0-aea6-8a1d6b18b00d.png
 abbrlink: 7822
 date: 2022-09-30 13:09:30
 ---

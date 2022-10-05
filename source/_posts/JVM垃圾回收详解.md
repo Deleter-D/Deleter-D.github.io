@@ -5,8 +5,7 @@ tags:
   - JVM
   - GC
 categories: Java
-cover: >-
-  https://gimg2.baidu.com/image_search/src=http%3A%2F%2F00.minipic.eastday.com%2F20160127%2F20160127094202_240e1b9a1653010cb5298aa7e94f5221_5.jpeg&refer=http%3A%2F%2F00.minipic.eastday.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1655455501&t=1cf033f9c63c06cd50a953afba9c390b
+cover: https://user-images.githubusercontent.com/56388518/193994409-97e175c3-bf7d-4295-900e-518632cac411.png
 abbrlink: 54227
 date: 2022-05-18 16:43:39
 ---
