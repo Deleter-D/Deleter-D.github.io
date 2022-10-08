@@ -1,7 +1,7 @@
 ---
 date: 2019-11-25 14:49:08
 comments: false
-thumbnail: https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170800.png
+thumbnail: https://user-images.githubusercontent.com/56388518/194699905-e12df1c1-0d16-48b2-8c65-73b4a321297b.png
 ---
 <div class = "text-center"><h1>碎碎念</h1></div><div class = "text-tips">
 

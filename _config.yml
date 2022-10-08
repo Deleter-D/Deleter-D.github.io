@@ -104,5 +104,5 @@ theme: amazing  # nexmoe
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repository: https://github.com/Deleter-D/Deleter-D.github.io.git
+  repository: git@github.com:Deleter-D/Deleter-D.github.io.git
   branch: main
