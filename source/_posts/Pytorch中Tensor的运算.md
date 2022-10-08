@@ -3,11 +3,16 @@ title: Pytorch中Tensor的运算
 tags:
   - 机器学习
   - Pytorch
-categories: 机器学习
+categories: [机器学习,Pytorch]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193995226-d9bfc448-55e7-42d0-aea6-8a1d6b18b00d.png
 abbrlink: 7822
 date: 2022-09-30 13:09:30
 ---
+
+关于Pytorch中Tensor的一系列基本运算及矩阵运算，同时介绍一下in-place操作和Tensor的广播机制；还提到了一些其他运算，如取整、取余、比较、排序等；最后介绍Tensor数据合法性校验的方法。
+
+<!--more-->
 
 # Tensor的算术运算
 

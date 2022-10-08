@@ -5,10 +5,15 @@ tags:
   - 反射
   - 注解
 categories: Java
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193994323-beeddfc4-1a08-429e-95a5-232dc56ab02d.png
 abbrlink: 46441
 date: 2022-05-15 23:09:02
 ---
+
+想知道Spring这类框架中的注解为什么能实现那么强大的功能，请看本篇博客，用几乎逐行的注释讲解原理。
+
+<!--more-->
 
 # 反射
 

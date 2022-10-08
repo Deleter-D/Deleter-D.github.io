@@ -3,14 +3,17 @@ title: Pytorch常用数学与统计学函数
 tags:
   - 机器学习
   - Pytorch
-categories: 机器学习
+categories: [机器学习,Pytorch]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193995325-c9392df5-b759-41c5-8772-7a69700d148e.png
 abbrlink: 47260
 mathjax: true
 date: 2022-10-04 17:10:37
 ---
 
+Pytorch中常用的数学函数，包括三角函数、绝对值函数、`sign()`函数、误差函数等；还有一些统计学相关函数，包括`histc()`函数、`bincount()`函数等。
 
+<!--more-->
 
 # Pytorch中的数学函数
 

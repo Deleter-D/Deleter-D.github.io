@@ -3,11 +3,16 @@ title: Pytorch中Tensor的创建
 tags:
   - 机器学习
   - Pytorch
-categories: 机器学习
+categories: [机器学习,Pytorch]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193994974-2751204b-86b3-4c32-abe3-19024142beeb.png
 abbrlink: 44567
 date: 2022-09-16 17:29:03
 ---
+
+Pytorch中Tensor的各种定义方式。
+
+<!--more-->
 
 # Tensor的创建
 

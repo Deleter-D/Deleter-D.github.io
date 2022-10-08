@@ -3,11 +3,16 @@ title: npm常用命令
 tags:
   - npm
   - node.js
-categories: 前端
+categories: [前端,nodejs]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991269-25bd57bf-12fb-41b1-bbde-1c6b56d3983d.png
 abbrlink: 34123
 date: 2022-03-14 17:54:57
 ---
+
+npm换源命令，安装、更新模块命令等常用命令
+
+<!--more-->
 
 ## 换源
 

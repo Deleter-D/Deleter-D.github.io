@@ -4,10 +4,15 @@ tags:
   - Linux
   - 操作系统
 categories: Linux
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992644-7172a82a-aa6d-43fa-8b56-0eded8388984.png
 abbrlink: 50125
 date: 2022-03-18 11:53:14
 ---
+
+转载文章，与Linux系统相关的知识。
+
+<!--more-->
 
 # Linux 基础
 

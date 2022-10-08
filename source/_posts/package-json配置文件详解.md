@@ -3,11 +3,16 @@ title: package.json配置文件详解
 tags:
   - package.json
   - 配置文件
-categories: 前端
+categories: [前端,nodejs]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991363-6b870c0a-7963-4c9a-b4da-51c65309efdd.png
 abbrlink: 49919
 date: 2022-03-14 17:56:23
 ---
+
+有关package.json配置文件的简单解释，方便理解配置文件所配置的内容。
+
+<!--more-->
 
 scripts指定运行的脚本
 

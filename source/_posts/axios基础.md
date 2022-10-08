@@ -2,11 +2,16 @@
 title: axios基础
 tags:
   - axios
-categories: 前端
+categories: [前端,axios]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991506-22eabcad-4648-47d5-aa9b-a928df18297e.png
 abbrlink: 63440
 date: 2022-03-14 17:58:40
 ---
+
+axios的基本用法。
+
+<!--more-->
 
 ## 安装axios
 

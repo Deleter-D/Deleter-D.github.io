@@ -5,10 +5,15 @@ tags:
   - JVM
   - GC
 categories: Java
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193994409-97e175c3-bf7d-4295-900e-518632cac411.png
 abbrlink: 54227
 date: 2022-05-18 16:43:39
 ---
+
+对JVM垃圾回收算法及垃圾回收器的宏观讲解，先了解宏观，再去纠结细节。
+
+<!--more-->
 
 # 垃圾定位方式
 

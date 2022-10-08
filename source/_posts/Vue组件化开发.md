@@ -3,11 +3,16 @@ title: Vue组件化开发
 tags:
   - Vue
   - Vue组件
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992093-afdfc04a-59e9-4f6e-8849-f56062508265.png
 abbrlink: 61428
 date: 2022-03-15 19:08:07
 ---
+
+Vue组件化开发的思想及父子组件之间的通信方式，以及Vue中插槽的基本用法。
+
+<!--more-->
 
 ## Vue组件
 

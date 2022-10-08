@@ -3,11 +3,16 @@ title: Vue模板语法
 tags:
   - Vue
   - v-指令
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991999-72eab280-1d5f-4681-8811-c22a7f97277b.png
 abbrlink: 37641
 date: 2022-03-15 19:06:25
 ---
+
+Vue的模板语法及v-指令的基本用法。
+
+<!--more-->
 
 ## options
 

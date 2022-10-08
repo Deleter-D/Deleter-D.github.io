@@ -3,11 +3,16 @@ title: Vue-router路由（上）
 tags:
   - Vue
   - Vue-Router
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992250-d10a551b-e10e-4341-9cc7-3845ed4d93ec.png
 abbrlink: 14233
 date: 2022-03-18 00:11:10
 ---
+
+Vue生态中的一员大将Vue-router，负责管理页面路由，本节介绍路由模式、嵌套路由及路由参数传递。
+
+<!--more-->
 
 ## 路由
 

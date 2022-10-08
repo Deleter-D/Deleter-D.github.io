@@ -4,11 +4,16 @@ tags:
   - Vue
   - Composition API
   - 组合式API
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992571-90879f64-0a1a-41d7-b5bf-40c47ed459a2.png
 abbrlink: 12922
 date: 2022-03-18 00:17:36
 ---
+
+Vue组合式API，为了解决业务逻辑复杂度变高而生的神器。
+
+<!--more-->
 
 # Composition API（组合式API）
 

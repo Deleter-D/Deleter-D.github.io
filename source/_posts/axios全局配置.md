@@ -3,11 +3,16 @@ title: axios全局配置
 tags:
   - axios
   - 配置文件
-categories: 前端
+categories: [前端,axios]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991589-a181c95d-a206-4c02-b353-ab14c5f1846b.png
 abbrlink: 65179
 date: 2022-03-14 17:59:24
 ---
+
+axios的两种配置方式，全局配置与按实例配置。
+
+<!--more-->
 
 ## 全局配置
 

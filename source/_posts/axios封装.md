@@ -2,11 +2,16 @@
 title: axios封装
 tags:
   - axios
-categories: 前端
+categories: [前端,axios]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991763-81023062-d085-4994-9c55-56e5e3d094ae.png
 abbrlink: 30201
 date: 2022-03-14 18:00:45
 ---
+
+封装自定义axios的方法。
+
+<!--more-->
 
 ## 创建js文件
 

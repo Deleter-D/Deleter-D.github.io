@@ -3,11 +3,16 @@ title: Vue-router路由（下）
 tags:
   - Vue
   - Vue-Router
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992311-d603f3db-8eed-4298-9cc3-cbc801d21b08.png
 abbrlink: 52120
 date: 2022-03-18 00:13:10
 ---
+
+Vue生态中的一员大将Vue-router，负责管理页面路由，书接上回，本节介绍路由重定向、别名及导航守卫。
+
+<!--more-->
 
 ## 重定向
 

@@ -4,11 +4,16 @@ tags:
   - Hexo
   - LaTex
 categories: Hexo
+toc: true
 cover: >-
   https://user-images.githubusercontent.com/56388518/194000349-474ca0eb-f3b8-4e5b-96ce-87d785831919.png
 abbrlink: 47466
 date: 2022-10-05 14:51:38
 ---
+
+hexo集成LaTex数学公式所需要的依赖，还有一些注意事项。
+
+<!--more-->
 
 # hexo集成LaTex数学公式解决方案
 

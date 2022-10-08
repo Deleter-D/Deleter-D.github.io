@@ -3,11 +3,16 @@ title: Vue_CLI安装及项目搭建
 tags:
   - Vue
   - Vue_CLI
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991926-8ea40b7a-4fb9-4d88-ba2e-c9a10b8176ba.png
 abbrlink: 8559
 date: 2022-03-15 19:02:57
 ---
+
+通过Vue-CLI搭建Vue项目的操作流程。
+
+<!--more-->
 
 ## Vue-CLI (Command Line Interface)
 

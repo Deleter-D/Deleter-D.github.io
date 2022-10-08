@@ -4,11 +4,16 @@ tags:
   - axios
   - promise
   - RESTFul
-categories: 前端
+categories: [前端,axios]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991448-54f2eff8-11e0-404e-b1f7-7104725bcb52.png
 abbrlink: 4623
 date: 2022-03-14 17:57:39
 ---
+
+学习axios必须的前置知识，包括RESTFul API规范、Promise的基本用法。
+
+<!--more-->
 
 ## RESTFul API规范
 

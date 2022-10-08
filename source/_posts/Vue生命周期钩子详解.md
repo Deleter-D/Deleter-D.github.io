@@ -2,11 +2,16 @@
 title: Vue生命周期钩子详解
 tags:
   - Vue
-categories: 前端
+categories: [前端,Vue]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992164-23bf98cc-5c31-4a37-a916-0121cf40b31e.png
 abbrlink: 27624
 date: 2022-03-18 00:07:56
 ---
+
+Vue页面的生命周期及特殊方法`$nextTick`。
+
+<!--more-->
 
 ## 生命周期
 

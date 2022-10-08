@@ -3,11 +3,16 @@ title: Pytorch中Tensor的属性及稀疏张量
 tags:
   - 机器学习
   - Pytorch
-categories: 机器学习
+categories: [机器学习,Pytorch]
+toc: true
 cover: https://user-images.githubusercontent.com/56388518/193995083-dc7bdef0-cc48-4825-ba4f-3b659425f652.png
 abbrlink: 42093
 date: 2022-09-16 17:32:22
 ---
+
+介绍Pytorch中Tensor的属性以及稀疏张量的概念，还有一个小概念——COO风格矩阵。
+
+<!--more-->
 
 # Tensor的属性
 
