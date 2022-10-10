@@ -1,5 +1,5 @@
 ---
-thumbnail: https://user-images.githubusercontent.com/56388518/194699703-49ef686a-4cfc-4719-be48-c7f456f566dc.png
+thumbnail: https://user-images.githubusercontent.com/56388518/194826761-d9c83166-d77f-4071-822d-90f32ee98e20.png
 date: 2018-11-11 08:24:49
 comments: false
 ---
