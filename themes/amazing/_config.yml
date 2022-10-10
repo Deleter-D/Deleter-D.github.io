@@ -146,14 +146,15 @@ comment:
     language: zh-CN #zh-CN #Localization language key, en, zh-CN and zh-TW are currently available.
     owner: Deleter-D         # (required) GitHub user name
     repo: Deleter-D.github.io          # (required) GitHub repository name
-    client_id: d0194124d91614aeed82     # (required) OAuth application client id
-    client_secret: 13620eee98e6f3c9023f67b62c72998e959bd6b6 # (required) OAuth application client secret
+    client_id: d087baa8a532e3b31fba     # (required) OAuth application client id
+    client_secret: faec4c1d7046247c200bca62c9930d0799ce58a5 # (required) OAuth application client secret
     admin: ['Deleter-D']
     create_issue_manually: true
     distraction_free_mode: false
     has_hot_recommend: true # 是否有热门推荐
     has_latest_comment: true #是否有最新评论
-    proxy: https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token #解决登录后403问题
+    proxy: https://cloudflare-cors-anywhere.wyp867909454.workers.dev/?https://github.com/login/oauth/access_token
+    # proxy: https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token #解决登录后403问题
 # comment:
 #     type: valine
 #     app_id: rOtVIhvG3kd7QkMKe3naSU9R-gzGzoHsz
