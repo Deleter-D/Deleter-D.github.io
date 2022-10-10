@@ -4,7 +4,7 @@ date: {{ date }}
 tags:
 categories:
 toc: true
-mathJax: true
+mathjax: true
 ---
 
 摘要
