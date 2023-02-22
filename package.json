@@ -33,6 +33,7 @@
     "hexo-renderer-pandoc": "^0.3.1",
     "hexo-renderer-stylus": "^2.0.0",
     "hexo-server": "^1.0.0",
+    "hexo-tag-aplayer": "^3.0.4",
     "hexo-util": "^2.2.0",
     "inferno": "^7.3.3",
     "inferno-create-element": "^7.3.3",

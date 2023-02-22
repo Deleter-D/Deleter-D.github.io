@@ -106,3 +106,6 @@ deploy:
   type: git
   repository: git@github.com:Deleter-D/Deleter-D.github.io.git
   branch: main
+
+aplayer:
+  meting: true
