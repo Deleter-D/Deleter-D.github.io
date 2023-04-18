@@ -1,0 +1,260 @@
+---
+title: 毕昇C++异构开发基本思想
+toc: true
+mathjax: true
+tags:
+  - 毕昇C++
+  - 毕昇编译器
+  - 异构编程
+categories: 项目
+abbrlink: 11914
+date: 2023-04-18 14:01:13
+---
+
+毕昇C++的异构编程的基本思想，如果理解CUDA编程的话，可以类比理解。
+
+<!-- more -->
+
+# 毕昇C++异构开发基本思想
+
+## 队列
+
+首先定义任务队列，任务队列用来管理device上的可执行任务。
+
+```c++
+queue Q(ascend_selector{});
+```
+
+`queue`来自命名空间`sycl`，需要引入头文件`#include <sycl/sycl.hpp>`。
+
+## Host数据
+
+想要将host上的数据搬移到device，一个核心思想就是找到host端的数据指针。如果待迁移算子中的数据封装度较高，大体上可以分为两种情况：
+
+- 指针传递式的封装。
+- 数据结构式的封装。
+
+如果只是指针传递式的封装，即封装过程仅仅是将数据指针一层一层传递过来，则是比较简单的情况，只需取得该指针即可。
+
+如果是数据结构式的封装，即封装过程中使得子类无法读取到数据的指针，则是较为复杂的情况，迁移的工作量可能会比较大。但依然没有脱离最核心的思想——找到host端的数据指针。
+
+这里举一个简单的例子，在host端定义两个数组。
+
+```c++
+constexpr int M = 32;
+constexpr int N = 16;
+
+// 模拟M*M的矩阵
+auto* ptrDataA = new int[M * M];
+// 模拟N*N的矩阵
+auto *ptrDataB = new int[N * N];
+```
+
+`ptrDataA`与`ptrDataB`是host端的数据指针。
+
+## Device数据
+
+为了将host端的数据搬移到device端，需要先在device端申请内存，申请的大小根据实际情况决定。这里需要将两个矩阵都搬移至device上，故申请如下大小的内容。
+
+```c++
+auto *devA = malloc_device<int>(M * M, Q);
+auto *devB = malloc_device<int>(N * N, Q);
+```
+
+`devA`和`devB`分别为device端的数据指针，这两片空间处于Global Memory中，但此时仅仅是申请了内存，这两片设备内存中并不存在任何数据。接下来就需要将host端的数据正式拷贝到device端。
+
+```c++
+Q.memcpy(devA, ptrDataA, M * M * sizeof(int));
+Q.memcpy(devB, ptrDataB, N * N * sizeof(int));
+```
+
+`memcpy()`接口定义如下。
+
+```c++
+void memcpy(void *Dst, const void *Src, size_t Size);
+```
+
+- `Dst`为目标地址。
+- `Src`为源地址。
+- `Size`为待搬移数据的大小。
+
+## 提交任务
+
+截止目前，数据已经在device端准备完毕，接下来就可以进行任务的提交。任务以核函数的形式，作为参数传递给`launch()`接口。
+
+首先来看一下`launch()`的定义。
+
+```c++
+template <typename KernelName = detail::auto_name, typename KernelType>
+event launch(size_t NumWorkGroups, _KERNELFUNCPARAM(KernelFunc) _CODELOCPARAM(&CodeLoc)) 
+```
+
+接口定义虽然比较复杂，还涉及到一些宏，但我们只需要关注两个参数：
+
+- `NumWorkGroups`为work-group的数量。
+- `KernelFunc`为核函数。
+
+核函数以lambda表达式的方式进行定义。
+
+```c++
+auto KernelFunc = [=](group<1> group) {
+    // TODO
+};
+```
+
+接下来进行任务的提交。
+
+```c++
+Q.launch<class Test>(N, KernelFunc);
+```
+
+该行代码指定了`N`个`work-group`，并传入一个核函数`KernelFunc`作为device端执行的实际操作。
+
+当然也可以直接将任务提交与核函数定义的代码合并，省去单独定义`KernelFunc`的步骤。
+
+```c++
+Q.launch<class Test>(N, [=](group<1> group) {
+    // TODO
+});
+```
+
+> C++中的lambda表达式定义方式如下。
+>
+> ```c++
+> auto func = [capture] (params) mutable throw() -> return-type { func_body };
+> ```
+>
+> `[capture]`：用来捕获一定范围的变量。
+>
+> - `[ ]`不捕获任何变量；
+> - `[&]`引用捕获，捕获外部作用域所有变量，在函数体内当作引用使用；
+> - `[=]`值捕获，捕获外部作用域所有变量，在函数体内创建一个拷贝使用；
+> - `[=, &a]`值捕获外部作用域所有变量，按引用捕获a变量；
+> - `[a]`值捕获外部作用域所有变量，按引用捕获a变量；
+> - `[this]`捕获当前类中的this指针。
+>
+> `(params)`：参数列表。
+>
+> `mutable`：当使用值捕获时，加上`mutable`关键字就可以对捕获到的值进行修改。
+>
+> `throw()`：用于函数体抛出异常
+>
+> `return-type`：用来显式指定返回类型，当不需要返回值或返回类型明确的情况下，可以将`->`与`return-type`一同省略
+>
+> `{ func_body }`：函数体。
+
+这里以矩阵的`update`操作为例，该操作给定两个矩阵`A`和`B`，以及两个参数`left`和`top`，将矩阵`A`从`(left, top)`元素开始的与矩阵`B`大小相同的子矩阵替换为矩阵`B`。
+
+```c++
+Q.launch<class Test>(N, [=](group<1> group) {
+    __local int UBBuf[N];
+    size_t groupId = group.get_id();
+    dmi::memcpy_blocks(UBBuf, &devB[groupId * N], N * sizeof(int) / 32);
+    dmi::memcpy_blocks(&devA[top * M + groupId * M + left], UBBuf, N * sizeof(int) / 32);
+});
+```
+
+我们来一行一行解析上面的代码。
+
+首先看第一行`__local int UBBuf[N]`，该语句利用空间制导符`__local`在Unified Buffer中申请了一片大小为`N`的内存空间。
+
+第二行`size_t groupId = group.get_id()`利用`get_id()`接口获取到了当前的work-group的id。
+
+第三行`dmi::memcpy_blocks(UBBuf, &devB[groupId * N], N * sizeof(int) / 32)`，利用命名空间`dmi`下的`memcpy_blocks()`接口进行连续数据的拷贝，将之前定义的Global Memory中`devB`的数据并行的拷贝至Unified Buffer中的`UBBuf`中。可以观察到拷贝的源地址是利用`groupId`计算得来的，这一点后面会详细解释。
+
+第四行`dmi::memcpy_blocks(&devA[top * M + groupId * M + left], UBBuf, N * sizeof(int) / 32)`，同样是利用连续数据拷贝的接口，将Unified Buffer中的`UBBuf`中的数据，拷贝到Global Memory中`devA`的正确位置，从而实现`update`操作。拷贝的目的地址同样是利用`groupId`与参数`left`和`top`计算得来。
+
+### work-group的理解
+
+以上面提到的矩阵`update()`操作为例。
+
+<img src="https://user-images.githubusercontent.com/56388518/232685578-f50902ed-afc2-4cbf-a322-9139b44626b2.png" style="zoom: 67%;" />
+
+当`groupId == 0`时，`&devA[top * M + groupId * M + left]`计算的结果为`&devA[top * M + left]`，即图中`groupId=0`箭头所指的那一行数据。而`groupId == 1`时，同理，计算结果为`&devA[top * M + M + left]`，即比`groupId == 0`时多向前指了一行数据，也即图中`groupId=1`箭头所指的数据。
+
+理解work-group最重要的一点就是，要意识到所有group都是并行的，是同时执行的。
+
+## 取回数据
+
+通过核函数使device执行完任务后，最后一步就是要将运算结果从device上取回host，也即从Global Memory中搬移回Host Memory中。
+
+```c++
+Q.memcpy(ptrDataA, devA, M * M * sizeof(int));
+```
+
+最后可以利用`wait()`接口对device端的任务进行同步。
+
+```c++
+Q.wait();
+```
+
+# 完整示例
+
+```c++
+#include <iostream>
+#include <vnl/vnl_matrix.h>
+#include <sycl/sycl.hpp>
+#include <bisheng/bisheng.hpp>
+using namespace sycl;
+
+constexpr int M = 32;
+constexpr int N = 16;
+constexpr int left = 4;
+constexpr int top = 7;
+
+int main(int argc, char const *argv[])
+{
+    queue Q(ascend_selector{});
+
+    // host端数据指针
+    auto *ptrDataA = new int[M * M];
+    auto *ptrDataB = new int[N * N];
+
+    // 初始化数据
+    for (int i = 0; i < M * M; i++)
+    {
+        ptrDataA[i] = 1;
+    }
+    for (int i = 0; i < N * N; i++)
+    {
+        ptrDataB[i] = 2;
+    }
+    
+    // 申请device端内存
+    auto *devA = malloc_device<int>(M * M, Q);
+    auto *devB = malloc_device<int>(N * N, Q);
+
+    // 将host端的数据拷贝至device端，此时数据在Global Memory中
+    Q.memcpy(devA, ptrDataA, M * M * sizeof(int));
+    Q.memcpy(devB, ptrDataB, N * N * sizeof(int));
+
+    // 提交任务
+    // <class Test>是为该任务命名，Test可以根据实际情况修改为合适的名称
+    Q.launch<class Test>(N, [=](group<1> group) {
+        // 申请Unified Buffer内存
+        __local int UBA[N];
+        // 获取group id
+        size_t groupId=group.get_id();
+        // 将矩阵B的数据并行地拷贝进Unified Buffer
+        dmi::memcpy_blocks(UBA, &devB[groupId * N], N * sizeof(int) / 32);
+        // 将Unified Buffer中的数据并行的拷贝进矩阵A的正确位置
+        dmi::memcpy_blocks(&devA[top * M + groupId * M + left], UBA, N * sizeof(int) / 32);
+    });
+
+    // 将结果从Global Memory中取回Host Memory
+    Q.memcpy(ptrDataA, devA, M * M * sizeof(int));
+
+    // 任务同步
+    Q.wait();
+
+    // 输出矩阵A，检查update操作是否正确
+    for (int i = 0; i < M * M; i++)
+    {
+        if (i % M == 0)
+            std::cout << std::endl;
+        std::cout << ptrDataA[i] << " ";
+    }
+
+    return 0;
+}
+```

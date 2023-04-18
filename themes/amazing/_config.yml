@@ -396,7 +396,7 @@ providers:
     # my_cdn_pre: https://cdn.jsdelivr.net/gh/removeif/removeif-demo@v1.0.8/ #https://cdn.jsdelivr.net/gh/removeif/removeif.github.io@v2.2.1
 
 
-footer_copyright_dsec: © 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /> #footer 版权说明 可自由配置
+footer_copyright_dsec: © 版权说明：[本网站所有内容均收集于互联网或自己创作，如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /> #footer 版权说明 可自由配置
 website_start_time: 2022/03/13 00:00:00 #网站运行开始时间,不填不显示
 # footer_registered_no: 川ICP备88888888号-8（测试） #备案号
 side_music_netease_id: 475747480 #侧边栏网易云歌单id
