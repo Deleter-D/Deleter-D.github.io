@@ -101,6 +101,10 @@ ccmake ../InsightToolkit-5.2.1
 ccmake ../InsightToolkit-5.2.1
 ```
 
+打开编译动态链接库的选项。
+
+![](https://user-images.githubusercontent.com/56388518/232485701-07cc07a2-96cd-41b4-8994-63c15a86bc1f.png)
+
 按下Page Down翻到下一页，或者使用方向键下键也可以翻页，改动如图。
 
 ![](https://user-images.githubusercontent.com/56388518/232485725-904f8550-d199-46db-b19b-8077cd1606d8.png)
