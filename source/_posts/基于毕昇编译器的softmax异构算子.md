@@ -1,5 +1,5 @@
 ---
-title: 基于毕昇C++的softmax异构算子
+title: 基于毕昇编译器的softmax异构算子
 toc: true
 mathjax: true
 tags:
@@ -12,7 +12,7 @@ abbrlink: 15984
 date: 2023-07-31 16:10:00
 ---
 
-使用毕昇C++开发Softmax算子，坑太多太多了。。。。
+使用毕昇编译器异构开发Softmax算子，坑太多太多了。。。。
 
 <!-- more -->
 
@@ -355,7 +355,9 @@ std::vector<float> ascend_softmax(std::vector<float> input) {
 [Debug]: Result correct.
 ```
 
-无论执行多少次，结果都是正确的。那现在基本可以确定是`vec_cross_add()`接口出现了问题。所以我们对代码进行修改，将`vec_cross_add()`接口用`for`循环代替。
+无论执行多少次，结果都是正确的。~~那现在基本可以确定是`vec_cross_add()`接口出现了问题。所以我们对代码进行修改，将`vec_cross_add()`接口用`for`循环代替。~~
+
+> 此处的结论不正确，`vec_cross_add()`接口本身没有任何问题，详细测试及Softmax的重新实现详见[关于vec_cross_add接口的详细测试 - 亦初 (deleter-d.github.io)](https://deleter-d.github.io/posts/1040/)
 
 由于使用标量运算，故每个group求和的结果不再是向量，而是标量。所以存放求和结果的内存空间大小需要做一定的调整，这里申请大小为`group_num * (32 / sizeof(data_t))`的空间。其实理论上，每个group求和的结果只需要一个`data_t`数据类型的大小即可，但为了按照block为粒度严格分离group的访存空间，所以申请了与`group_num`个block大小相同的内存空间来存放。
 
