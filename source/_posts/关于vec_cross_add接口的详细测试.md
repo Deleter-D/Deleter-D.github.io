@@ -12,7 +12,7 @@ abbrlink: 1040
 date: 2023-08-17 20:14:52
 ---
 
-先说结论，问题出在我粗心了，磕头道歉！！本接口没有任何问题，为上篇中不严谨的言论道歉。
+先说结论，问题出在我粗心了，磕头道歉！！本接口没有计算逻辑性问题，为上篇中不严谨的言论道歉。但在特定情况下，会有不符合预期的返回值。
 
 <!-- more -->
 
@@ -193,146 +193,178 @@ ascend sum: 1.49505162239
 Result correct.
 ```
 
-# 重新实现Softmax
+# 特定不符合预期的情况
 
-经过修改，使用`vec_cross_add()`接口的Softmax算子实现如下。
+## 情况描述
+
+在此之前，我认为这个接口确实没问题了，但在偶然的情况下，还是测试出了不符合预期返回结果的情况。
+
+在使用`vec_cross_add()`时，我们应该定义两个向量，一个作为输入向量，另一个作为结果向量。正常情况下，结果向量的长度应该为输入向量的repeat数量。例如：
 
 ```c++
-using data_t = float;
+bisheng::vector<float, 128> src; // src为128个float，也就是2个repeat
+bisheng::vector<float, 2> dst; // 结果向量长度应该为2
+bisheng::vec_cross_add(src.data(), dst); // 正常的调用方式
+```
 
-std::vector<data_t> ascend_softmax(std::vector<data_t> input) {
-  std::size_t input_sz = input.size();
-  std::size_t byte_count = input_sz * sizeof(data_t);
+这种方式确实没有问题，结果返回也正常，将结果数组中的元素都相加后，确实是输入向量元素的和。
 
-  // call the host operator if input isn't enough a full block
-  if (byte_count < 32) {
-    return softmax(input);
-  }
+但当我们用变长向量`bisheng::vector_view`时，返回结果就不像预期这样了。
 
-  // number of elements per group
-  const std::size_t elem_per_group = 640;
-  // number of repeats per group
-  const std::size_t repeat_per_group = elem_per_group * sizeof(data_t) / 256;
-  // number of elements in tail block
-  const std::size_t tail_elem_count = input_sz % elem_per_group;
-  // number of groups
-  // if tail block is exist, apply for one more group
-  const std::size_t group_num = (tail_elem_count > 0)
-                                    ? ((input_sz / elem_per_group) + 1)
-                                    : (input_sz / elem_per_group);
+下面实现了一个利用变长向量操作数据的算子。大部分代码与上面的一致，只需关注有注释的部分。
 
+```c++
+data_t ascend_summary_view(std::vector<data_t> &input) {
   sycl::queue Q(sycl::ascend_selector{});
 
-  // GM memory allocation
-  auto dev_buf = sycl::malloc_device<data_t>(group_num * elem_per_group, Q);
-  auto sum_res_buf = sycl::malloc_device<data_t>(group_num * (32 / sizeof(data_t)), Q);
+  auto input_buf = sycl::malloc_device<data_t>(INPUT, Q);
+  const std::size_t res_vec_num = GROUP_NUM * (32 / sizeof(data_t));
+  auto res_buf = sycl::malloc_device<data_t>(res_vec_num, Q);
 
-  // Host memory allocation
-  std::vector<data_t> sum_res(group_num * (32 / sizeof(data_t)), 0.0f);
-  std::vector<data_t> res(input_sz, 0.0f);
+  const std::size_t repeat_num = ELEM_PER_GROUP * sizeof(data_t) / 256;
 
-  // host -> GM
-  Q.memcpy(dev_buf, input.data(), byte_count);
+  Q.memcpy(input_buf, input.data(), INPUT * sizeof(data_t));
 
-  Q.launch<class Summary>(group_num, [=](sycl::group<1> group) {
-    bisheng::vector<data_t, elem_per_group> input_vec;
-    bisheng::vector<data_t, repeat_per_group> sum_vec;
-    std::size_t group_id = group.get_group_id();
+  sycl::stream out(512 * GROUP_NUM, 512, Q.get_device());
+  Q.launch<class SumView>(GROUP_NUM, [=](sycl::group<1> group) {
+    const std::size_t group_id = group.get_group_id();
 
-    // GM -> UB
+    // 申请较大的向量
+    bisheng::vector<data_t, 30000> input_vec;
+    bisheng::vector<data_t, 30000> res_vec;
+
     input_vec.load(
-        sycl::global_ptr<data_t>(dev_buf + group_id * elem_per_group).get(), 
-        elem_per_group);
+        sycl::global_ptr<data_t>(input_buf + group_id * ELEM_PER_GROUP).get(),
+        ELEM_PER_GROUP);
 
-    if (tail_elem_count > 0 && group_id == group_num - 1) {
-      // if tail block has element and this is the last group
-      bisheng::vector_view<data_t> input_vec_v(input_vec.data(), tail_elem_count);
+    // 使用变长向量来操作正确范围内的数据
+    bisheng::vector_view<data_t> input_vec_v(input_vec.data(), ELEM_PER_GROUP);
+    bisheng::vector_view<data_t> res_vec_v(res_vec.data(), repeat_num);
 
-      bisheng::vec_exp(input_vec_v, input_vec_v);
-      for (int i = 0; i < tail_elem_count; ++i)
-        sum_res_buf[group_id * (32 / sizeof(data_t))] += input_vec_v[i];
-    } else {
-      // full block data
-      bisheng::vec_exp(input_vec, input_vec);
-      bisheng::vec_cross_add(sum_vec.data(), input_vec);
-      for (int i = 0; i < repeat_per_group; ++i) {
-        sum_res_buf[group_id * (32 / sizeof(data_t))] += sum_vec[i];
-      }
-    }
+    bisheng::vec_cross_add(res_vec_v, input_vec_v);
 
-    // UB -> GM
-    input_vec.store(
-        sycl::global_ptr<data_t>(dev_buf + group_id * elem_per_group).get(),
-        elem_per_group);
+    // 输出变长结果向量前20个元素
+    out << "group " << group_id << "\n";
+    for (std::size_t i = 0; i < 20; ++i)
+      out << res_vec_v[i] << " ";
+    out << "\n";
+
+    res_vec.store(
+        sycl::global_ptr<data_t>(res_buf + group_id * (32 / sizeof(data_t)))
+            .get(),
+        repeat_num);
   });
 
-  // GM -> Host
-  Q.memcpy(sum_res.data(), sum_res_buf, group_num * (32 / sizeof(data_t)) * sizeof(data_t));
+  std::vector<data_t> sum_host_vec(res_vec_num, 0.0f);
+  Q.memcpy(sum_host_vec.data(), res_buf, res_vec_num * sizeof(data_t));
   Q.wait();
 
   data_t sum;
-  for (int i = 0; i < sum_res.size(); i += 32 / sizeof(data_t))
-    sum += sum_res[i];
+  for (std::size_t i = 0; i < res_vec_num; i++)
+    if (i % (32 / sizeof(data_t)) < repeat_num)
+      sum += sum_host_vec[i];
 
-  Q.launch<class Softmax>(group_num, [=](sycl::group<1> group) {
-    // UB memory of exponent result
-    bisheng::vector<data_t, elem_per_group> exp_res_vec;
-    // UB memory of divisor
-    bisheng::vector<data_t, elem_per_group> divisor_vec(sum);
-    // UB memory of final result
-    bisheng::vector<data_t, elem_per_group> res_vec;
-    std::size_t group_id = group.get_group_id();
-
-    // GM -> UB
-    exp_res_vec.load(
-        sycl::global_ptr<data_t>(dev_buf + group_id * elem_per_group).get(),
-        elem_per_group);
-
-    if (tail_elem_count > 0 && group_id == group_num - 1) {
-      // if tail block has element and this is the last group
-      bisheng::vector_view<data_t> exp_res_vec_v(exp_res_vec.data(),
-                                                 tail_elem_count);
-      bisheng::vector_view<data_t> divisor_vec_v(divisor_vec.data(),
-                                                 tail_elem_count);
-      bisheng::vector_view<data_t> res_vec_v(res_vec.data(),
-                                             tail_elem_count);
-
-      bisheng::vec_div(res_vec_v, exp_res_vec_v, divisor_vec_v);
-    } else {
-      // full block data
-      bisheng::vec_div(res_vec, exp_res_vec, divisor_vec);
-    }
-
-    // UB -> GM
-    res_vec.store(
-        sycl::global_ptr<data_t>(dev_buf + group_id * elem_per_group).get(),
-        elem_per_group);
-  });
-
-  // GM -> host
-  Q.memcpy(res.data(), dev_buf, byte_count);
-  Q.wait();
-
-  sycl::free(dev_buf, Q);
-  sycl::free(sum_res_buf, Q);
-
-  return res;
+  return sum;
 }
 ```
 
-## 功能测试
+为了更清楚的看到其中发生了什么，故定义一个`sycl::stream`来输出Kernel中的信息。
 
-功能测试全部验证正确。
+理论上，即使是变长向量，返回的结果向量长度也应该是输入向量的repeat数，在这里用上面的用例二进行说明。
 
-## 性能测试
+此时的宏为：
 
-与之前效果最好的方案三对比。
+```c++
+#define INPUT 128
+#define GROUP_NUM 1
+#define ELEM_PER_GROUP 128
+```
 
-| 测试用例     | 640      | 6400     | 64000    | 640000   |
-| :----------- | :------- | :------- | :------- | :------- |
-| 方案三加速比 | 0.224613 | 1.512394 | 13.30433 | 88.70575 |
-| 新方案加速比 | 0.225836 | 1.330532 | 12.58051 | 101.0137 |
+先来看计算结果的输出：
 
-可以看到在向量长度比较大的情况下，接口的优势还是远大于`for`循环求和的。
+```
+  host sum: 1.49505186081
+ascend sum: 1.76275908947
+Result error.
+```
 
-再次为我不严谨的言论道歉！
+计算错误，这成功复现了另一种错误的情况。这个错误表面上看起来，和上面使用定长向量测试时描述的错误原因一样，原因没有将所以有意义的数据累加进去，最终导致了结果不正确。
+
+先想一个问题，我们在Kernel中输出了结果向量的前20个元素，理论上讲，输出应该类似于下面这种形式：
+
+```
+1.7628 -0.2677 ......
+```
+
+前两个元素应该就是两个repeat的和，后面的元素应该都是未初始化的无意义的数据。
+
+**但问题的关键来了，来看一看Kernel中输出的结果向量的前20个元素。**
+
+```
+1.7628 0.0000000013091844320297241211 -0.0000000027893838882446289062 0.0000000034829735755920410156 0.000000041852550506591796875 -0.000000004057476043701171875 -0.0000004261577606201171875 0.0000000014236330986022949219 -0.2677 -0.000000044695949554443359375 -0.000000012639684677124023437 0.00000000012021332979202270508 -0.000000060646677017211914062 -0.0000000027346568107604980469 -0.000000011391909122467041016 -0.000000012336615324020385742 0.00000018131090164184570312
+```
+
+这样看不够直观，我们将每个元素都换个行再输出，得到如下。
+
+```
+1.7628
+0.0000000013091844320297241211
+-0.0000000027893838882446289062
+0.0000000034829735755920410156
+0.000000041852550506591796875
+-0.000000004057476043701171875
+-0.0000004261577606201171875
+0.0000000014236330986022949219
+-0.2677
+-0.000000044695949554443359375
+-0.000000012639684677124023437
+0.00000000012021332979202270508
+-0.000000060646677017211914062
+-0.0000000027346568107604980469
+-0.000000011391909122467041016
+-0.000000012336615324020385742
+0.00000018131090164184570312
+```
+
+观察到的结果是有些惊喜的，`vec_cross_add`并没有按照预期的形式返回结果。这些很小的数都是未初始化的无意义数据，真正有意义的数据被放在的位置0和8上。
+
+而为什么是这两个位置，一种可能的解释是，该接口在运算的过程中，是按照block来计算的，一个repeat是8个block，所以理论上会有8个求和结果，然后这个接口将8个block的和再累加起来，放到结果向量的第一个位置。按照正常来讲，最终返回结果之前，应该将所有repeat的求和结果做一个紧凑排布，就会得到像定长向量那样正常的结果向量。可能在实现变长向量重载的时候没有做这个紧凑？我乱猜的（狗头保命）。
+
+## 解决方案
+
+所以只要注意这一点，在使用变长向量的时候，将正确位置的元素累加即可得到正确的结果。
+
+正确的代码实现如下，这里只展示核心部分。
+
+```c++
+Q.launch<class SumViewFixed>(GROUP_NUM, [=](sycl::group<1> group) {
+    const std::size_t group_id = group.get_group_id();
+
+    bisheng::vector<data_t, 30000> input_vec;
+    bisheng::vector<data_t, 30000> res_vec;
+
+    input_vec.load(
+        sycl::global_ptr<data_t>(input_buf + group_id * ELEM_PER_GROUP).get(),
+        ELEM_PER_GROUP);
+
+    bisheng::vector_view<data_t> input_vec_v(input_vec.data(), ELEM_PER_GROUP);
+    // 使用变长向量的时候就要考虑到正确数据的存放位置
+    bisheng::vector_view<data_t> res_vec_v(res_vec.data(), repeat_num * 8);
+
+    bisheng::vec_cross_add(res_vec_v, input_vec_v);
+
+    // 结果就直接用标量操作写回GM
+    for (std::size_t i = 0; i < repeat_num * 8; i += 8)
+      res_buf[group_id * (32 / sizeof(data_t))] += res_vec_v[i];
+  });
+```
+
+## 测试结果
+
+```
+  host sum: 1.49505186081
+ascend sum: 1.49505162239
+Result correct.
+```
+
+这是一个比较隐蔽的问题，在使用该接口的时候还是要多加注意。
