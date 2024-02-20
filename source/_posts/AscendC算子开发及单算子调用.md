@@ -3,9 +3,9 @@ title: AscendC算子开发及单算子调用
 toc: true
 mathjax: true
 tags:
-  - 异构编程
+  - 异构计算
   - AscendC
-categories: AscendC
+categories: [高性能计算,AscendC]
 abbrlink: 19902
 date: 2023-10-16 11:42:58
 ---
