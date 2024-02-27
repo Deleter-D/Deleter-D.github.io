@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>CUDA编程模型概述 - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-02-20T07:48:18.000Z"><meta property="article:modified_time" content="2024-02-27T09:37:44.297Z"><meta property="article:author" content="亦初"><meta property="article:tag" content="CUDA"><meta property="article:tag" content="高性能计算"><meta property="article:tag" content="异构计算"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/posts/57516/"},"headline":"亦初","image":[],"datePublished":"2024-02-20T07:48:18.000Z","dateModified":"2024-02-27T09:37:44.297Z","author":{"@type":"Person","name":"亦初"},"description":"很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"}</script><link rel="canonical" href="https://deleter-d.github.io/posts/57516/"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="亦初" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/music">音乐</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2024-02-20  <a class="commentCountImg" href="/posts/57516/#comment-container"><span class="display-none-class">da1a16231e94dd4f029d3a020248d018</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="da1a16231e94dd4f029d3a020248d018">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>36 分钟  <i class="fas fa-pencil-alt"> </i>5.4 k</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">CUDA编程模型概述</h1><div class="content"><p>很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由《Professional CUDA C Programming》一书、CUDA官方文档、互联网上的一些资料以及笔者自己的理解构成，希望能对你有一些帮助，若有错误也请大胆指出。</p>
+<span id="more"></span>
+<h2 id="核函数">核函数</h2>
+<p>CUDA的核函数（Kernel）是通过<code>__global__</code>说明符定义的，通过C++扩展语法<code>&lt;&lt;&lt;...&gt;&gt;&gt;</code>来启动。下面是一个向量加法的例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 核函数定义</span><br><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">VecAdd</span><span class="hljs-params">(<span class="hljs-type">float</span>* A, <span class="hljs-type">float</span>* B, <span class="hljs-type">float</span>* C)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> i = threadIdx.x;<br>    C[i] = A[i] + B[i];<br>}<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    ...<br>    <span class="hljs-comment">// 核函数调用，该核函数包含N个线程</span><br>    VecAdd&lt;&lt;&lt;<span class="hljs-number">1</span>, N&gt;&gt;&gt;(A, B, C);<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>核函数的编写是无需考虑并行性的，并行调度是由编译器和GPU自动完成的，只需要针对每个线程需要处理的逻辑编写代码即可。</p>
+<p>核函数的返回类型必须是<code>void</code>，限定符<code>__global__</code>和返回类型的顺序可以调换，上面的核函数也可以写成如下形式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> __global__ <span class="hljs-title">VecAdd</span><span class="hljs-params">(<span class="hljs-type">float</span>* A, <span class="hljs-type">float</span>* B, <span class="hljs-type">float</span>* C)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>核函数有一些注意事项：</p>
+<ul>
+<li>核函数只能访问GPU内存；</li>
+<li>核函数不能使用变长参数；</li>
+<li>核函数不能使用静态变量；</li>
+<li>核函数不能使用函数指针；</li>
+<li>核函数具有异步性；</li>
+</ul>
+<p>具体例子参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/01_hello_world.cu">hello_world.cu</a>。</p>
+<p>CUDA除了核函数还有两种函数，设备函数和主机函数。</p>
+<ul>
+<li>设备函数使用<code>__device__</code>限定符修饰，只能在设备上执行，只能被核函数或其他设备函数调用；</li>
+<li>主机函数使用<code>__host__</code>限定符修饰，可以与<code>__device__</code>限定符同时使用，编译器会针对主机和设备分别编译该函数；</li>
+</ul>
+<p>注意：<code>__global__</code>不能与<code>__host__</code>或<code>__device__</code>同时使用。</p>
+</blockquote>
+<blockquote>
+<p>除此之外，还需要掌握两个常用技巧，一个是错误处理，一个是性能分析。这两个技巧将在整个GPU算子开发和优化过程中起到重要的作用。关于错误处理，示例代码见<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/02_error_handle.cu">error_handle.cu</a>。关于性能分析，详见<a href="#性能分析">性能分析</a>，以及代码示例<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/03_profiling.cu">profiling.cu</a>。</p>
+</blockquote>
+<h2 id="线程层级结构">线程层级结构</h2>
+<p>为了方便的定位和访问线程，CUDA提供了线程索引<code>threadIdx</code>，这是一个具有三个分量的向量，可以使用一维、二维或三维的线程索引来标识线程。</p>
+<p>线程的索引和ID对应关系如下：</p>
+<ul>
+<li>一维block：索引与ID相等；</li>
+<li>大小为<code>(Dx, Dy)</code>的二维block：索引<code>(x, y)</code>对应ID为<code>(x + y * Dx)</code>；</li>
+<li>大小为<code>(Dx, Dy, Dz)</code>的三维block：索引<code>(x, y, z)</code>对应ID为<code>(x + y * Dx + z * Dx * Dy)</code>。</li>
+</ul>
+<p>下面是一个矩阵加法的例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">MatAdd</span><span class="hljs-params">(<span class="hljs-type">float</span> A[N][N], <span class="hljs-type">float</span> B[N][N], <span class="hljs-type">float</span> C[N][N])</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> i = threadIdx.x;<br>    <span class="hljs-type">int</span> j = threadIdx.y;<br>    C[i][j] = A[i][j] + B[i][j];<br>}<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    ...<br>    <span class="hljs-comment">// 核函数调用，该核函数包括N * N * 1个线程</span><br>    <span class="hljs-type">int</span> numBlocks = <span class="hljs-number">1</span>;<br>    <span class="hljs-function">dim3 <span class="hljs-title">threadsPerBlock</span><span class="hljs-params">(N, N)</span></span>;<br>    MatAdd&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(A, B, C);<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>对于当前的GPU，每个线程块（block）最多可以容纳1024个线程。但每个核函数可以被多个形状相同的线程块执行，故总线程数为线程块数量 * 每块线程数。</p>
+</blockquote>
+<p>线程块由一维、二维或三维的线程块网格（grid）组织起来，网格中线程块的数量通常由被处理的数据决定，通常这个数量是超过物理处理单元数量的。</p>
+<p>grid和block的数量可以由<code>&lt;&lt;&lt;...&gt;&gt;&gt;</code>来指定，其中的数据类型可以是<code>int</code>或<code>dim3</code>。</p>
+<p>每个block可以由一维、二维或三维的<code>blockIdx</code>唯一标识，block的维度可以通过<code>blockDim</code>在核函数内获取。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/42de655c-5f10-41d2-9bc8-e1a40f3fd95f"></p>
+<p>扩展一下上面的矩阵加法的例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">MatAdd</span><span class="hljs-params">(<span class="hljs-type">float</span> A[N][N], <span class="hljs-type">float</span> B[N][N], <span class="hljs-type">float</span> C[N][N])</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> i = blockIdx.x * blockDim.x + threadIdx.x;<br>    <span class="hljs-type">int</span> j = blockIdx.y * blockDim.y + threadIdx.y;<br>    <span class="hljs-keyword">if</span> (i &lt; N &amp;&amp; j &lt; N)<br>        C[i][j] = A[i][j] + B[i][j];<br>}<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    ...<br>    <span class="hljs-comment">// 每个block有16 * 16共256个线程</span><br>    <span class="hljs-function">dim3 <span class="hljs-title">threadsPerBlock</span><span class="hljs-params">(<span class="hljs-number">16</span>, <span class="hljs-number">16</span>)</span></span>;<br>    <span class="hljs-comment">// grid大小是由矩阵的大小决定的，来确保每个矩阵元素都有线程处理</span><br>    <span class="hljs-function">dim3 <span class="hljs-title">numBlocks</span><span class="hljs-params">(N ∕ threadsPerBlock.x, N ∕ threadsPerBlock.y)</span></span>;<br>    MatAdd&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(A, B, C);<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<p>上面的例子是基于每个grid的线程数在每个维度上都能被每个block的线程数整除，但实际中可能不是这样的。</p>
+<p>同一个block中的线程可以通过共享内存（shared memory）来协作，并可以通过内部函数<code>__syncthreads()</code>来同步线程以协调访存，这些后面会再提到。</p>
+<blockquote>
+<p>详细来说，CUDA可以组织最多三个维度的grid和block，如果不指定维度，则默认都是一维的。</p>
+<p>有一些内建变量可以用来索引线程，这些变量只在核函数内有效，定义在<code>device_launch_parameters.h</code>头文件中。</p>
+<p>其中，<code>blockIdx</code>和<code>threadIdx</code>是类型为<code>uint3</code>的结构体，分别都有<code>x, y, z</code>三个成员，该结构体源码长下面这样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">__device_builtin__</span> uint3<br>{<br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> x, y, z;<br>};<br></code></pre></td></tr></table></figure>
+<p>而<code>gridDim</code>和<code>blockDim</code>是类型为<code>dim3</code>的结构体，同样有<code>x, y, z</code>三个成员，源码是下面这样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">__device_builtin__</span> dim3<br>{<br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> x, y, z;<br>	<span class="hljs-comment">// 还有其他部分...</span><br>};<br></code></pre></td></tr></table></figure>
+<p>对于上述几个变量，他们有下列范围关系：</p>
+<ul>
+<li><code>blockIdx.x</code>范围为<code>[0, gridDim.x-1]</code>；</li>
+<li><code>blockIdx.y</code>范围为<code>[0, gridDim.y-1]</code>；</li>
+<li><code>blockIdx.z</code>范围为<code>[0, gridDim.z-1]</code>；</li>
+<li><code>threadIdx.x</code>范围为<code>[0, blockDim.x-1]</code>;</li>
+<li><code>threadIdx.y</code>范围为<code>[0, blockDim.y-1]</code>;</li>
+<li><code>threadIdx.z</code>范围为<code>[0, blockDim.z-1]</code>;</li>
+</ul>
+<p>定义多维grid和block可以使用C++构造函数的形式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">dim3 <span class="hljs-title">grid_size</span><span class="hljs-params">(Gx, Gy, Gz)</span></span>;<br><span class="hljs-function">dim3 <span class="hljs-title">block_size</span><span class="hljs-params">(Bx, By, Bz)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>grid和block是有大小限制的：</p>
+<ul>
+<li><code>gridDim.x</code>最大值为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex;" xmlns="http://www.w3.org/2000/svg" width="6.816ex" height="2.072ex" role="img" focusable="false" viewBox="0 -833.9 3012.6 915.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(1512.3,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(2512.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></svg></mjx-container></span>；</li>
+<li><code>gridDim.y</code>最大值为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex;" xmlns="http://www.w3.org/2000/svg" width="6.816ex" height="2.072ex" role="img" focusable="false" viewBox="0 -833.9 3012.6 915.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path data-c="36" d="M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(1512.3,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(2512.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></svg></mjx-container></span>；</li>
+<li><code>gridDim.z</code>最大值为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex;" xmlns="http://www.w3.org/2000/svg" width="6.816ex" height="2.072ex" role="img" focusable="false" viewBox="0 -833.9 3012.6 915.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path data-c="36" d="M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(1512.3,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(2512.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></svg></mjx-container></span>；</li>
+<li><code>blockDim.x</code>最大值为1024；</li>
+<li><code>blockDim.y</code>最大值为1024；</li>
+<li><code>blockDim.z</code>最大值为64；</li>
+</ul>
+<p>但block有一个额外限制，总的block数最大为1024，即满足上述限制的同时要满足<code>blockDim.x * blockDim.y * blockDim.z &lt;= 1024</code>。</p>
+<p>具体例子参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/04_threads_management.cu">threads_management.cu</a></p>
+</blockquote>
+<h3 id="线程块集群">线程块集群</h3>
+<p>线程块集群（Thread Block Cluster）是一个可选的层级。在线程块中，线程会被协调安排在流式多处理器（streaming multiprocessor）中。类似地，一个线程块集群中的线程会被协调安排在GPU处理簇（GPU Processing Cluster, GPC）中。</p>
+<p>与block类似，簇也有一维、二维或三维的形式。簇中的block数量是可以由用户定义的，但CUDA支持的可移植的簇中最多包含8个block。对于不能支持最大簇的GPU设备或MIG配置中，会相应减小这个最大数量。在特定体系结构下，可以用<code>cudaOccupancyMaxPotentialClusterSize</code>接口来查询簇支持的最大block数量。</p>
+<blockquote>
+<p>MIG是英伟达提供的多实例GPU框架，能够独立划分GPU资源，使得GPU在运行不同任务的时候不会争抢资源。</p>
+</blockquote>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/48e6be32-5b22-4ec0-884d-00d767fa2893"></p>
+<p>可以使用编译时核函数属性<code>__cluster_dims__(X, Y, Z)</code>或者使用CUDA核函数的启动API<code>cudaLanunchKernelEx</code>来启用线程块集群。若核函数使用编译时属性确定簇大小，则核函数启动时就无法改变簇大小。下面是使用编译时核函数属性使用线程块集群的例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 编译时确定线程块集群尺寸为2 * 1 * 1</span><br>__global__ <span class="hljs-type">void</span> __cluster_dims__(<span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>) <span class="hljs-built_in">cluster_kernel</span>(<span class="hljs-type">float</span> *input, <span class="hljs-type">float</span>* output) {}<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">float</span> *input, *output;<br>    <span class="hljs-function">dim3 <span class="hljs-title">threadsPerBlock</span><span class="hljs-params">(<span class="hljs-number">16</span>, <span class="hljs-number">16</span>)</span></span>;<br>    <span class="hljs-function">dim3 <span class="hljs-title">numBlocks</span><span class="hljs-params">(N / threadsPerBlock.x, N / threadsPerBlock.y)</span></span>;<br><br>    <span class="hljs-comment">// grid的维度不受线程块集群启动方式影响</span><br>    <span class="hljs-comment">// grid的维度必须是线程块集群尺寸的倍数</span><br>    cluster_kernel&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(input, output);<br>}<br></code></pre></td></tr></table></figure>
+<p>线程块集群大小也可以在运行时设置，并且使用CUDA核函数的启动API<code>cudaLaunchKernelEx</code>来启动内核。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">cluster_kernel</span><span class="hljs-params">(<span class="hljs-type">float</span> *input, <span class="hljs-type">float</span>* output)</span> </span>{}<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">float</span> *input, *output;<br>    <span class="hljs-function">dim3 <span class="hljs-title">threadsPerBlock</span><span class="hljs-params">(<span class="hljs-number">16</span>, <span class="hljs-number">16</span>)</span></span>;<br>    <span class="hljs-function">dim3 <span class="hljs-title">numBlocks</span><span class="hljs-params">(N / threadsPerBlock.x, N / threadsPerBlock.y)</span></span>;<br><br>    {<br>        cudaLaunchConfig_t config = {<span class="hljs-number">0</span>};<br>        <span class="hljs-comment">// grid的维度不受线程块集群启动方式影响</span><br>        <span class="hljs-comment">// grid的维度必须是线程块集群尺寸的倍数</span><br>        config.gridDim = numBlocks;<br>        config.blockDim = threadsPerBlock;<br><br>        cudaLaunchAttribute attribute[<span class="hljs-number">1</span>];<br>        attribute[<span class="hljs-number">0</span>].id = cudaLaunchAttributeClusterDimension;<br>        attribute[<span class="hljs-number">0</span>].val.clusterDim.x = <span class="hljs-number">2</span>; <span class="hljs-comment">// 线程块集群的X维度大小</span><br>        attribute[<span class="hljs-number">0</span>].val.clusterDim.y = <span class="hljs-number">1</span>; <span class="hljs-comment">// 线程块集群的Y维度大小</span><br>        attribute[<span class="hljs-number">0</span>].val.clusterDim.z = <span class="hljs-number">1</span>; <span class="hljs-comment">// 线程块集群的Z维度大小</span><br>        config.attrs = attribute;<br>        config.numAttrs = <span class="hljs-number">1</span>;<br><br>        <span class="hljs-built_in">cudaLaunchKernelEx</span>(&amp;config, cluster_kernel, input, output);<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>在计算能力9.0的GPU中，线程块集群中所有的线程块都保证在单个GPC上调度，并且允许簇中的线程块使用<code>Cluster Group</code>中的API<code>cluster.sync()</code>来执行硬件支持的同步操作。同时<code>Cluster Group</code>还提供成员函数<code>num_threads()</code>和<code>num_blocks()</code>来获取簇中的线程数和线程块数。<code>dim_threads()</code>和<code>dim_blocks()</code>获取线程和线程块的维度排列方式。</p>
+<p>对于同一线程块集群中的线程块来说，共享内存是分布式的，可以互相访问彼此的共享内存。</p>
+<h2 id="内存层级结构">内存层级结构</h2>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/c3212b1c-8279-44eb-9420-df8763211819"></p>
+<p>CUDA线程可以从不同的内存空间中访问数据。</p>
+<ul>
+<li>每个线程拥有私有的本地内存（Local Memory）；</li>
+<li>每个线程块拥有所有块内线程可见的共享内存（Shared Memory），这些块内线程与线程块有着相同的生命周期；</li>
+<li>每个线程块集群中的线程块可以在彼此的共享内存中进行读、写和原子操作；</li>
+<li>所有线程共享全局内存（Global Memory）。</li>
+</ul>
+<p>此外还有两片可以被所有线程访问的读内存空间，常量内存（Constant Memory）和纹理内存（Texture Memory）空间。全局、常量、纹理内存针对不同的内存使用进行了优化，纹理内存还为一些特定的数据格式提供不同的访存模式以及数据过滤。这三片内存在同一个程序的核函数启动期间是持久的。</p>
+<blockquote>
+<p>CUDA的内存管理与标准C语言的内存管理非常类似。</p>
+<table>
+<thead>
+<tr class="header">
+<th>标准C函数</th>
+<th>CUDA C函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>malloc</code></td>
+<td><code>cudaMalloc</code></td>
+<td>内存分配</td>
+</tr>
+<tr class="even">
+<td><code>memcpy</code></td>
+<td><code>cudaMemcpy</code></td>
+<td>内存般移</td>
+</tr>
+<tr class="odd">
+<td><code>memset</code></td>
+<td><code>cudaMemset</code></td>
+<td>内存初始化</td>
+</tr>
+<tr class="even">
+<td><code>free</code></td>
+<td><code>cudaFree</code></td>
+<td>内存释放</td>
+</tr>
+</tbody>
+</table>
+<p>函数签名的对比如下。</p>
+<table>
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>标准C函数</th>
+<th>CUDA C函数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>extern void *malloc(size_t __size)</code></td>
+<td><code>__host__ __device__ cudaError_t cudaMalloc(void **devPtr, size_t size)</code></td>
+</tr>
+<tr class="even">
+<td><code>extern void *memcpy(void *__restrict __dest, const void *__restrict __src, size_t __n)</code></td>
+<td><code>__host__ cudaError_t cudaMemcpy(void *dst, const void *src, size_t count, cudaMemcpyKind kind)</code></td>
+</tr>
+<tr class="odd">
+<td><code>extern void *memset(void *__s, int __c, size_t __n)</code></td>
+<td><code>__host__ cudaError_t cudaMemset(void *devPtr, int value, size_t count)</code></td>
+</tr>
+<tr class="even">
+<td><code>extern void free(void *__ptr)</code></td>
+<td><code>__host__ __device__ cudaError_t cudaFree(void *devPtr)</code></td>
+</tr>
+</tbody>
+</table>
+<p>上表中<code>cudaMemcpy</code>接口中的最后一个参数<code>cudaMemcpyKind</code>是一个枚举类，有五个成员。</p>
+<ul>
+<li><code>cudaMemcpyHostToHost</code>：主机 -&gt; 主机；</li>
+<li><code>cudaMemcpyHostToDevice</code>：主机 -&gt; 设备；</li>
+<li><code>cudaMemcpyDeviceToHost</code>：设备 -&gt; 主机；</li>
+<li><code>cudaMemcpyDeviceToDevice</code>：设备 -&gt; 设备；</li>
+<li><code>cudaMemcpyDefault</code>：默认方式，仅允许在支持统一虚拟寻址的系统中使用。</li>
+</ul>
+<p>详细代码见<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/05_memory_management.cu">memory_management.cu</a>。</p>
+</blockquote>
+<h2 id="异构编程">异构编程</h2>
+<p>CUDA 编程模型假设主机和设备维护自己独立的内存空间，分别称为主机内存（Host Memory）和设备内存（Device Memory），程序通过CUDA运行时来管理设备内存，包括内存申请、释放以及主机和设备之间的数据搬移。</p>
+<p>CUDA还提供了统一内存管理，贯通了主机内存和设备内存，使得系统中所有CPU和GPU都能够通过一个单一的、连续的内存视图来管理内存。统一内存使得设备端可以超额订阅内存，且不必再显式地将数据从主机端镜像到设备端，从而简化程序的移植。</p>
+<h2 id="异步simt编程模型">异步SIMT编程模型</h2>
+<p>在CUDA中，线程是运算或内存操作的最低层级抽象。异构编程模型定义了CUDA线程的异步操作，为CUDA线程之间的同步定义了异步屏障（Asynchronous Barrier）行为。该模型还解释并定义了<code>cuda::memcpy_async</code>如何在GPU计算的同时从全局内存中异步搬移数据。</p>
+<h3 id="异步操作">异步操作</h3>
+<p>异步操作的定义是，由CUDA线程发起，并且看起来像由另一个线程异步执行的操作。在良好的程序中，一个或多个CUDA线程与异步操作同步。发起异步操作的CUDA线程不需要位于同步线程中。这样的异步线程（类似线程）始终与启动异步操作的CUDA线程相关联。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/e85f06cf-a5d4-4cb8-9d8e-3d47d4b84127"></p>
+<p>异步操作使用同步对象来同步操作的完成，同步对象可以由用户显式管理（<code>cuda::memcpy_async</code>）或由库隐式管理（<code>cooperative_groups::memcpy_async</code>）。同步对象可以是<code>cuda::barrier</code>或<code>cuda::pipeline</code>，后续会详细介绍。这些同步对象可以在不同的线程域中使用，详见下表。</p>
+<table>
+<thead>
+<tr class="header">
+<th>线程域</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cuda::thread_scope::thread_scope_thread</code></td>
+<td>仅在发起异步操作的线程内同步。</td>
+</tr>
+<tr class="even">
+<td><code>cuda::thread_scope::thread_scope_block</code></td>
+<td>在发起异步操作的线程所属的block内同步所有或任意线程。</td>
+</tr>
+<tr class="odd">
+<td><code>cuda::thread_scope::thread_scope_device</code></td>
+<td>在发起异步操作的线程所属的GPU设备上同步所有或任意线程。</td>
+</tr>
+<tr class="even">
+<td><code>cuda::thread_scope::thread_scope_system</code></td>
+<td>在发起异步操作的线程所属的整个系统中同步所有或任意线程。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="计算能力">计算能力</h2>
+<p>设备的计算能力由版本号表示，也称为“SM 版本”。 该版本号标识 GPU 硬件支持的功能，并由应用程序在运行时使用来确定当前 GPU 上可用的硬件功能和指令。计算能力包括主版本号X和次版本号Y，用X.Y表示。</p>
+<ul>
+<li>Hopper架构：9</li>
+<li>Ampere架构：8</li>
+<li>Volta架构：7
+<ul>
+<li>Turing架构：7.5</li>
+</ul></li>
+<li>Pascal架构：6</li>
+<li>Maxwell架构：5</li>
+<li>Kepler架构：3</li>
+</ul>
+<p>若想知道自己的GPU对应的计算能力可以在英伟达官网给出的列表中查询<a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">GPU Compute Capability</a>。</p>
+<p>支持的虚拟架构计算能力见<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list">Virtual Architecture Feature List</a>，实际架构计算能力见<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list">GPU Feature List</a>。</p>
+<h2 id="性能分析">性能分析</h2>
+<p>这里对性能分析手段只需有一个初步了解，不讨论过多细节。CUDA性能分析大致有6种方法：</p>
+<ul>
+<li>CPU计时</li>
+<li>事件计时</li>
+<li>NVVP（Nidia Visual Profiler）</li>
+<li><code>nvprof</code></li>
+<li>Nsight Systems（<code>nsys</code>）</li>
+<li>Nsight Compute（<code>ncu</code>）</li>
+</ul>
+<h3 id="cpu计时">CPU计时</h3>
+<p>是最简单粗暴的方式，统计精度不高，不推荐使用。</p>
+<h3 id="事件计时">事件计时</h3>
+<p>通过CUDA提供的事件API来统计时间，精度比CPU计时高，但只能统计到某代码段的运行时间，没有其他性能信息。</p>
+<h3 id="nvvp和nvprof">NVVP和<code>nvprof</code></h3>
+<p>NVVP是带有图形界面的性能分析工具，<code>nvprof</code>是针对命令行的。这两个工具是有局限性的，当文件较大的时候，性能分析的速度会很慢。</p>
+<p>这两个工具是上一代的CUDA性能分析工具，工具定位也不是很清楚。对于计算能力7.5及以上的设备已经不支持使用<code>nvprof</code>来进行性能分析了。</p>
+<h3 id="nsight-systems和nsight-compute">Nsight Systems和Nsight Compute</h3>
+<p>这两个是新一代的CUDA性能分析工具，Nsight Systems是系统层面的分析工具，不仅会分析GPU的使用情况，还会给出CPU使用情况，以及CPU和GPU之间的交互情况。而Nsight Compute则用于分析核函数。</p>
+<p>Nvidia官方推荐的使用顺序是：</p>
+<ul>
+<li>先使用Nsight Systems从系统层面进行分析，优化不必要的同步和数据传输等操作。</li>
+<li>如果是计算程序，则使用Nsight Compute进行分析来优化核函数性能； 如果是图形程序，则使用Nsight Graphics进行分析，由于重点在于计算算子的开发，所以不对这一工具作过多介绍。</li>
+<li>优化过核函数后，再使用Nsight Systems重新进行系统层面的分析，继续优化。</li>
+</ul>
+<p>重复以上过程，直到达到一个比较满意的性能。</p>
+<h2 id="组织并行线程">组织并行线程</h2>
+<p>在此之前，我们已经了解了CUDA的基本编程模型，接下来用一系列实例来加深理解。</p>
+<h3 id="二维grid二维block">二维grid二维block</h3>
+<p>使用二维grid和二维block可以最好的理解矩阵加法映射到CUDA线程的过程，如果将grid中的每个block平铺开，再将每个block中的线程也平铺开，那么正好每个线程就对应矩阵的一个元素。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/58d83140-598a-4aa4-a7cc-0cd35fdfb6b5"></p>
+<p>这种情况下，可以先分别定位线程在x维度和y维度上的索引：</p>
+<ul>
+<li>x维度索引<code>ix = blockDim.x * blockIdx.x + threadIdx.x</code>；</li>
+<li>y维度索引<code>iy = blockDim.y * blockIdx.y + threadIdx.y</code>；</li>
+</ul>
+<p>然后再得到全局索引<code>idx = iy * nx + ix</code>，当然这个的前提是矩阵为行优先存储。</p>
+<p>详细代码见<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/06_example_sum_matrix_2D-grid_2D-block.cu">example_sum_matrix_2D-grid_2D-block.cu</a>。</p>
+<h3 id="一维grid一维block">一维grid一维block</h3>
+<p>使用一维grid一维block就意味着每个线程必须处理矩阵的一列数据，如图所示。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/454a29b9-5130-4d16-b4aa-9ed0b7004bf6"></p>
+<p>此时，x维度上的线程索引仍然为<code>ix = blockDim.x * blockIdx.x + threadIdx.x</code>。但y维度的线程只有1个，所以需要在线程内部遍历该线程待处理列向量中的每一个元素。元素在线程内部的索引为<code>idx = iy * nx + ix</code>，其中<code>iy</code>的范围是<code>[0, ny)</code>。</p>
+<p>详细代码见<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/07_example_sum_matrix_1D-grid_1D-block.cu">example_sum_matrix_1D-grid_1D-block.cu</a>。</p>
+<h3 id="二维grid一维block">二维grid一维block</h3>
+<p>这种情况下，每个线程都只处理矩阵的一个元素，可以看作是<a href="#二维grid二维block">二维grid二维block</a>的一种特殊情况，其中block的y维度为1，映射关系如图所示。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/65280438-b3a6-459f-979e-627144af3459"></p>
+<p>还是从x和y两个维度来分别索引线程：</p>
+<ul>
+<li>x维度索引<code>ix = blockDim.x * blockIdx.x + threadIdx.x</code>；</li>
+<li>y维度索引<code>iy = blockIdx.y</code>；</li>
+</ul>
+<p>然后得到线程的全局索引为<code>idx = iy * nx + ix</code>。</p>
+<p>详细代码见<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/08_example_sum_matrix_2D-grid_1D-block.cu">example_sum_matrix_2D-grid_1D-block.cu</a>。</p>
+<h2 id="设备管理">设备管理</h2>
+<h3 id="运行时api查询gpu信息">运行时API查询GPU信息</h3>
+<p>可以通过运行时API<code>cudaGetDeviceProperties()</code>来获取关于GPU的所有信息，通过给该API传入一个<code>cudaDeviceProp</code>和设备id来获取带有设备信息的结构体。结构体的成员详见<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp">cudaDeviceProp</a>。</p>
+<p>常用的一些属性请参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/01_programming_model/09_device_management.cu">device_management.cu</a>，代码中还给出了在多GPU系统中确定最优GPU的方法。</p>
+<h3 id="使用nvidia-smi查询gpu信息">使用nvidia-smi查询GPU信息</h3>
+<p><code>nvidia-smi</code></p>
+<p>选项<code>-L</code>可以列出系统中安装了多少个GPU，以及每个GPU的设备ID。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">nvidia-smi -L</span><br>GPU 0: NVIDIA GeForce RTX 4070 (UUID: GPU-2792043a-40d8-faf2-cf4e-e94d68836d2f)<br></code></pre></td></tr></table></figure>
+<p>选项<code>-q -i ${DeviceID}</code>可以获取指定设备的详细信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">nvidia-smi -q -i 0</span><br></code></pre></td></tr></table></figure>
+<p>可以通过下列参数精简显示的信息：</p>
+<ul>
+<li>MEMORY</li>
+<li>UTILIZATION</li>
+<li>ECC</li>
+<li>TEMPERATURE</li>
+<li>POWER</li>
+<li>CLOCK</li>
+<li>COMPUTE</li>
+<li>PIDS</li>
+<li>PERFORMANCE</li>
+<li>SUPPORTED_CLOCKS</li>
+<li>PAGE_RETIREMENT</li>
+<li>ACCOUNTING</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">nvidia-smi -q -i 0 -d MEMORY</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">nvidia-smi -q -i 0 -d UTILIZATION</span><br></code></pre></td></tr></table></figure>
+<h3 id="通过环境变量设置设备">通过环境变量设置设备</h3>
+<p>可以通过环境变量<code>CUDA_VISIBLE_DEVICES</code>来指定设备。</p>
+<ul>
+<li>若<code>CUDA_VISIBLE_DEVICES = 2</code>，则设备2将在CUDA程序中以设备0的身份出现；</li>
+<li>若<code>CUDA_VISIBLE_DEVICES = 2,3</code>，则设备2，3将在CUDA程序中以设备0，1的身份出现。</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>CUDA编程模型概述</p><p><a href="https://deleter-d.github.io/posts/57516/">https://deleter-d.github.io/posts/57516/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://deleter-d.github.io"><p>亦初</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-02-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-02-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/posts/9782/" target="_blank">CUDA编程——GPU加速库和OpenACC</a><br></span><span>  2.<a class="is-size-6" href="/posts/53610/" target="_blank">CUDA编程——调整指令集原语</a><br></span><span>  3.<a class="is-size-6" href="/posts/4919/" target="_blank">CUDA编程——流和并发</a><br></span><span>  4.<a class="is-size-6" href="/posts/50255/" target="_blank">CUDA编程——性能分析工具</a><br></span><span>  5.<a class="is-size-6" href="/posts/38038/" target="_blank">CUDA编程——共享内存和常量内存</a><br></span><span>  6.<a class="is-size-6" href="/posts/47184/" target="_blank">CUDA编程——全局内存</a><br></span><span>  7.<a class="is-size-6" href="/posts/47225/" target="_blank">CUDA编程——执行模型</a><br></span><span>  8.<a class="is-size-6" href="/posts/50741/" target="_blank">CUDA编程——NVCC编译器</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/50741/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">CUDA编程——NVCC编译器</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/22702/"><span class="level-item">打造vscode般的neovim</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'da1a16231e94dd4f029d3a020248d018',
+            repo: 'Deleter-D.github.io',
+            owner: 'Deleter-D',
+            clientID: 'd087baa8a532e3b31fba',
+            clientSecret: 'faec4c1d7046247c200bca62c9930d0799ce58a5',
+            admin: ["Deleter-D"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cloudflare-cors-anywhere.wyp867909454.workers.dev/?https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="is-flex is-mobile" href="#核函数"><span>核函数</span></a></li><li><a class="is-flex is-mobile" href="#线程层级结构"><span>线程层级结构</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#线程块集群"><span>线程块集群</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#内存层级结构"><span>内存层级结构</span></a></li><li><a class="is-flex is-mobile" href="#异构编程"><span>异构编程</span></a></li><li><a class="is-flex is-mobile" href="#异步simt编程模型"><span>异步SIMT编程模型</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#异步操作"><span>异步操作</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#计算能力"><span>计算能力</span></a></li><li><a class="is-flex is-mobile" href="#性能分析"><span>性能分析</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cpu计时"><span>CPU计时</span></a></li><li><a class="is-flex is-mobile" href="#事件计时"><span>事件计时</span></a></li><li><a class="is-flex is-mobile" href="#nvvp和nvprof"><span>NVVP和nvprof</span></a></li><li><a class="is-flex is-mobile" href="#nsight-systems和nsight-compute"><span>Nsight Systems和Nsight Compute</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#组织并行线程"><span>组织并行线程</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#二维grid二维block"><span>二维grid二维block</span></a></li><li><a class="is-flex is-mobile" href="#一维grid一维block"><span>一维grid一维block</span></a></li><li><a class="is-flex is-mobile" href="#二维grid一维block"><span>二维grid一维block</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#设备管理"><span>设备管理</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#运行时api查询gpu信息"><span>运行时API查询GPU信息</span></a></li><li><a class="is-flex is-mobile" href="#使用nvidia-smi查询gpu信息"><span>使用nvidia-smi查询GPU信息</span></a></li><li><a class="is-flex is-mobile" href="#通过环境变量设置设备"><span>通过环境变量设置设备</span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">亦初</p><p class="is-size-6 is-block">落霞与孤鹜齐飞，秋水共长天一色</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>冰岛</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">74</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">22</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">72</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/Deleter-D" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/Deleter-D"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:18735855248@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Telegram" href="https://t.me/GoldPancake687"><i class="fab fa-telegram"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:49:53.000Z">2024-02-20</time></p><p class="title"><a href="/posts/9782/">CUDA编程——GPU加速库和OpenACC</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:45:21.000Z">2024-02-20</time></p><p class="title"><a href="/posts/53610/">CUDA编程——调整指令集原语</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:36:28.000Z">2024-02-20</time></p><p class="title"><a href="/posts/4919/">CUDA编程——流和并发</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:29:56.000Z">2024-02-20</time></p><p class="title"><a href="/posts/50255/">CUDA编程——性能分析工具</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:22:30.000Z">2024-02-20</time></p><p class="title"><a href="/posts/38038/">CUDA编程——共享内存和常量内存</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Hexo/"><span class="level-start"><span class="level-item">Hexo</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java/"><span class="level-start"><span class="level-item">Java</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Linux/"><span class="level-start"><span class="level-item">Linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">15</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/Vue/"><span class="level-start"><span class="level-item">Vue</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/axios/"><span class="level-start"><span class="level-item">axios</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%8A%98%E8%85%BE/"><span class="level-start"><span class="level-item">折腾</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/"><span class="level-start"><span class="level-item">数学</span></span><span class="level-end"><span class="level-item tag">6</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="level-start"><span class="level-item">矩阵论</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2024/02/"><span class="level-start"><span class="level-item">二月 2024</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/12/"><span class="level-start"><span class="level-item">十二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/10/"><span class="level-start"><span class="level-item">十月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/08/"><span class="level-start"><span class="level-item">八月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/"><span class="tag">算法</span><span class="tag is-grey-lightest">11</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E8%AE%A1%E7%AE%97/"><span class="tag">异构计算</span><span class="tag is-grey-lightest">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CUDA/"><span class="tag">CUDA</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><span class="tag">机器学习</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%AF%95%E6%98%87%E7%BC%96%E8%AF%91%E5%99%A8/"><span class="tag">毕昇编译器</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/"><span class="tag">高性能计算</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Vue/"><span class="tag">Vue</span><span class="tag is-grey-lightest">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8A%9B%E6%89%A3/"><span class="tag">力扣</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E5%AD%A6/"><span class="tag">数学</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="tag">矩阵论</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><span class="tag">设计模式</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/axios/"><span class="tag">axios</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E7%BC%96%E7%A8%8B/"><span class="tag">异构编程</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/3D%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1/"><span class="tag">3D人体姿态估计</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Pytorch/"><span class="tag">Pytorch</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87/"><span class="tag">论文</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ITK/"><span class="tag">ITK</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><span class="tag">深度学习</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CVPR/"><span class="tag">CVPR</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Hexo/"><span class="tag">Hexo</span><span class="tag is-grey-lightest">2</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a><p class="size-small"><span>&copy; 2024 亦初</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作，如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2022/03/13 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="475747480" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>

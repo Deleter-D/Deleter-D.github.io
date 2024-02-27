@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>CUDA编程——流和并发 - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-02-20T08:36:28.000Z"><meta property="article:modified_time" content="2024-02-27T09:37:44.297Z"><meta property="article:author" content="亦初"><meta property="article:tag" content="CUDA"><meta property="article:tag" content="高性能计算"><meta property="article:tag" content="异构计算"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/posts/4919/"},"headline":"亦初","image":[],"datePublished":"2024-02-20T08:36:28.000Z","dateModified":"2024-02-27T09:37:44.297Z","author":{"@type":"Person","name":"亦初"},"description":"很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"}</script><link rel="canonical" href="https://deleter-d.github.io/posts/4919/"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="亦初" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/music">音乐</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2024-02-20  <a class="commentCountImg" href="/posts/4919/#comment-container"><span class="display-none-class">718aa5062a9ca7e020fa71d3b8af1a74</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="718aa5062a9ca7e020fa71d3b8af1a74">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>6.8 k</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">CUDA编程——流和并发</h1><div class="content"><p>很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由《Professional CUDA C Programming》一书、CUDA官方文档、互联网上的一些资料以及笔者自己的理解构成，希望能对你有一些帮助，若有错误也请大胆指出。</p>
+<span id="more"></span>
+<h2 id="异步并发执行">异步并发执行</h2>
+<p>CUDA将以下几个操作暴露为可以互相并发执行的操作：</p>
+<ul>
+<li>主极端的运算；</li>
+<li>设备端的运算；</li>
+<li>从主机端到设备端的数据传输；</li>
+<li>从设备端到主机端的数据传输；</li>
+<li>给定设备内的数据传输；</li>
+<li>设备之间的数据传输。</li>
+</ul>
+<p>这些操作之间实现的并发级别将取决于设备的特性集和计算能力，如下所述。</p>
+<h3 id="主机和设备之间的并发执行">主机和设备之间的并发执行</h3>
+<p>主机和设备的并发执行是通过在设备完成所请求的任务之前，将控制权交还给主机线程完成的，这一过程由异步库函数实现。使用异步调用，多个设备可以同时排队，以便在设备资源满足时，由CUDA驱动程序执行。这减轻了主机线程管理设备的责任，使其有更多的精力去执行其他操作。</p>
+<p>以下设备操作对于主机是异步的：</p>
+<ul>
+<li>核函数启动；</li>
+<li>在单个设备内的内存拷贝；</li>
+<li>从主机到设备的64KB或更小的内存拷贝；</li>
+<li>由带有<code>Async</code>后缀的函数发起的内存拷贝；</li>
+<li>内存集合（Memory Set）函数调用。</li>
+</ul>
+<p>可以将环境变量<code>CUDA_LAUNCH_BLOCKING</code>设为1来全局禁用所有CUDA程序的核函数异步启动。该功能仅用于调试，不应该用于生产环境。</p>
+<p>若通过分析软件（Nsight，Visual Profiler等）收集硬件计数器，则核函数启动时同步的，除非启用了并发核函数分析。若异步内存拷贝没有涉及锁页内存，则该拷贝也可能是同步的。</p>
+<h3 id="并发核函数执行">并发核函数执行</h3>
+<p>部分计算能力2.x以及更高的设备能够并发执行多个核函数。程序可以通过设备属性<code>concurrentKernels</code>来检查这种能力，该属性为1则表示支持该功能。</p>
+<p>核函数的最大并发量取决于设备的计算能力，详见<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#features-and-technical-specifications-technical-specifications-per-compute-capability">官方文档表格</a>。</p>
+<p>来自一个CUDA上下文中的核函数无法与另一个CUDA上下文中的核函数并发执行。GPU可能以时间划分来为每个上下文提供前向过程。若用户想在SM上同时执行多个过程的核函数，则必须启动MPS。</p>
+<p>若核函数使用了很多纹理内存或大量的本地内存，则与其他核函数并发执行的可能性会更小。</p>
+<h3 id="数据传输与核函数的交叠">数据传输与核函数的交叠</h3>
+<p>一些设备可以利用核函数并发地执行（与设备之间的）异步内存拷贝。可以通过设备属性<code>asyncEngineCount</code>来检查这种能力，若该值大于0则表明设备支持该功能。如果内存拷贝涉及到了主机内存，则必须是锁页内存。</p>
+<p>通过核函数同时执行设备内部的内存拷贝（需要设备支持设备属性<code>concurrentKernels</code>）和与设备之间的内存拷贝（需要设备支持设备属性<code>asyncEngineCount</code>）也是可能的。设备内部的内存拷贝通过使用目的地址与源地址处于同一设备的标准内存拷贝函数发起。</p>
+<h3 id="并发数据传输">并发数据传输</h3>
+<p>部分计算能力2.x以及更高的设备可以将与设备之间的内存拷贝操作交叠。可以通过设备属性<code>asyncEngineCount</code>来检查这种能力，若该值为2则表明设备支持该功能。为了实现这种交叠，任何涉及到的主机内存必须是锁页内存。</p>
+<h2 id="流和事件">流和事件</h2>
+<p>CUDA流是一系列异步的CUDA操作，这些操作按照主机代码确定的顺序在设备上执行。流可以封装这些操作，保持操作的顺序，允许操作在流中排队，并使其在先前的所有操作之后执行，并且可以查询排队操作的状态。流中操作的执行相对于主机总是异步的。在同一个CUDA流中的操作有严格的执行顺序，而不同流中的操作在执行顺序上不受限制。</p>
+<p>CUDA的API函数一般分为同步和异步。具有同步行为的函数会阻塞主机端线程，直到它们完成。具有异步行为的函数被调用后，会立即将控制权归还给主机。</p>
+<h3 id="cuda流">CUDA流</h3>
+<h5 id="创建和销毁流">创建和销毁流</h5>
+<p>通过创建一个流对象并将其指定为一系列核函数启动与<code>host &lt;-&gt; device</code>间内存拷贝的参数来定义流。下列代码创建了两个流对象，并在锁页主机内存中分配一个<code>float</code>型的数组<code>hostPtr</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cudaStream_t stream[<span class="hljs-number">2</span>];<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; ++i)<br>    <span class="hljs-built_in">cudaStreamCreate</span>(&amp;stream[i]);<br><span class="hljs-type">float</span>* hostPtr;<br><span class="hljs-built_in">cudaMallocHost</span>(&amp;hostPtr, <span class="hljs-number">2</span> * size);<br></code></pre></td></tr></table></figure>
+<p>下面的代码通过三个操作定义了一系列流，三个操作分别是<code>host -&gt; device</code>内存拷贝、核函数启动、<code>device -&gt; host</code>内存拷贝。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; ++i) {<br>    <span class="hljs-built_in">cudaMemcpyAsync</span>(inputDevPtr + i * size, hostPtr + i * size, size, cudaMemcpyHostToDevice, stream[i]);<br>    MyKernel &lt;&lt;&lt;<span class="hljs-number">100</span>, <span class="hljs-number">512</span>, <span class="hljs-number">0</span>, stream[i]&gt;&gt;&gt;(outputDevPtr + i * size, inputDevPtr + i * size, size);<br>    <span class="hljs-built_in">cudaMemcpyAsync</span>(hostPtr + i * size, outputDevPtr + i * size, size, cudaMemcpyDeviceToHost, stream[i]);<br>}<br></code></pre></td></tr></table></figure>
+<p>上面的例子中，每个流将输入数组<code>HostPtr</code>的一部分拷贝到设备内存中的数组<code>InputDevPtr</code>，通过调用核函数<code>MyKernel()</code>来处理这些数据，最后将结果<code>outputDevPtr</code>拷贝回<code>HostPtr</code>的同一位置。注意：<code>hostPtr</code>必须指向锁页内存才会发生交叠行为。</p>
+<p>通过调用<code>cudaStreamDestroy()</code>来释放流。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; ++i)<br>    <span class="hljs-built_in">cudaStreamDestroy</span>(stream[i]);<br></code></pre></td></tr></table></figure>
+<p>如果在调用<code>cudaStreamDestroy()</code>时设备仍在流中工作，则该函数将立即返回，并且一旦设备完成流中的所有工作，与流关联的资源将被自动释放。</p>
+<blockquote>
+<p>CUDA提供两个API来检查流中的操作是否都已完成：</p>
+<ul>
+<li><code>cudaStreamSynchronize()</code>：强制阻塞主机，直到所给流中的操作全部完成；</li>
+<li><code>cudaStreamQuery()</code>：检查流中的所有操作是否完成，在完成之前不会阻塞主机。所有操作都完成时会返回<code>cudaSuccess</code>，当还有操作仍在执行或等待执行时返回<code>cudaErrorNotReady</code>。</li>
+</ul>
+</blockquote>
+<h5 id="默认流">默认流</h5>
+<p>当启动核函数与执行<code>host &lt;-&gt; device</code>间内存拷贝时未指定流参数，或将流参数指定为0，命令将提交到默认流。他们是顺序执行的。</p>
+<p>使用编译选项<code>--default-stream per-thread</code>编译的代码，或在引入CUDA头文件之间定义了宏<code>CUDA_API_PER_THREAD_DEFAULT_STREAM</code>的代码，默认流是常规流，每个主机线程均有自己的默认流。</p>
+<p>对于使用了编译选项<code>--default-stream legacy</code>编译的代码，默认流是称为空流（NULL Stream）的特殊流，每个设备都有一个用于所有主机线程的空流。空流是特殊的，因为它会导致<a href="#隐式同步">隐式同步</a>。</p>
+<p>对于未指定编译选项<code>--default-stream</code>的代码，默认值为<code>--default-stream legacy</code>。</p>
+<h3 id="流调度">流调度</h3>
+<p>从逻辑上看，所有流都可以同时执行，但映射到硬件上时并不总是这样。</p>
+<h4 id="虚假的依赖关系">虚假的依赖关系</h4>
+<p>虽然GPU支持多个<code>grid</code>同时执行，但所有流最终是被多路复用到单一的硬件工作队列中的。当选择一个<code>grid</code>执行时，在队列前面的任务由CUDA运行时调度。运行时会检查任务的依赖关系，若仍有任务在执行，则将等待该任务依赖的任务执行完成。当所有依赖关系都执行结束后，新任务才会被调度到可用的SM上。</p>
+<p>上述的这种单一流水线可能会导致虚假的依赖关系。图中的A、P与X本来没有依赖关系，但由于队列是单一的，故P只能等待A-B均执行完成才会和C一起被并发调度，X同理。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/ea7d2a6b-8ceb-4f99-8abb-bf705846ee7d"></p>
+<h4 id="hyper-q技术">Hyper-Q技术</h4>
+<p>Hyper-Q使用多个硬件工作队列，从而减少虚假的依赖关系。该技术通过在主机和设备之间维持多个硬件管理上的连接，允许多个CPU线程或进程在单一GPU上同时启动工作。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/baccc996-b6f1-44ea-a7c6-98d07d642c58"></p>
+<p>这种技术可以实现全流级并发，并具有最小的虚假流间依赖关系。</p>
+<h3 id="流的优先级">流的优先级</h3>
+<p>流的相对优先级可以在创建时使用<code>cudaStreamCreateWithPriority()</code>来指定。可以使用<code>cudaDeviceGetStreamPriorityRange()</code>函数获取允许的优先级范围，按 [最高优先级，最低优先级] 排序。在运行时，较高优先级流中的挂起工作优先于较低优先级流中的挂起工作。</p>
+<p>下面的代码展示了如何获取当前设备允许的优先级范围，并创建具有最高和最低优先级的流。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 获取当前设备允许的优先级范围</span><br><span class="hljs-type">int</span> priority_high, priority_low;<br><span class="hljs-built_in">cudaDeviceGetStreamPriorityRange</span>(&amp;priority_low, &amp;priority_high);<br><span class="hljs-comment">// 创建具有最高和最低优先级的流</span><br>cudaStream_t st_high, st_low;<br><span class="hljs-built_in">cudaStreamCreateWithPriority</span>(&amp;st_high, cudaStreamNonBlocking, priority_high);<br><span class="hljs-built_in">cudaStreamCreateWithPriority</span>(&amp;st_low, cudaStreamNonBlocking, priority_low);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>流优先级不会影响数据传输操作，只对计算核函数有影响。</p>
+<p>如果指定的优先级超出了设备定义的范围，它会被自动限制为定义范围内的最低值或最高值。</p>
+</blockquote>
+<h3 id="cuda事件">CUDA事件</h3>
+<p>CUDA运行时提供了一种方法来密切监视设备的进度，并通过让应用程序异步记录程序中任意点的事件并查询这些事件何时完成来执行准确的计时。当事件之前的所有任务（或者给定流中的所有命令）都完成时，事件就完成了。在所有流中的所有前面的任务和命令完成之后，流0中的事件才会完成。</p>
+<h4 id="创建和销毁事件">创建和销毁事件</h4>
+<p>下面的代码创建两个事件。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cudaEvent_t start, stop;<br><span class="hljs-built_in">cudaEventCreate</span>(&amp;start);<br><span class="hljs-built_in">cudaEventCreate</span>(&amp;stop);<br></code></pre></td></tr></table></figure>
+<p>用如下方式销毁。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">cudaEventDestroy</span>(start);<br><span class="hljs-built_in">cudaEventDestroy</span>(stop);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>对于事件，CUDA也提供了检查先前操作是否完成的API：</p>
+<ul>
+<li><code>cudaEventSynchronize()</code>：强制阻塞主机，直到该事件所在流中先前的操作执行结束，与<code>cudaStreamSynchronize()</code>类似；</li>
+<li><code>cudaEventQuery()</code>：不阻塞主机，与<code>cudaStreamQuery()</code>类似。</li>
+</ul>
+</blockquote>
+<h4 id="记录事件和计算运行时间">记录事件和计算运行时间</h4>
+<p>下面的代码展示了如何利用事件统计运行时间。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">cudaEventRecord</span>(start, <span class="hljs-number">0</span>);<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; ++i) {<br>    <span class="hljs-built_in">cudaMemcpyAsync</span>(inputDev + i * size, inputHost + i * size, size, cudaMemcpyHostToDevice, stream[i]);<br>    MyKernel&lt;&lt;&lt;<span class="hljs-number">100</span>, <span class="hljs-number">512</span>, <span class="hljs-number">0</span>, stream[i]&gt;&gt;&gt;(outputDev + i * size, inputDev + i * size, size);<br>    <span class="hljs-built_in">cudaMemcpyAsync</span>(outputHost + i * size, outputDev + i * size, size, cudaMemcpyDeviceToHost, stream[i]);<br>}<br><span class="hljs-built_in">cudaEventRecord</span>(stop, <span class="hljs-number">0</span>);<br><span class="hljs-built_in">cudaEventSynchronize</span>(stop);<br><span class="hljs-type">float</span> elapsedTime;<br><span class="hljs-built_in">cudaEventElapsedTime</span>(&amp;elapsedTime, start, stop);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>事件的启动和停止不必在同一个流中。</p>
+<p>注意：若在非默认流中记录启动事件或停止事件，返回的时间可能比预期的要大。因为<code>cudaEventRecord()</code>函数是异步的，并且不能保证计算的延迟正好处于两个事件之间。</p>
+</blockquote>
+<h3 id="流同步">流同步</h3>
+<p>在非默认流中，所有操作对于主机线程都是非阻塞的，因此会遇到需要在同一个流中令主机和运算操作同步的情况。</p>
+<p>从主机角度来讲，CUDA操作可以分为两大类：</p>
+<ul>
+<li>内存操作；</li>
+<li>核函数启动。</li>
+</ul>
+<p>对于主机来说，核函数启动总是异步的。很多内存操作本质上是同步的，但CUDA也提供了异步版本。</p>
+<p>CUDA的流可以分为两种：</p>
+<ul>
+<li>异步流（非默认流）；</li>
+<li>同步流（默认流）。</li>
+</ul>
+<p>在主机上，非默认流是异步流，其上所有操作都不阻塞主机执行。而被隐式声明的默认流是同步流，大多数添加到默认流上的操作都会导致主机在先前所有的操作上阻塞。</p>
+<p>非默认流可以进一步分为两种：</p>
+<ul>
+<li>阻塞流；</li>
+<li>非阻塞流。</li>
+</ul>
+<p>虽然非默认流对于主机是非阻塞的，但非默认流中的操作可以被默认流中的操作所阻塞。若一个非默认流是阻塞流，则默认流可以阻塞该非默认流中的操作。若一个非默认流是非阻塞流，则它不会阻塞默认流中的操作。</p>
+<h4 id="阻塞流和非阻塞流">阻塞流和非阻塞流</h4>
+<p>使用<code>cudaStreamCreate()</code>创建的流是阻塞流，即这些流中的操作可以被阻塞，一直等到默认流中先前的操作执行结束。默认流是隐式流，在相同的CUDA上下文中它和其他所有的阻塞流同步。一般情况下，当操作被发布到默认流中，在该操作被执行之前，CUDA上下文会等待所有先前的操作发布到所有的阻塞流中。此外，任何发布到阻塞流中的操作会被挂起等待，指导默认流中先前的操作执行结束才开始执行。</p>
+<p>CUDA运行时提供了一个函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">cudaError_t <span class="hljs-title">cudaStreamCreateWithFlags</span><span class="hljs-params">(cudaStream_t* pStream, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> flags)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>参数<code>flags</code>决定了所创建流的行为，可选如下两个值：</p>
+<ul>
+<li><code>cudaStreamDefault</code>；</li>
+<li><code>cudaStreamNonBlocking</code>。</li>
+</ul>
+<p>指定为<code>cudaStreamNonBlocking</code>使得默认流对于非默认流的阻塞行为失效。</p>
+<h4 id="隐式同步">隐式同步</h4>
+<p>若主机线程在来自不同流的两个命令之间发出以下任何一个操作，它们均不能同时执行：</p>
+<ul>
+<li>锁页主机内存分配；</li>
+<li>设备内存分配；</li>
+<li>设备内存初始化；</li>
+<li>同一设备内存地址之间的内存拷贝；</li>
+<li>任何提交至空流的CUDA命令；</li>
+<li>L1/共享内存配置之间的切换（见<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability-7-x">计算能力7.x</a>）。</li>
+</ul>
+<p>一些操作需要依赖关系检查，这些操作包括与被检查的启动项相同流中的任何其他命令，以及该流上对<code>cudaStreamQuery()</code>的任何调用。故程序应该遵循以下原则，以提高核函数的并发潜力：</p>
+<ul>
+<li>所有独立操作应该在有依赖关系的操作之前提交；</li>
+<li>任何形式的同步操作都应该尽可能的延迟。</li>
+</ul>
+<h4 id="显式同步">显式同步</h4>
+<p>以下多种方法可以显式同步流。</p>
+<ul>
+<li><code>cudaDeviceSynchronize()</code>：会等待此调用前的所有主机线程中的所有流中的所有命令全部完成；</li>
+<li><code>cudaStreamSynchronize()</code>：接受一个流作为参数，等待给定流中的此调用前的所有命令全部完成。可以用于使主机与特定流同步，从而允许其他流继续在设备上执行；</li>
+<li><code>cudaStreamWaitEvent()</code>：接受流和事件作为参数，使该调用之后添加到给定流的所有命令延迟执行，直到给定事件完成。该函数允许跨流同步；</li>
+<li><code>cudaStreamQuery()</code>：返回流中此调用前的所有命令的完成情况。</li>
+</ul>
+<h4 id="可配置事件">可配置事件</h4>
+<p>与流类似，CUDA也提供了API来创建不同行为的事件：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">cudaError_t <span class="hljs-title">cudaEventCreateWithFlags</span><span class="hljs-params">(cudaEvent_t* event, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> flags)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>参数<code>flags</code>的可选项有4个：</p>
+<ul>
+<li><code>cudaEventDefault</code>；</li>
+<li><code>cudaEventBlockingSync</code>；</li>
+<li><code>cudaEventDisableTiming</code>；</li>
+<li><code>cudaEventInterprocess</code>。</li>
+</ul>
+<p>指定为<code>cudaEventBlockingSync</code>的事件在同步时会阻塞调用的线程。<code>cudaEventSynchronize()</code>函数的默认操作是围绕事件进行的，使用CPU周期不断检查事件的状态。而指定为<code>cudaEventBlockingSync</code>后，会将这种轮询交给另一个线程，而调用线程本身继续执行，直到事件依赖关系满足才通知调用线程。这样可以减少CPU周期的浪费，但也会使得事件满足依赖关系与激活调用线程之间的延迟被拉长。</p>
+<p>指定为<code>cudaEventDisableTiming</code>表明事件只能用来同步，节省了记录时间戳带来的开销。</p>
+<p>指定为<code>cudaEventInterprocess</code>表明时间可能被用作进程间事件。</p>
+<h2 id="并发核函数执行-1">并发核函数执行</h2>
+<h3 id="非默认流中的并发核函数">非默认流中的并发核函数</h3>
+<p>现在已经几乎不存在不支持Hyper-Q的GPU设备了。想要实现核函数的并发执行，必须要令核函数在非默认流中执行。使用类似如下代码使核函数在不同的非默认流中并发执行。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>{<br>    kernel_1&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_2&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_3&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_4&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/01_hyper-Q_depth.cu">hyper-Q_depth.cu</a>。</p>
+</blockquote>
+<p>通过<code>NVIDIA Nsight System</code>分析核函数在流中的执行情况，可以借助可视化流水线来观察核函数在各个流中的执行情况，分析结果如下图所示。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/169eb417-183d-483f-bee3-d5588c6b8e1a"></p>
+<p>可以观察到核函数在<code>stream 14</code>，<code>stream 15</code>，<code>stream 16</code>中是并发执行的。</p>
+<blockquote>
+<p>关于这里有一些待解决和讨论的问题，为什么<code>stream 13</code>中的核函数没有和其他三个流中的核函数并发执行。我们来尝试一下每个流执行一个、两个和三个核函数，分别得到了如下结果。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/03e3a790-e45f-4bd0-9f2e-ec729631ca99"></p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/18f080d8-528b-44e3-abc6-ba5ce23d8bd0"></p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/9263efa6-cd30-4809-b329-a33b0614fef1"></p>
+<p>可以观察到，每个流只有一个核函数时，并发执行情况是符合预期的。但每个流中执行的核函数超过一个，就会先在某个流中全部执行一遍，然后在其他流中并发执行。在英伟达开发者论坛中询问后，官方人员给出了解释，这是由于核函数初始化时机导致的，这里放上帖子的<a target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/kernels-executing-concurrently-in-different-streams-do-not-behave-as-expected/276389">链接</a>。</p>
+<p>从CUDA 11.7开始，引入了一种懒加载机制，并在CUDA 11.8中进行了重大更新，相见官方文档<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#lazy-loading">Lazy Loading</a>。懒加载会使得核函数在真正要执行之前才进行初始化，而不是先全部初始化后再根据安排来执行。我们可以通过环境变量<code>CUDA_MODULE_LOADING</code>来控制是否开启懒加载，开启则设为<code>LAZY</code>，不开启则设为<code>EAGER</code>。</p>
+<p>我们将环境变量设置为<code>EAGER</code>便可以得到所有流同时启动核函数的结果。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/82ab2a82-9340-4056-8efc-0e817910f0e1"></p>
+</blockquote>
+<h3 id="虚假依赖关系的并发核函数">虚假依赖关系的并发核函数</h3>
+<p>接下来我们模拟一下不支持Hyper-Q技术的设备。可以通过环境变量<code>CUDA_DEVICE_MAX_CONNECTIONS</code>来控制队列个数，这里设为1来模拟只有一个硬件队列的情况。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">setenv</span>(<span class="hljs-string">"CUDA_DEVICE_MAX_CONNECTIONS"</span>, <span class="hljs-string">"32"</span>, <span class="hljs-number">1</span>);<br></code></pre></td></tr></table></figure>
+<p>在此基础上使用<code>nsys</code>分析核函数执行情况。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/dd30ae2d-d4c9-4e5f-a81a-286ccff6cb8a"></p>
+<p>可以观察到，如同<a href="#虚假的依赖关系">虚假的依赖关系</a>中介绍的那样，核函数的并发执行只发生在了流的边缘。在这种情况下，可以通过广度优先的调用方式来缓解。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>    kernel_1&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>    kernel_2&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>    kernel_3&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>    kernel_4&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/02_hyper-Q_breadth.cu">hyper-Q_breadth.cu</a>。</p>
+</blockquote>
+<p>深度优先和广度优先的调用方式的区别可以通过下图来理解。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/52e64391-7d1b-454e-9847-974df653fdf2"></p>
+<p>这样就可以在只有一个硬件队列的情况下，实现核函数的并发执行。不过鉴于现代的GPU设备基本都支持Hyper-Q，所以此处简单了解即可。通过<code>nsys</code>分析来佐证上述的观点。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/b03d99e9-397d-402d-a5e3-ee222f5f41d1"></p>
+<h3 id="使用openmp的调度操作">使用OpenMP的调度操作</h3>
+<p>借助OpenMP开启多线程，每个线程来管理一个流。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">omp_set_num_threads</span>(stream_count);<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> omp parallel</span><br>{<br>    <span class="hljs-type">int</span> i = <span class="hljs-built_in">omp_get_thread_num</span>();<br>    kernel_1&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_2&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_3&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_4&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/03_hyper-Q_OpenMP.cu">hyper-Q_OpenMP.cu</a>。</p>
+</blockquote>
+<p>注意，主机代码中若包含OpenMP的内容，则在编译CUDA程序时需要添加如下几个编译器选项。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-deletion">-Xcompiler -fopenmp -lgomp</span><br></code></pre></td></tr></table></figure>
+<h3 id="默认流的阻塞行为">默认流的阻塞行为</h3>
+<p>将<a href="#非默认流中的并发核函数">非默认流中的并发核函数</a>中提到的<code>kernel_3</code>放在默认流中调用，以此来理解默认流的阻塞行为。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>{<br>    kernel_1&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_2&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_3&lt;&lt;&lt;grid, block&gt;&gt;&gt;(d_data);<br>    kernel_4&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>}<br></code></pre></td></tr></table></figure>
+<p>核函数执行情况如下图所示。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/8fd6a798-48e9-4509-a772-23309ad473b2"></p>
+<p>可以观察到，由于<code>kernel_3</code>在默认流中启动，所以在非默认流上的所有之后的操作都会被阻塞，直到默认流中的操作完成。</p>
+<h3 id="创建流间依赖关系">创建流间依赖关系</h3>
+<p>在复杂的应用程序中，引入流间依赖关系是非常有用的，它可以在一个流中阻塞操作，直到另一个流中的指定操作完成。事件可以用来添加流间依赖关系。</p>
+<p>通过如下代码来创建同步事件。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cudaEvent_t* kernelEvent = (cudaEvent_t*)<span class="hljs-built_in">malloc</span>(stream_count * <span class="hljs-built_in">sizeof</span>(cudaEvent_t));<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>{<br>    <span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaEventCreateWithFlags</span>(&amp;kernelEvent[i], cudaEventDisableTiming));<br>}<br></code></pre></td></tr></table></figure>
+<p>通过如下方式调用，令每个流完成时记录不同的事件，然后使最后一个流等待其他所有流完成。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; stream_count; i++)<br>{<br>    kernel_1&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_2&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_3&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br>    kernel_4&lt;&lt;&lt;grid, block, <span class="hljs-number">0</span>, streams[i]&gt;&gt;&gt;(d_data);<br><br>    <span class="hljs-comment">// 每个流完成时记录不同的事件</span><br>    <span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaEventRecord</span>(kernelEvent[i], streams[i]));<br>    <span class="hljs-comment">// 使最后一个流等待其他所有流</span><br>    <span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaStreamWaitEvent</span>(streams[stream_count - <span class="hljs-number">1</span>], kernelEvent[i], <span class="hljs-number">0</span>));<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/04_hyper-Q_dependence.cu">hyper-Q_dependence.cu</a>。</p>
+</blockquote>
+<p>观察下图可以看出，最后一个流被其他流阻塞，直到所有流都完成操作后，最后一个流才执行。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/5e746b78-49ee-495a-8fff-2da8bc5f1820"></p>
+<h2 id="核函数执行与数据传输的交叠">核函数执行与数据传输的交叠</h2>
+<p>想要令核函数执行与数据传输交叠，不仅需要设备支持，还需要在内存申请和搬移的时候注意。要实现交叠，必须使用异步的内存搬移函数，而异步的内存搬移函数所搬移的内存又需要通过<code>cudaHostAlloc</code>来申请。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">float</span> *h_A, *h_B, *hostRef, *gpuRef;<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaHostAlloc</span>((<span class="hljs-type">void</span> **)&amp;h_A, bytes, cudaHostAllocDefault));<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaHostAlloc</span>((<span class="hljs-type">void</span> **)&amp;h_B, bytes, cudaHostAllocDefault));<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaHostAlloc</span>((<span class="hljs-type">void</span> **)&amp;hostRef, bytes, cudaHostAllocDefault));<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaHostAlloc</span>((<span class="hljs-type">void</span> **)&amp;gpuRef, bytes, cudaHostAllocDefault));<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/05_multi_add_depth.cu">multi_add_depth.cu</a>。</p>
+</blockquote>
+<p>这里以向量加法为例，实现一个向量加法的核函数，并分别使用不交叠和交叠的调用方式来观察其执行情况。</p>
+<p>下图是不交叠的调用方式，可以观察到核函数的执行必须要等到<code>H2D</code>的内存搬移完成后才能开始，<code>D2H</code>的内存搬移也只能等核函数执行完毕后才可以开始。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/c8e60104-8ccc-4a23-90f8-a144d7b59cd6"></p>
+<p>但当我们使用多个流，将这些操作分散在各个流中，同时使用异步的内存搬移操作后，效果如下。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/b8ff4b3b-53e9-4f9a-ac91-aa21f8e6ace5"></p>
+<p>可以观察到，不同流中的内存搬移操作和核函数执行产生了交叠，大大提高了并发度。</p>
+<h2 id="流回调">流回调</h2>
+<p>流回调是另一种可以到CUDA流中排列等待的操作。一旦流回调之前所有的流操作全部完成，被流回调指定的主机端函数就会被CUDA运行时调用。流回调允许任意主机端逻辑插入到CUDA流中。</p>
+<p>在较老版本的CUDA中通过如下函数来调用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">cudaError_t <span class="hljs-title">cudaStreamAddCallback</span><span class="hljs-params">(cudaStream_t stream, cudaStreamCallback_t callback, <span class="hljs-type">void</span> *userData, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> flags)</span></span>;<br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>callback</code>：传入自定义的回调函数；</li>
+<li><code>userData</code>：传入回调函数的数据；</li>
+<li><code>flags</code>：是保留参数，必须指定为0。</li>
+</ul>
+<p>回调函数以如下格式定义。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> CUDART_CB <span class="hljs-title">my_callback</span><span class="hljs-params">(cudaStream_t stream, cudaError_t status, <span class="hljs-type">void</span>* data)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"callback from stream %d\n"</span>, (<span class="hljs-type">int</span>*)data);<br>}<br></code></pre></td></tr></table></figure>
+<p>上述的流回调方式会在未来被弃用，但目前还没有代替方案，所以依然是有效的。</p>
+<p>在较新版本的CUDA中通过如下函数来调用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">cudaError_t <span class="hljs-title">cudaLaunchHostFunc</span><span class="hljs-params">(cudaStream_t stream, cudaHostFn_t fn, <span class="hljs-type">void</span> *userData)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>回调函数以如下格式定义。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> CUDART_CB <span class="hljs-title">my_callback</span><span class="hljs-params">(<span class="hljs-type">void</span>* data)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"callback from stream %d\n"</span>, (<span class="hljs-type">int</span>*)data);<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/05_stream_and_concurrence/06_stream_callback.cu">stream_callback.cu</a>。同时，关于上述问题，Stack Overflow上有一个<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/56448390/how-to-recover-from-cuda-errors-when-using-cudalaunchhostfunc-instead-of-cudastr">帖子</a>提到了。</p>
+</blockquote>
+</div><div class="article-licensing box"><div class="licensing-title"><p>CUDA编程——流和并发</p><p><a href="https://deleter-d.github.io/posts/4919/">https://deleter-d.github.io/posts/4919/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://deleter-d.github.io"><p>亦初</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-02-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-02-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/posts/9782/" target="_blank">CUDA编程——GPU加速库和OpenACC</a><br></span><span>  2.<a class="is-size-6" href="/posts/53610/" target="_blank">CUDA编程——调整指令集原语</a><br></span><span>  3.<a class="is-size-6" href="/posts/50255/" target="_blank">CUDA编程——性能分析工具</a><br></span><span>  4.<a class="is-size-6" href="/posts/38038/" target="_blank">CUDA编程——共享内存和常量内存</a><br></span><span>  5.<a class="is-size-6" href="/posts/47184/" target="_blank">CUDA编程——全局内存</a><br></span><span>  6.<a class="is-size-6" href="/posts/47225/" target="_blank">CUDA编程——执行模型</a><br></span><span>  7.<a class="is-size-6" href="/posts/50741/" target="_blank">CUDA编程——NVCC编译器</a><br></span><span>  8.<a class="is-size-6" href="/posts/57516/" target="_blank">CUDA编程模型概述</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/53610/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">CUDA编程——调整指令集原语</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/50255/"><span class="level-item">CUDA编程——性能分析工具</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '718aa5062a9ca7e020fa71d3b8af1a74',
+            repo: 'Deleter-D.github.io',
+            owner: 'Deleter-D',
+            clientID: 'd087baa8a532e3b31fba',
+            clientSecret: 'faec4c1d7046247c200bca62c9930d0799ce58a5',
+            admin: ["Deleter-D"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cloudflare-cors-anywhere.wyp867909454.workers.dev/?https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="is-flex is-mobile" href="#异步并发执行"><span>异步并发执行</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#主机和设备之间的并发执行"><span>主机和设备之间的并发执行</span></a></li><li><a class="is-flex is-mobile" href="#并发核函数执行"><span>并发核函数执行</span></a></li><li><a class="is-flex is-mobile" href="#数据传输与核函数的交叠"><span>数据传输与核函数的交叠</span></a></li><li><a class="is-flex is-mobile" href="#并发数据传输"><span>并发数据传输</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#流和事件"><span>流和事件</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cuda流"><span>CUDA流</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#默认流"><span>默认流</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#流调度"><span>流调度</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#虚假的依赖关系"><span>虚假的依赖关系</span></a></li><li><a class="is-flex is-mobile" href="#hyper-q技术"><span>Hyper-Q技术</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#流的优先级"><span>流的优先级</span></a></li><li><a class="is-flex is-mobile" href="#cuda事件"><span>CUDA事件</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#创建和销毁事件"><span>创建和销毁事件</span></a></li><li><a class="is-flex is-mobile" href="#记录事件和计算运行时间"><span>记录事件和计算运行时间</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#流同步"><span>流同步</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#阻塞流和非阻塞流"><span>阻塞流和非阻塞流</span></a></li><li><a class="is-flex is-mobile" href="#隐式同步"><span>隐式同步</span></a></li><li><a class="is-flex is-mobile" href="#显式同步"><span>显式同步</span></a></li><li><a class="is-flex is-mobile" href="#可配置事件"><span>可配置事件</span></a></li></ul></li></ul></li><li><a class="is-flex is-mobile" href="#并发核函数执行-1"><span>并发核函数执行</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#非默认流中的并发核函数"><span>非默认流中的并发核函数</span></a></li><li><a class="is-flex is-mobile" href="#虚假依赖关系的并发核函数"><span>虚假依赖关系的并发核函数</span></a></li><li><a class="is-flex is-mobile" href="#使用openmp的调度操作"><span>使用OpenMP的调度操作</span></a></li><li><a class="is-flex is-mobile" href="#默认流的阻塞行为"><span>默认流的阻塞行为</span></a></li><li><a class="is-flex is-mobile" href="#创建流间依赖关系"><span>创建流间依赖关系</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#核函数执行与数据传输的交叠"><span>核函数执行与数据传输的交叠</span></a></li><li><a class="is-flex is-mobile" href="#流回调"><span>流回调</span></a></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">亦初</p><p class="is-size-6 is-block">落霞与孤鹜齐飞，秋水共长天一色</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>冰岛</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">74</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">22</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">72</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/Deleter-D" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/Deleter-D"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:18735855248@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Telegram" href="https://t.me/GoldPancake687"><i class="fab fa-telegram"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:49:53.000Z">2024-02-20</time></p><p class="title"><a href="/posts/9782/">CUDA编程——GPU加速库和OpenACC</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:45:21.000Z">2024-02-20</time></p><p class="title"><a href="/posts/53610/">CUDA编程——调整指令集原语</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:36:28.000Z">2024-02-20</time></p><p class="title"><a href="/posts/4919/">CUDA编程——流和并发</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:29:56.000Z">2024-02-20</time></p><p class="title"><a href="/posts/50255/">CUDA编程——性能分析工具</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:22:30.000Z">2024-02-20</time></p><p class="title"><a href="/posts/38038/">CUDA编程——共享内存和常量内存</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Hexo/"><span class="level-start"><span class="level-item">Hexo</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java/"><span class="level-start"><span class="level-item">Java</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Linux/"><span class="level-start"><span class="level-item">Linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">15</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/Vue/"><span class="level-start"><span class="level-item">Vue</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/axios/"><span class="level-start"><span class="level-item">axios</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%8A%98%E8%85%BE/"><span class="level-start"><span class="level-item">折腾</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/"><span class="level-start"><span class="level-item">数学</span></span><span class="level-end"><span class="level-item tag">6</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="level-start"><span class="level-item">矩阵论</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2024/02/"><span class="level-start"><span class="level-item">二月 2024</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/12/"><span class="level-start"><span class="level-item">十二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/10/"><span class="level-start"><span class="level-item">十月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/08/"><span class="level-start"><span class="level-item">八月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/"><span class="tag">算法</span><span class="tag is-grey-lightest">11</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E8%AE%A1%E7%AE%97/"><span class="tag">异构计算</span><span class="tag is-grey-lightest">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CUDA/"><span class="tag">CUDA</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><span class="tag">机器学习</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%AF%95%E6%98%87%E7%BC%96%E8%AF%91%E5%99%A8/"><span class="tag">毕昇编译器</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/"><span class="tag">高性能计算</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Vue/"><span class="tag">Vue</span><span class="tag is-grey-lightest">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8A%9B%E6%89%A3/"><span class="tag">力扣</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E5%AD%A6/"><span class="tag">数学</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="tag">矩阵论</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><span class="tag">设计模式</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/axios/"><span class="tag">axios</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E7%BC%96%E7%A8%8B/"><span class="tag">异构编程</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/3D%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1/"><span class="tag">3D人体姿态估计</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Pytorch/"><span class="tag">Pytorch</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87/"><span class="tag">论文</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ITK/"><span class="tag">ITK</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><span class="tag">深度学习</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CVPR/"><span class="tag">CVPR</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Hexo/"><span class="tag">Hexo</span><span class="tag is-grey-lightest">2</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a><p class="size-small"><span>&copy; 2024 亦初</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作，如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2022/03/13 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="475747480" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>

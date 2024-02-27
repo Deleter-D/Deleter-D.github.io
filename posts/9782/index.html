@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>CUDA编程——GPU加速库和OpenACC - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-02-20T08:49:53.000Z"><meta property="article:modified_time" content="2024-02-27T09:37:44.297Z"><meta property="article:author" content="亦初"><meta property="article:tag" content="CUDA"><meta property="article:tag" content="高性能计算"><meta property="article:tag" content="异构计算"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/posts/9782/"},"headline":"亦初","image":[],"datePublished":"2024-02-20T08:49:53.000Z","dateModified":"2024-02-27T09:37:44.297Z","author":{"@type":"Person","name":"亦初"},"description":"很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"}</script><link rel="canonical" href="https://deleter-d.github.io/posts/9782/"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="亦初" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/music">音乐</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2024-02-20  <a class="commentCountImg" href="/posts/9782/#comment-container"><span class="display-none-class">441db59b5babd69811cb3d707626978c</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="441db59b5babd69811cb3d707626978c">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>9.3 k</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">CUDA编程——GPU加速库和OpenACC</h1><div class="content"><p>很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由《Professional CUDA C Programming》一书、CUDA官方文档、互联网上的一些资料以及笔者自己的理解构成，希望能对你有一些帮助，若有错误也请大胆指出。</p>
+<span id="more"></span>
+<h2 id="cuda库概述">CUDA库概述</h2>
+<p>CUDA支持的库及其作用域如下表所示。</p>
+<table>
+<colgroup>
+<col style="width: 26%">
+<col style="width: 23%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>库名</th>
+<th>作用域</th>
+<th>官方文档</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>NVIDIA CUDA Math Library</td>
+<td>数学运算</td>
+<td>https://docs.nvidia.com/cuda/cuda-math-api/index.html</td>
+</tr>
+<tr class="even">
+<td>NVIDIA cuBLAS</td>
+<td>线性代数</td>
+<td>https://docs.nvidia.com/cuda/cublas/index.html</td>
+</tr>
+<tr class="odd">
+<td>NVIDIA cuSPARSE</td>
+<td>稀疏线性代数</td>
+<td>https://docs.nvidia.com/cuda/cusparse/index.html</td>
+</tr>
+<tr class="even">
+<td>NVIDIA CUSP</td>
+<td>稀疏线性代数和图形计算</td>
+<td>https://cusplibrary.github.io/index.html</td>
+</tr>
+<tr class="odd">
+<td>NVIDIA cuFFT</td>
+<td>快速傅里叶变换</td>
+<td>https://docs.nvidia.com/cuda/cufft/index.html</td>
+</tr>
+<tr class="even">
+<td>NVIDIA cuRAND</td>
+<td>随机数生成</td>
+<td>https://docs.nvidia.com/cuda/curand/index.html</td>
+</tr>
+<tr class="odd">
+<td>NVIDIA NPP</td>
+<td>图像和信号处理</td>
+<td>https://docs.nvidia.com/cuda/npp/index.html</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>MAGMA</td>
+<td>新一代线性代数</td>
+<td>https://icl.utk.edu/magma/</td>
+</tr>
+<tr class="even">
+<td>IMSL Fortran Numerical Library</td>
+<td>数学与统计学</td>
+<td>https://www.imsl.com/products/imsl-fortran-libraries</td>
+</tr>
+<tr class="odd">
+<td>AccelerEyes ArrayFire</td>
+<td>数学，信号和图像处理，统计学</td>
+<td>https://arrayfire.com/</td>
+</tr>
+<tr class="even">
+<td>Thrust</td>
+<td>并行算法和数据结构</td>
+<td>https://docs.nvidia.com/cuda/thrust/index.html</td>
+</tr>
+<tr class="odd">
+<td>Geometry Performance Primitives</td>
+<td>计算几何</td>
+<td>https://developer.nvidia.com/geometric-performance-primitives-gpp</td>
+</tr>
+<tr class="even">
+<td>Paralution</td>
+<td>稀疏迭代方法</td>
+<td>https://www.paralution.com/</td>
+</tr>
+<tr class="odd">
+<td>AmgX</td>
+<td>核心求解</td>
+<td>https://github.com/NVIDIA/AMGX</td>
+</tr>
+</tbody>
+</table>
+<p>CUDA的库有一些通用的工作流：</p>
+<ul>
+<li>在库操作中创建一个特定的库句柄来管理上下文信息；</li>
+<li>为库函数的输入输出分配设备内存；</li>
+<li>如果输入格式不是函数库支持的格式则需要进行转换；</li>
+<li>将输入以支持的格式填入预先分配的设备内存中；</li>
+<li>配置要执行的库运算；</li>
+<li>执行一个将计算部分交付给GPU的库函数调用；</li>
+<li>取回设备内存中的计算结果（结果可能是库设定的格式）；</li>
+<li>如有必要，将取回的数据转换成应用程序的原始格式；</li>
+<li>释放CUDA资源；</li>
+<li>继续完成应用程序的其他工作。</li>
+</ul>
+<h2 id="cusparse库">cuSPARSE库</h2>
+<p>较新版本的cuSPARSE将API分为了两大类：</p>
+<ul>
+<li>Legacy：这部分接口是为了兼容旧版本所保留的，在未来的版本也不会改进；</li>
+<li>Generic：这部分是cuSPARSE的标准接口。</li>
+</ul>
+<p>下面的讨论都基于Generic系列接口。</p>
+<p>Generic系列接口大体分为几类：</p>
+<ul>
+<li>稀疏向量与稠密向量之间的操作（<code>Axpby</code>、<code>Gather</code>、<code>Scatter</code>、求和、点积）；</li>
+<li>稀疏向量与稠密矩阵之间的操作（乘积）；</li>
+<li>稀疏矩阵与稠密向量之间的操作（乘积、三角线性方程求解、三对角、五对角线性方程求解）；</li>
+<li>稀疏矩阵与稠密矩阵之间的操作（乘积、三角线性方程求解、三对角、五对角线性方程求解）；</li>
+<li>稀疏矩阵与稀疏矩阵之间的操作（求和、乘积）；</li>
+<li>稠密矩阵与稠密矩阵之间的操作，输出一个稀疏矩阵（乘积）；</li>
+<li>稀疏矩阵预处理（不完全Cholesky分解、不完全LU分解）；</li>
+<li>不同稀疏矩阵存储格式的相互转换。</li>
+</ul>
+<h3 id="cusparse数据存储格式">cuSPARSE数据存储格式</h3>
+<p>cuSPARSE的索引有两种，从零开始和从一开始的，这是为了兼容<code>C/C++</code>和<code>Fortran</code>。</p>
+<h4 id="向量存储格式">向量存储格式</h4>
+<p>稠密向量不过多介绍，与<code>C/C++</code>的数组存储方式是一致的。</p>
+<p>稀疏向量是借助两个数组表示的：</p>
+<ul>
+<li>值数组<code>values</code>：存储向量中的非零值；</li>
+<li>索引数组<code>indices</code>：存储向量中非零值在等价稠密向量中的索引。</li>
+</ul>
+<p>官方文档中的图片很好的解释了这种存储方式。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/5356cf8f-d236-4e1f-b18e-2348c6d0943a" style="zoom:25%;"></p>
+<h4 id="矩阵存储格式">矩阵存储格式</h4>
+<h5 id="稠密矩阵">稠密矩阵</h5>
+<p>稠密矩阵有行优先和列优先两种组织方式，通过几个参数来表示：</p>
+<ul>
+<li>矩阵行数<code>rows</code>；</li>
+<li>矩阵列数<code>columns</code>；</li>
+<li>主维度<code>leading_dimension</code>：主维度在行优先模式下必须大于等于列数，在列优先模式下必须大于等于行数；</li>
+<li>值数组指针：该数组的长度在行优先模式下为<code>rows * leading_dimension</code>，在列优先模式下为<code>columns * leading_dimension</code>。</li>
+</ul>
+<p>下图是一个<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="5.028ex" height="1.557ex" role="img" focusable="false" viewBox="0 -666 2222.4 688"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><path data-c="35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z"></path></g><g data-mml-node="mo" transform="translate(722.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mn" transform="translate(1722.4,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></svg></mjx-container></span>的稠密矩阵在两种模式下的内存布局。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/c0295ca3-e6c7-4f35-a6eb-b7ec254b0df4" style="zoom: 25%;"></p>
+<p>这里比较特殊的一个参数就是主维度<code>leading_dimension</code>，这个参数的存在是为了更好的表示子矩阵。下图是官方文档中的示例。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/405673bc-5fd7-4208-ae44-a0094fe79547" style="zoom:25%;"></p>
+<p>我们推广这个示例，将一个<code>rows * columns</code>的矩阵以行优先存储，并令其<code>leading_dimension</code>为<code>columns</code>。此时取它的一个<code>m * n</code>的子矩阵，起始元素指针为<code>sub</code>，想要得到其<code>(i, j)</code>位置的元素，只需要利用如下计算公式：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">sub_ij = <span class="hljs-function"><span class="hljs-keyword">sub</span> + <span class="hljs-title">j</span> * <span class="hljs-title">leading_dimension</span> + <span class="hljs-title">i</span></span>;<br></code></pre></td></tr></table></figure>
+<p>列优先存储同理。</p>
+<h5 id="稀疏矩阵">稀疏矩阵</h5>
+<h6 id="坐标存储coordinate-coo">坐标存储Coordinate (COO)</h6>
+<p>COO是一种利用非零元素及其坐标来存储稀疏矩阵的方式，主要有如下参数表示：</p>
+<ul>
+<li>矩阵行数<code>rows</code>；</li>
+<li>矩阵列数<code>columns</code>；</li>
+<li>非零元素个数<code>nnz</code>；</li>
+<li>行索引数组指针<code>row_indices</code>：其长度为<code>nnz</code>，存放了非零元素在等价稠密矩阵中的行索引；</li>
+<li>列索引数组指针<code>column_indices</code>：其长度为<code>nnz</code>，存放了非零元素在等价稠密矩阵中的列索引；</li>
+<li>值数组指针<code>values</code>：其长度为<code>nnz</code>，存放了矩阵的非零元素，按照等价稠密矩阵行优先的顺序排列。</li>
+</ul>
+<p>COO的每一项由一个<code>&lt;row, column&gt;</code>的二元组表示，COO默认是按照行的顺序排序的。</p>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/5bb89fb8-5c28-4ad2-9eff-742ee6966220"></p>
+<p>若想计算COO格式下的元素在等价稠密矩阵中的位置，可以通过如下公式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 行优先</span><br>rows_indices[i] * leading_dimension + column_indices[i];<br><br><span class="hljs-comment">// 列优先</span><br>column_indices[i] * leading_dimension + row_indices[i];<br></code></pre></td></tr></table></figure>
+<h6 id="压缩稀疏行compressed-sparse-row-csr">压缩稀疏行Compressed Sparse Row (CSR)</h6>
+<p>CSR和COO非常类似，只是将行索引数组进行了压缩，用一个行偏移数组来代替了。</p>
+<ul>
+<li>行偏移数组<code>row_offsets</code>：其长度为<code>rows + 1</code>，存储了每一行起始元素在列索引数组和值索引数组中的位置；</li>
+<li>其余参数与COO一致。</li>
+</ul>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/b1e1c0e8-83a0-4b8c-a689-803396446ac9"></p>
+<p>若想计算CSR格式下的元素在等价稠密矩阵中的位置，可以通过如下公式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 行优先</span><br>row * leading_dimension + column_indices[row_offsets[row] + k]<br><br><span class="hljs-comment">// 列优先</span><br>column_indices[row_offsets[row] + k] * leading_dimension + row<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>其中，<code>row</code>表示稠密矩阵的第几行，<code>k</code>的范围是<code>k = 0; k &lt; row_offsets[row + 1] - row_offsets[row]</code>。</p>
+</blockquote>
+<p>此外还有CSC、SELL、BSR、BLOCKED-ELL等稀疏矩阵的存储方式，详细参考官方文档的介绍。</p>
+<h3 id="具体示例">具体示例</h3>
+<p>我们来实现一个比较常见的操作<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.439ex;" xmlns="http://www.w3.org/2000/svg" width="18.01ex" height="2.034ex" role="img" focusable="false" viewBox="0 -705 7960.4 899"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D418" d="M605 0Q581 3 434 3Q286 3 262 0H250V62H358V275L126 624H19V686H30Q54 683 189 683Q361 685 370 686H383V624H308L319 608Q330 591 353 556T396 491L484 359L660 623Q660 624 623 624H585V686H595Q613 683 728 683Q832 683 841 686H849V624H742L509 274V62H618V0H605Z"></path></g></g><g data-mml-node="mo" transform="translate(1146.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mi" transform="translate(2202.6,0)"><path data-c="1D6FC" d="M34 156Q34 270 120 356T309 442Q379 442 421 402T478 304Q484 275 485 237V208Q534 282 560 374Q564 388 566 390T582 393Q603 393 603 385Q603 376 594 346T558 261T497 161L486 147L487 123Q489 67 495 47T514 26Q528 28 540 37T557 60Q559 67 562 68T577 70Q597 70 597 62Q597 56 591 43Q579 19 556 5T512 -10H505Q438 -10 414 62L411 69L400 61Q390 53 370 41T325 18T267 -2T203 -11Q124 -11 79 39T34 156ZM208 26Q257 26 306 47T379 90L403 112Q401 255 396 290Q382 405 304 405Q235 405 183 332Q156 292 139 224T121 120Q121 71 146 49T208 26Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2842.6,0)"><g data-mml-node="mi"><path data-c="1D400" d="M296 0Q278 3 164 3Q58 3 49 0H40V62H92Q144 62 144 64Q388 682 397 689Q403 698 434 698Q463 698 471 689Q475 686 538 530T663 218L724 64Q724 62 776 62H828V0H817Q796 3 658 3Q509 3 485 0H472V62H517Q561 62 561 63L517 175H262L240 120Q218 65 217 64Q217 62 261 62H306V0H296ZM390 237L492 238L440 365Q390 491 388 491Q287 239 287 237H390Z"></path></g><g data-mml-node="mo" transform="translate(1091.2,0)"><path data-c="22C5" d="M78 250Q78 274 95 292T138 310Q162 310 180 294T199 251Q199 226 182 208T139 190T96 207T78 250Z"></path></g><g data-mml-node="mi" transform="translate(1591.4,0)"><path data-c="1D417" d="M327 0Q306 3 174 3Q52 3 43 0H33V62H98L162 63L360 333L157 624H48V686H59Q80 683 217 683Q368 683 395 686H408V624H335L393 540L452 458L573 623Q573 624 528 624H483V686H494Q515 683 646 683Q769 683 778 686H787V624H658L575 511Q493 398 493 397L508 376Q522 356 553 312T611 229L727 62H835V0H824Q803 3 667 3Q516 3 489 0H476V62H513L549 63L401 274L247 63Q247 62 292 62H338V0H327Z"></path></g></g><g data-mml-node="mo" transform="translate(5525.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mi" transform="translate(6525.4,0)"><path data-c="1D6FD" d="M29 -194Q23 -188 23 -186Q23 -183 102 134T186 465Q208 533 243 584T309 658Q365 705 429 705H431Q493 705 533 667T573 570Q573 465 469 396L482 383Q533 332 533 252Q533 139 448 65T257 -10Q227 -10 203 -2T165 17T143 40T131 59T126 65L62 -188Q60 -194 42 -194H29ZM353 431Q392 431 427 419L432 422Q436 426 439 429T449 439T461 453T472 471T484 495T493 524T501 560Q503 569 503 593Q503 611 502 616Q487 667 426 667Q384 667 347 643T286 582T247 514T224 455Q219 439 186 308T152 168Q151 163 151 147Q151 99 173 68Q204 26 260 26Q302 26 349 51T425 137Q441 171 449 214T457 279Q457 337 422 372Q380 358 347 358H337Q258 358 258 389Q258 396 261 403Q275 431 353 431Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(7091.4,0)"><g data-mml-node="mi"><path data-c="1D418" d="M605 0Q581 3 434 3Q286 3 262 0H250V62H358V275L126 624H19V686H30Q54 683 189 683Q361 685 370 686H383V624H308L319 608Q330 591 353 556T396 491L484 359L660 623Q660 624 623 624H585V686H595Q613 683 728 683Q832 683 841 686H849V624H742L509 274V62H618V0H605Z"></path></g></g></g></g></svg></mjx-container></span>，也就是<code>SpMV</code>函数。接下来的内容重点在于cuSPARSE库一些通用操作。</p>
+<p>首先需要创建一个句柄。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cusparseHandle_t handle;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCreate</span>(&amp;handle));<br></code></pre></td></tr></table></figure>
+<p>由于我们的数据大部分是在主机端准备的，所以生成的数据自然而然地是以稠密的形式存储的。所以需要进行稠密矩阵到稀疏矩阵的转换。这一部分的工作可能有一些复杂，总体步骤包含：</p>
+<ul>
+<li>创建cuSPARSE的稠密和稀疏矩阵；</li>
+<li>判断是否需要额外的buffer；</li>
+<li>分析非零元素个数；</li>
+<li>准备特定稀疏矩阵格式所需要的空间；</li>
+<li>执行转换。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 创建稠密矩阵</span><br>cusparseDnMatDescr_t dn_mat;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCreateDnMat</span>(&amp;dn_mat, rows, columns, ld, d_A, CUDA_R_32F, CUSPARSE_ORDER_ROW));<br><br><span class="hljs-comment">// 创建稀疏矩阵</span><br>cusparseSpMatDescr_t sp_mat;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCreateCsr</span>(&amp;sp_mat, rows, columns, <span class="hljs-number">0</span>, d_row_offsets_A, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32F));<br><br><span class="hljs-comment">// 若有必要，为转换工作申请额外的buffer</span><br><span class="hljs-type">size_t</span> buffer_size = <span class="hljs-number">0</span>;<br><span class="hljs-type">void</span> *d_buffer     = <span class="hljs-literal">NULL</span>;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseDenseToSparse_bufferSize</span>(handle, dn_mat, sp_mat, CUSPARSE_DENSETOSPARSE_ALG_DEFAULT, &amp;buffer_size)); <span class="hljs-comment">// 该函数返回所需的buffer大小</span><br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaMalloc</span>(&amp;d_buffer, buffer_size));<br><br><span class="hljs-comment">// 分析矩阵中的非零元素个数</span><br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseDenseToSparse_analysis</span>(handle, dn_mat, sp_mat, CUSPARSE_DENSETOSPARSE_ALG_DEFAULT, d_buffer));<br><span class="hljs-comment">// 获取非零元素个数</span><br><span class="hljs-type">int64_t</span> rows_tmp, cols_tmp, nnz;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseSpMatGetSize</span>(sp_mat, &amp;rows_tmp, &amp;cols_tmp, &amp;nnz));<br><br><span class="hljs-comment">// 申请CSR中的列索引数组和值数组</span><br><span class="hljs-type">int</span> *d_column_indices_A;<br><span class="hljs-type">float</span> *d_values_A;<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaMalloc</span>((<span class="hljs-type">void</span> **)&amp;d_column_indices_A, nnz * <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">int</span>)));<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaMalloc</span>((<span class="hljs-type">void</span> **)&amp;d_values_A, nnz * <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">float</span>)));<br><br><span class="hljs-comment">// 为稀疏矩阵设置各个数组指针</span><br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCsrSetPointers</span>(sp_mat, d_row_offsets_A, d_column_indices_A, d_values_A));<br><br><span class="hljs-comment">// 执行稠密矩阵到稀疏矩阵的转换</span><br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseDenseToSparse_convert</span>(handle, dn_mat, sp_mat, CUSPARSE_DENSETOSPARSE_ALG_DEFAULT, d_buffer));<br></code></pre></td></tr></table></figure>
+<p>准备好矩阵后，接着准备参与运算的两个稠密向量。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cusparseDnVecDescr_t dn_vec_X, dn_vec_Y;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCreateDnVec</span>(&amp;dn_vec_X, columns, d_X, CUDA_R_32F));<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseCreateDnVec</span>(&amp;dn_vec_Y, rows, d_Y, CUDA_R_32F));<br></code></pre></td></tr></table></figure>
+<p>最后就是执行计算，但在执行真正的计算之前，依然需要判断是否需要额外的buffer。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 若有必要，为SpMV计算申请额外的buffer</span><br><span class="hljs-type">float</span> alpha = <span class="hljs-number">3.0f</span>;<br><span class="hljs-type">float</span> beta  = <span class="hljs-number">4.0f</span>;<br><span class="hljs-type">size_t</span> spmv_buffer_size;<br><span class="hljs-type">void</span> *d_spmv_buffer;<br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseSpMV_bufferSize</span>(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, &amp;alpha, sp_mat, dn_vec_X, &amp;beta, dn_vec_Y, CUDA_R_32F, CUSPARSE_SPMV_ALG_DEFAULT, &amp;spmv_buffer_size));<br><span class="hljs-built_in">ERROR_CHECK</span>(<span class="hljs-built_in">cudaMalloc</span>(&amp;d_spmv_buffer, spmv_buffer_size));<br><br><span class="hljs-comment">// 执行SpMV计算</span><br><span class="hljs-built_in">ERROR_CHECK_CUSPARSE</span>(<span class="hljs-built_in">cusparseSpMV</span>(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, &amp;alpha, sp_mat, dn_vec_X, &amp;beta, dn_vec_Y, CUDA_R_32F, CUSPARSE_SPMV_ALG_DEFAULT, d_spmv_buffer));<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注意，无论是计算之前，还是前面提到的稠密转稀疏之前，它们判断是否需要额外buffer的操作，全部交给库来自行判断，不需要人为干预。程序员需要做的只是写一个像上面一样较为通用的代码，使其能够在需要buffer的时候申请得到即可。</p>
+</blockquote>
+<blockquote>
+<p>示例完整代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/01_cusparse.cu">cusparse.cu</a>。关于其他API就不过多阐述了，用到的时候查官方文档即可。</p>
+</blockquote>
+<h2 id="cublas库">cuBLAS库</h2>
+<p>cuBLAS库与cuSPARSE库最大的不同在于，cuBLAS库并不支持多种稀疏矩阵类型，它更擅长处理稠密矩阵和稠密向量的运算。</p>
+<p>当前的cuBLAS库将接口分为了四类：</p>
+<ul>
+<li>cuBLAS API（CUDA 6.0开始）；</li>
+<li>cuBLASXt API（CUDA 6.0开始）；</li>
+<li>cuBLASLt API（CUDA 10.1开始）；</li>
+<li>cuBLASDx API（未包含在CUDA Toolkit中）。</li>
+</ul>
+<p>上面四套API的主要区别在于：</p>
+<ul>
+<li>cuBLAS API需要将数据搬移到设备上进行运算；</li>
+<li>cuBLASXt API可以将数据放在主机或参与运算的任何设备上，库会承担运算和数据分发的责任；</li>
+<li>cuBLASLt API是一套专注于通用矩阵乘（GEMM）的灵活的轻量级API，该API可以通过参数来灵活指定矩阵数据布局、输入类型、计算类型以及算法的实现。用户指定了一组预期的GEMM操作后，这组操作可以根据不同的输入来复用；</li>
+<li>cuBLASDx API则是一个设备端API扩展，可以在核函数中执行BLAS计算。通过融合数值运算，可以减少延迟并进一步提高性能。目前该组API还在preview阶段。</li>
+</ul>
+<p>同时，cuBLAS API存在新旧两套API，后面的所有讨论都基于定义在<code>cublas_v2.h</code>头文件中的新版API，旧版API定义在<code>cublas.h</code>中。具体的区别这里不过多讨论，有兴趣可以查看官方文档<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cublas/index.html#new-and-legacy-cublas-api">New and Legacy cuBLAS API</a>。</p>
+<h3 id="cublas数据存储格式">cuBLAS数据存储格式</h3>
+<p>cuBLAS有两套数据排布方式，一套为了兼容Fortran从1开始的索引，另一套是兼容C从0开始的索引。可以通过以下两个宏来计算全局索引。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> IDX2C(i,j,ld) (((j)*(ld))+(i))</span><br></code></pre></td></tr></table></figure>
+<p>要记住最核心的一点，cuBLAS是以<strong>列主序</strong>的形式存储矩阵的。</p>
+<h3 id="具体示例-1">具体示例</h3>
+<p>在熟悉了cuSPARSE的使用之后，你会发现cuBLAS要简洁很多，因为少了很多配置稀疏矩阵的过程，下面以通用矩阵乘法为例说明。</p>
+<p>同样地，首先创建句柄。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cublasHandle_t handle;<br><span class="hljs-built_in">ERROR_CHECK_CUBLAS</span>(<span class="hljs-built_in">cublasCreate</span>(&amp;handle));<br></code></pre></td></tr></table></figure>
+<p>然后就可以直接进行计算了，如果需要的话，可以使用<code>cublasSetStream()</code>来绑定一个流。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">ERROR_CHECK_CUBLAS</span>(<span class="hljs-built_in">cublasSgemm</span>(handle, CUBLAS_OP_N, CUBLAS_OP_N, m, n, k, &amp;alpha, d_A, lda, d_B, ldb, &amp;beta, d_C, ldc));<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/02_cublas.cu">cublas.cu</a>。</p>
+</blockquote>
+<h2 id="cufft库">cuFFT库</h2>
+<p>cuFFT库由两部分组成：</p>
+<ul>
+<li>cuFFT：提供GPU上的高性能快速傅里叶变换操作，它需要提前将数据搬移到设备端；</li>
+<li>cuFFTW：为FFTW的用户提供快速移植到GPU的能力，为了这种快速移植能力，cuFFTW支持主机端的数据传入，它将自动为用户处理如<code>cudaMalloc</code>、<code>cudaMemcpy</code>等操作。</li>
+</ul>
+<p>下面的内容重点介绍cuFFT。cuFFT提供一种简单易用的配置机制称为<code>plan</code>，它使用内部构建的block来优化给定配置和特定GPU硬件之间的转化。一旦创建了一个<code>plan</code>，库将自动保存多次执行该<code>plan</code>所需的所有状态，无需重新配置。不同类型的FFT需要不同的线程配置和GPU资源，<code>plan</code>接口提供了这样一种简单的配置重用方式。</p>
+<p>cuFFT支持多种类型的变换，如复数-复数变换（C2C）、复数-实数变换（C2R）、实数-复数变换（R2C）。由于变换的不同，需要的输入输出数据布局也就不同。</p>
+<h3 id="cufft数据存储格式">cuFFT数据存储格式</h3>
+<p>在cuFFT中，数据布局严格取决于配置和变换的类型。一般地，C2C变换情况下，输入输出数据应为<code>cufftComplex</code>或<code>cufftDoubleComplex</code>，具体取决于计算精度。而C2R变换，只需要非冗余的复数元素组成的向量作为输入，输出则是由<code>cufftReal</code>或<code>cufftDouble</code>元素组成的向量。对于R2C变换，需要一个实数向量作为输入，输出一个非冗余复数元素组成的向量。</p>
+<p>在C2R和R2C变换中，输入输出的大小是不同的。对于非就地变换，创建一个大小合适的输出数组即可。但对于就地变换，程序员应当使用填充的数据布局，这种布局与FFTW兼容。无论是就地C2R还是R2C变换，输出的起始地址都与输入的起始地址一致，所有应当填充R2C中的输入或C2R中的输出数据。</p>
+<p>以一维变换为例，期望的输入输出大小以及类型如下表所示。</p>
+<table>
+<thead>
+<tr class="header">
+<th>FFT类型</th>
+<th>输入数据大小（类型）</th>
+<th>输出数据大小（类型）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>C2C</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.294ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 572 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftComplex</code>）</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.294ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 572 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftComplex</code>）</td>
+</tr>
+<tr class="even">
+<td>C2R</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.781ex;" xmlns="http://www.w3.org/2000/svg" width="7.817ex" height="2.477ex" role="img" focusable="false" viewBox="0 -750 3454.9 1095"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mo"><path data-c="230A" d="M174 734Q174 735 175 737T177 740T180 744T184 747T189 749T196 750Q206 748 214 735V-210H310H373Q401 -210 411 -213T422 -230T411 -247T369 -251Q362 -251 338 -251T298 -250H190Q178 -246 174 -234V734Z"></path></g><g data-mml-node="mfrac" transform="translate(444,0)"><g data-mml-node="mi" transform="translate(220,394) scale(0.707)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mn" transform="translate(245.5,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="604.5" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1288.5,0)"><path data-c="230B" d="M229 734Q229 735 230 737T232 740T235 744T239 747T244 749T251 750Q262 748 269 735V-235Q266 -240 256 -249L147 -250H77Q43 -250 32 -247T21 -230T32 -213T72 -209Q79 -209 99 -209T133 -210H229V734Z"></path></g><g data-mml-node="mo" transform="translate(1954.7,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mn" transform="translate(2954.9,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftComplex</code>）</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.294ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 572 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftReal</code>）</td>
+</tr>
+<tr class="odd">
+<td>R2C</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.294ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 572 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftReal</code>）</td>
+<td><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.781ex;" xmlns="http://www.w3.org/2000/svg" width="7.817ex" height="2.477ex" role="img" focusable="false" viewBox="0 -750 3454.9 1095"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mo"><path data-c="230A" d="M174 734Q174 735 175 737T177 740T180 744T184 747T189 749T196 750Q206 748 214 735V-210H310H373Q401 -210 411 -213T422 -230T411 -247T369 -251Q362 -251 338 -251T298 -250H190Q178 -246 174 -234V734Z"></path></g><g data-mml-node="mfrac" transform="translate(444,0)"><g data-mml-node="mi" transform="translate(220,394) scale(0.707)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mn" transform="translate(245.5,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="604.5" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1288.5,0)"><path data-c="230B" d="M229 734Q229 735 230 737T232 740T235 744T239 747T244 749T251 750Q262 748 269 735V-235Q266 -240 256 -249L147 -250H77Q43 -250 32 -247T21 -230T32 -213T72 -209Q79 -209 99 -209T133 -210H229V734Z"></path></g><g data-mml-node="mo" transform="translate(1954.7,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mn" transform="translate(2954.9,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></svg></mjx-container></span>（<code>cufftComplex</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>对于多维的情况，参考官方文档<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cufft/index.html#multidimensional-transforms">multidimensional-transforms</a>。</p>
+<h3 id="具体示例-2">具体示例</h3>
+<p>关于傅里叶变换算法本身这里不过多展开，下面用一个比较基本的一维复数-复数FFT来说明。</p>
+<p>首先依旧是创建句柄，这里之所以将句柄命名为<code>plan</code>是因为，后续创建cuFFT的<code>plan</code>时，是基于这个句柄的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">cufftHandle plan;<br><span class="hljs-built_in">ERROR_CHECK_CUFFT</span>(<span class="hljs-built_in">cufftCreate</span>(&amp;plan));<br></code></pre></td></tr></table></figure>
+<p>创建<code>plan</code>，这个<code>plan</code>可以复用。如果需要的话，可以使用<code>cufftSetStream()</code>来绑定一个流。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">ERROR_CHECK_CUFFT</span>(<span class="hljs-built_in">cufftPlan1d</span>(&amp;plan, fft_size, CUFFT_C2C, batch_size));<br></code></pre></td></tr></table></figure>
+<p>执行变换操作，这里进行了一次正向变换，归一化后又进行了逆向变换。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 执行正向变换</span><br><span class="hljs-built_in">ERROR_CHECK_CUFFT</span>(<span class="hljs-built_in">cufftExecC2C</span>(plan, d_data, d_data, CUFFT_FORWARD));<br><span class="hljs-comment">// 归一化</span><br>scaling_kernel&lt;&lt;&lt;<span class="hljs-number">1</span>, <span class="hljs-number">128</span>&gt;&gt;&gt;(d_data, element_count, <span class="hljs-number">1.f</span> / fft_size);<br><span class="hljs-comment">// 执行逆向变换</span><br><span class="hljs-built_in">ERROR_CHECK_CUFFT</span>(<span class="hljs-built_in">cufftExecC2C</span>(plan, d_data, d_data, CUFFT_INVERSE));<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/03_cufft.cu">cufft.cu</a>。</p>
+</blockquote>
+<h2 id="curand库">cuRAND库</h2>
+<p>介绍cuRAND库之前要引入两个与随机数生成相关的概念：</p>
+<ul>
+<li>PRNG：伪随机数生成器；</li>
+<li>QRNG：拟随机数生成器。</li>
+</ul>
+<p>PRNG和QRNG的最大区别就在于，生成每一个随机数的事件是否为独立事件。PRNG每次采样均为独立统计事件，这意味着每次采样，所得到某个数的概率是相同的。而QRNG每次采样并不是独立事件，它会尽可能的均匀填充输出类型的范围。一个更具体的例子是，假设第一个生成的随机数是2的概率为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.92ex" role="img" focusable="false" viewBox="0 -683 1078.6 848.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g></g></svg></mjx-container></span>，下一个生成的随机数同样是2的概率为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.885ex" role="img" focusable="false" viewBox="0 -683 1078.6 833"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></g></svg></mjx-container></span>。在PRNG中<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.885ex" role="img" focusable="false" viewBox="0 -683 1078.6 833"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></g></svg></mjx-container></span>不会因为上一次取得的数是2就变小，它与<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.92ex" role="img" focusable="false" viewBox="0 -683 1078.6 848.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g></g></svg></mjx-container></span>是完全相等的，但在QRNG中，<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.885ex" role="img" focusable="false" viewBox="0 -683 1078.6 833"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></g></svg></mjx-container></span>会由于<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="2.44ex" height="1.92ex" role="img" focusable="false" viewBox="0 -683 1078.6 848.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mn" transform="translate(675,-150) scale(0.707)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g></g></svg></mjx-container></span>的成立而变小。</p>
+<p>cuRAND库与其他库最大的不同就是，它提供了主机端和设备端两套API。</p>
+<p>主机端API定义在头文件<code>curand.h</code>中。但要注意的是，主机端API允许两种生成方式：主机生成和设备生成。若生成时传入的数据指针是主机内存指针，则生成过程由CPU在主机端完成，结果也存储在主机内存中。若生成时传入的数据指针是设备内存指针，则生成过程由设备端完成，结果存储在设备的全局内存中。</p>
+<p>设备端API定义在头文件<code>curand_kernel.h</code>中，可以在核函数中直接生成随机数并使用，而不需要将生成结果存入全局内存后再读取。</p>
+<p>cuRAND库的RNG有9种，分别有5种PRNG和4种QRNG：</p>
+<ul>
+<li>PRNG：
+<ul>
+<li>CURAND_RNG_PSEUDO_XORWOW：使用XORWOW算法实现的，XORWOW算法是伪随机数生成器xor-shift系列的成员；</li>
+<li>CURAND_RNG_PSEUDO_MRG32K3A：组合多重递归伪随机数生成器系列的成员；</li>
+<li>CURAND_RNG_PSEUDO_MTGP32：Mersenne Twister伪随机数生成器系列的成员，具有为GPU定制的参数；</li>
+<li>CURAND_RNG_PSEUDO_MT19937：Mersenne Twister伪随机数生成器系列的成员，参数与CPU版本相同，但顺序不同，仅支持主机API，并且只能在架构sm_35或更高版本上使用；</li>
+<li>CURAND_RNG_PSEUDO_PHILOX4_32_10：Philox系列的成员，三大基于非加密计数器的随机数生成器之一。</li>
+</ul></li>
+<li>QRNG：
+<ul>
+<li>CURAND_RNG_QUASI_SOBOL32：32位序列的Sobol生成器；</li>
+<li>CURAND_RNG_QUASI_SCRAMBLED_SOBOL32：添加扰乱的32位序列的Sobol生成器；</li>
+<li>CURAND_RNG_QUASI_SOBOL64：64位序列的Sobol生成器；</li>
+<li>CURAND_RNG_QUASI_SCRAMBLED_SOBOL64：添加扰乱的64位序列的Sobol生成器。</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>cuRAND中的QRNG都是基于Sobol算法的，它以方向向量作为种子，上述的四种变体每种都能产生高达20000维的序列。</p>
+</blockquote>
+<h3 id="具体示例-3">具体示例</h3>
+<h4 id="主机端api">主机端API</h4>
+<p>主机端API调用流程如下：</p>
+<ul>
+<li>创建生成器并指定RNG类型；</li>
+<li>设置偏移量（<code>offset</code>）、排序方式（<code>ordering</code>）、种子（<code>seed</code>）；</li>
+<li>从指定分布中执行生成任务；</li>
+<li>若在设备端生成，根据需要确定是否将生成结果拷贝回主机端；</li>
+</ul>
+<p>具体示例如下，首先创建生成器。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandCreateGeneratorHost</span>(&amp;gen, CURAND_RNG_PSEUDO_XORWOW)); <span class="hljs-comment">// 主机端生成</span><br><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandCreateGenerator</span>(&amp;gen, CURAND_RNG_PSEUDO_XORWOW)); <span class="hljs-comment">// 设备端生成</span><br></code></pre></td></tr></table></figure>
+<p>设置<code>offset</code>、<code>ordering</code>、<code>seed</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 设置偏移量</span><br><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandSetGeneratorOffset</span>(gen, <span class="hljs-number">0ULL</span>));<br><span class="hljs-comment">// 设置排序方式</span><br><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandSetGeneratorOrdering</span>(gen, CURAND_ORDERING_PSEUDO_BEST));<br><span class="hljs-comment">// 设置种子</span><br><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandSetPseudoRandomGeneratorSeed</span>(gen, <span class="hljs-number">1234ULL</span>));<br></code></pre></td></tr></table></figure>
+<p>从指定分布中执行生成任务。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 以正态分布为例，此外还有均匀分布、对数正态分布和泊松分布</span><br><span class="hljs-built_in">ERROR_CHECK_CURAND</span>(<span class="hljs-built_in">curandGenerateNormal</span>(gen, data, n, mean, stddev));<br></code></pre></td></tr></table></figure>
+<h4 id="设备端api">设备端API</h4>
+<p>设备端API调用主要有以下几个步骤：</p>
+<ul>
+<li>根据RNG算法创建状态；</li>
+<li>初始化状态；</li>
+<li>生成随机值；</li>
+</ul>
+<p>每个支持的RNG算法都有对应的状态。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">curandStateXORWOW_t rand_state;<br></code></pre></td></tr></table></figure>
+<p>根据不同的RNG算法调用不同的<code>curand_init</code>重载。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> seed = threadIdx.x;<br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> subsequence = <span class="hljs-number">1ULL</span>;<br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> offset      = <span class="hljs-number">0ULL</span>;<br><span class="hljs-built_in">curand_init</span>(seed, subsequence, offset, &amp;rand_state);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>值得注意的是，由于线程的高度并发，所以应当避免在不同线程中使用相同的种子，也应当避免使用当前时间戳作为种子。</p>
+<p>这里的<code>subsequence</code>会使得<code>curand_init()</code>返回的序列是调用了<code>(2^67 * subsequence + offset)</code>次<code>curand()</code>的结果。</p>
+</blockquote>
+<p>最后生成随机值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">float</span> x = <span class="hljs-built_in">curand_normal</span>(&amp;rand_state);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/04_curand.cu">curand.cu</a>。</p>
+</blockquote>
+<h2 id="openacc">OpenACC</h2>
+<h3 id="基本概念">基本概念</h3>
+<p>OpenACC是一个基于编译器指令的API，它的工作方式和OpenMP非常类似，都是使用<code>#pragma</code>开头的编译器指令作为指导。OpenACC的并行粒度分为<code>gang</code>、<code>worker</code>、<code>vector</code>，这些概念可以和CUDA一一对应。</p>
+<table>
+<thead>
+<tr class="header">
+<th>OpenACC</th>
+<th>CUDA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gang</code></td>
+<td><code>block</code></td>
+</tr>
+<tr class="even">
+<td><code>worker</code></td>
+<td><code>warp</code>（未显式指出）</td>
+</tr>
+<tr class="odd">
+<td><code>vector</code></td>
+<td><code>thread</code></td>
+</tr>
+</tbody>
+</table>
+<p>一个<code>gang</code>可以包含一个或多个执行线程，每个<code>gang</code>内部都包含一个或多个<code>worker</code>。每个<code>worker</code>都有一个向量宽度，由一个或多个同时执行相同指令的向量元素构成，简单理解就是一个<code>worker</code>可以包含一个或多个<code>vector</code>。每个<code>vector</code>都是一个单一的执行流，类似于CUDA线程。</p>
+<p>OpenACC的目标是建立一个单线程的主机程序，该主机程序将核函数下放至多处理单元（PU），每个PU一次只运行一个<code>gang</code>，但可以同时执行多个独立的<code>worker</code>。在OpenACC中，<code>gang</code>并行使用多个PU，每个<code>gang</code>中的多线程并行即为<code>worker</code>并行。每个<code>worker</code>中的并行以及一个跨向量操作的并行称为<code>vector</code>并行。这里的PU有点类似于NVIDIA GPU中的SM。</p>
+<h3 id="并行模式">并行模式</h3>
+<p>根据任务是否通过<code>gang</code>、<code>worker</code>、<code>vector</code>并行执行，OpenACC将执行分为几种模式。</p>
+<p>假设一个OpenACC程序的并行计算区域创建了<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="1.778ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 786 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g></g></g></svg></mjx-container></span>个<code>gang</code>，每个<code>gang</code>包含<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="2.371ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 1048 705"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></g></g></g></svg></mjx-container></span>个<code>worker</code>，每个<code>worker</code>的向量宽度为<code>V</code>。此时总共有<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="11.421ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 5047.9 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g><g data-mml-node="mo" transform="translate(1008.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mi" transform="translate(2008.4,0)"><path data-c="1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></g><g data-mml-node="mo" transform="translate(3278.7,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mi" transform="translate(4278.9,0)"><path data-c="1D449" d="M52 648Q52 670 65 683H76Q118 680 181 680Q299 680 320 683H330Q336 677 336 674T334 656Q329 641 325 637H304Q282 635 274 635Q245 630 242 620Q242 618 271 369T301 118L374 235Q447 352 520 471T595 594Q599 601 599 609Q599 633 555 637Q537 637 537 648Q537 649 539 661Q542 675 545 679T558 683Q560 683 570 683T604 682T668 681Q737 681 755 683H762Q769 676 769 672Q769 655 760 640Q757 637 743 637Q730 636 719 635T698 630T682 623T670 615T660 608T652 599T645 592L452 282Q272 -9 266 -16Q263 -18 259 -21L241 -22H234Q216 -22 216 -15Q213 -9 177 305Q139 623 138 626Q133 637 76 637H59Q52 642 52 648Z"></path></g></g></g></svg></mjx-container></span>个执行线程来处理这个并行区域。</p>
+<h4 id="gang冗余模式"><code>gang</code>冗余模式</h4>
+<p>开始执行并行区域时，<code>gang</code>以冗余模式执行，可以在并行执行前对<code>gang</code>的状态进行初始化。在该模式下，每个<code>gang</code>中只有一个活跃的<code>worker</code>和一个活跃的<code>vector</code>元素，其他<code>worker</code>和<code>vector</code>元素是闲置的，因此只有<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="1.778ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 786 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g></g></g></svg></mjx-container></span>个活跃执行线程。用CUDA伪核函数来表示如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">kernel</span><span class="hljs-params">()</span> </span>{<br>    <span class="hljs-keyword">if</span> (threadIdx.x == <span class="hljs-number">0</span>)<br>        <span class="hljs-built_in">foo</span>();<br>}<br></code></pre></td></tr></table></figure>
+<h4 id="gang分裂模式"><code>gang</code>分裂模式</h4>
+<p>在OpenACC并行区域的某些地方，程序可能通过<code>gang</code>转换为并行执行，这种情况下程序以<code>gang</code>分裂模式执行。该模式下每个<code>gang</code>中仍然只有一个活跃的<code>worker</code>和一个活跃的<code>vector</code>元素，因此同样只有<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="1.778ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 786 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g></g></g></svg></mjx-container></span>个活跃执行线程。但每个活跃的<code>vector</code>执行不同的并行区域，故计算任务被分散到各个<code>gang</code>中。以向量加法为例，CUDA伪核函数表达如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">kernel</span><span class="hljs-params">(<span class="hljs-type">int</span>* v1, <span class="hljs-type">int</span>* v2, <span class="hljs-type">int</span>* out, <span class="hljs-type">int</span> N)</span> </span>{<br>    <span class="hljs-keyword">if</span> (threadIdx.x == <span class="hljs-number">0</span>) {<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = blockIdx.x; i &lt; N; i += gridDim.x) {<br>            out[i] = v1[i] + v2[i];<br>        }<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>每个<code>gang</code>只有一个活跃<code>worker</code>时，程序处于单一<code>worker</code>模式，当<code>worker</code>中只有一个活跃<code>vector</code>时，程序处于单一<code>vector</code>模式。所以<code>gang</code>冗余模式和<code>gang</code>分裂模式也可以被称作单一<code>worker</code>模式和单一<code>vector</code>模式。</p>
+</blockquote>
+<h4 id="worker分裂模式"><code>worker</code>分裂模式</h4>
+<p>在该模式下，并行区域的工作被划分到多个<code>gang</code>的多个<code>worker</code>中，可以提供<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="6.915ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 3056.4 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g><g data-mml-node="mo" transform="translate(1008.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mi" transform="translate(2008.4,0)"><path data-c="1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></g></g></g></svg></mjx-container></span>路并行。CUDA伪核函数表达如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">kernel</span><span class="hljs-params">(<span class="hljs-type">int</span>* v1, <span class="hljs-type">int</span>* v2, <span class="hljs-type">int</span>* out, <span class="hljs-type">int</span> N)</span> </span>{<br>    <span class="hljs-keyword">if</span> (threadIdx.x % warpSize == <span class="hljs-number">0</span>) {<br>        <span class="hljs-type">int</span> warpId = threadIdx.x / warpSize;<br>        <span class="hljs-type">int</span> warpsPerBlock = blockDim.x / warpSize;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = blockIdx.x * warpsPerBlock + warpId; i &lt; N; i += gridDim.x * warpsPerBlock) {<br>            out[i] = v1[i] + v2[i];<br>        }<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<h4 id="vector分裂模式"><code>vector</code>分裂模式</h4>
+<p>该模式将工作在<code>gang</code>、<code>worker</code>、<code>vector</code>通道上进行划分，提供<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="11.421ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 5047.9 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D43A" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q492 659 471 656T418 643T357 615T294 567T236 496T189 394T158 260Q156 242 156 221Q156 173 170 136T206 79T256 45T308 28T353 24Q407 24 452 47T514 106Q517 114 529 161T541 214Q541 222 528 224T468 227H431Q425 233 425 235T427 254Q431 267 437 273H454Q494 271 594 271Q634 271 659 271T695 272T707 272Q721 272 721 263Q721 261 719 249Q714 230 709 228Q706 227 694 227Q674 227 653 224Q646 221 643 215T629 164Q620 131 614 108Q589 6 586 3Q584 1 581 1Q571 1 553 21T530 52Q530 53 528 52T522 47Q448 -22 322 -22Q201 -22 126 55T50 252Z"></path></g><g data-mml-node="mo" transform="translate(1008.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mi" transform="translate(2008.4,0)"><path data-c="1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></g><g data-mml-node="mo" transform="translate(3278.7,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mi" transform="translate(4278.9,0)"><path data-c="1D449" d="M52 648Q52 670 65 683H76Q118 680 181 680Q299 680 320 683H330Q336 677 336 674T334 656Q329 641 325 637H304Q282 635 274 635Q245 630 242 620Q242 618 271 369T301 118L374 235Q447 352 520 471T595 594Q599 601 599 609Q599 633 555 637Q537 637 537 648Q537 649 539 661Q542 675 545 679T558 683Q560 683 570 683T604 682T668 681Q737 681 755 683H762Q769 676 769 672Q769 655 760 640Q757 637 743 637Q730 636 719 635T698 630T682 623T670 615T660 608T652 599T645 592L452 282Q272 -9 266 -16Q263 -18 259 -21L241 -22H234Q216 -22 216 -15Q213 -9 177 305Q139 623 138 626Q133 637 76 637H59Q52 642 52 648Z"></path></g></g></g></svg></mjx-container></span>路并行。该模式最接近CUDA核函数的行为模式，CUDA伪核函数表达如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">kernel</span><span class="hljs-params">(<span class="hljs-type">int</span>* v1, <span class="hljs-type">int</span>* v2, <span class="hljs-type">int</span>* out, <span class="hljs-type">int</span> N)</span> </span>{<br>    <span class="hljs-keyword">if</span> (threadIdx.x &lt; N)<br>        out[i] = v1[i] + v2[i];<br>}<br></code></pre></td></tr></table></figure>
+<h3 id="基本用法">基本用法</h3>
+<p>前面提到了OpenACC的工作方式与OpenMP的极为相似，在源代码中加入<code>#pragma acc</code>即可指导编译器对源代码进行翻译，使其能够在GPU上并行执行。</p>
+<h4 id="计算指令">计算指令</h4>
+<h5 id="核函数指令">核函数指令</h5>
+<p><code>#pragma acc kernels</code>会自动分析代码块中的可并行循环。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels</span><br>{<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        C[i] = A[i] + B[i];<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>核函数指令可以有条件子句来修饰，当条件为<code>false</code>时，代码块不会在设备上执行。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels <span class="hljs-keyword">if</span>(N &gt; 128)</span><br>{<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        C[i] = A[i] + B[i];<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>默认情况下，核函数指令结束时会有一个隐式同步，但可以通过添加<code>async</code>子句来使执行不被阻塞。</p>
+<p><code>async</code>子句接受一个可选的整型参数，若传入ID则可以使用指令来等待。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels async(3)</span><br>{<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        C[i] = A[i] + B[i];<br>    }<br>}<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc wait(3) <span class="hljs-comment">// 或通过运行时API来等待 acc_async_wait(3)</span></span><br><span class="hljs-comment">// 或者使用空等待指令，等待所以异步任务完成</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc wait <span class="hljs-comment">// 或通过运行时API来等待 acc_async_wait_all</span></span><br></code></pre></td></tr></table></figure>
+<p>也可以将<code>async</code>子句和<code>wait</code>子句结合起来，实现链式异步工作。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels async(0)</span><br>{<br>    ...<br>}<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels wait(0) async(1)</span><br>{<br>    ...<br>}<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels wait(1) async(2)</span><br>{<br>    ...<br>}<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc wait(2)</span><br></code></pre></td></tr></table></figure>
+<p>而检查异步任务在没有阻塞的情况下是否完成只能通过运行时API来完成。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">acc_async_test</span>(<span class="hljs-type">int</span>); <span class="hljs-comment">// 已结束返回非零值，否则返回零</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>目前想要编译OpenACC的代码，推荐使用PGI编译器。PGI被英伟达收购之后，编译器就纳入了NVIDIA HPC SDK中了。需要安装HPC SDK后使用<code>pgcc</code>命令来编译代码。详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/05_openacc_kernels.c">openacc_kernels.c</a>。</p>
+</blockquote>
+<h5 id="并行指令">并行指令</h5>
+<p>上面提到的核函数指令是一个强大的工具，编译器会自动分析代码并选择一个合适的并行策略，在这个过程中，程序员对程序的控制是较少的。但并行指令<code>#pragma acc parallel</code>则可以提供更多的控制选项。</p>
+<p>并行指令同样支持核函数指令的一些子句，如<code>if</code>、<code>async</code>、<code>wait</code>。此外可以使用<code>num_gangs(int)</code>来设置<code>gang</code>数量，<code>num_workers(int)</code>设置<code>worker</code>数量，<code>vector_length(int)</code>设置每个<code>worker</code>的向量宽度。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel num_gangs(32) num_workers(32) vector_length(64)</span><br>{<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<p>并行指令还支持<code>reduction</code>子句，格式为<code>#pragma acc parallel reduction(op:var1, var2, ...)</code>，支持的<code>op</code>有<code>+</code>、<code>*</code>、<code>max</code>、<code>min</code>、<code>&amp;</code>、<code>|</code>、<code>^</code>、<code>&amp;&amp;</code>、<code>||</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel reduction(+ : result)</span><br>{<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        result += A[i];<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>并行指令还支持<code>private</code>和<code>firstprivate</code>子句。<code>private</code>会为每个<code>gang</code>创建一个<code>private</code>型复制变量，只有该<code>gang</code>可以使用该变量的拷贝，因此该值的改变对其他<code>gang</code>或主机程序是不可见的。<code>firstprivate</code>功能和<code>private</code>相同，只是会将每个<code>gang</code>中的<code>private</code>型变量的值初始化为主机上该变量当前的值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel private(a)</span><br>{<br>    ...<br>}<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel firstprivate(a)</span><br>{<br>	...<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/06_openacc_parallel.c">openacc_parallel.c</a>。</p>
+</blockquote>
+<h5 id="循环指令">循环指令</h5>
+<p>并行指令需要程序员为编译器明确标注并行性，并行区域总是以<code>gang</code>冗余模式开始的，执行并行模式之间的转换需要对编译器有明确的指示，这种指示可以通过循环指令<code>#pragma acc loop</code>来完成。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        C[i] = A[i] + B[i];<br>    }<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        D[i] = C[i] * A[i];<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>上面的代码并没有为循环指令添加子句，所以编译器可以自由使用它认为的最优循环调度。也可以通过<code>gang</code>、<code>worker</code>或<code>vector</code>子句来显式控制每一级的并行性。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel</span><br>{<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">1</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop gang</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        vec2[i] = a;<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>上述代码中，并行区域以<code>gang</code>冗余模式开始，遇到带有<code>gang</code>子句的循环指令后，转换为了<code>gang</code>分裂模式。</p>
+<p>考虑下列代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        ...<br>    }<br>}<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>    {<br>        ...<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>可以简写为下列形式。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel loop</span><br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>{<br>    ...<br>}<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels loop</span><br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>{<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/06_openacc_parallel.c">openacc_parallel.c</a>。</p>
+</blockquote>
+<p>循环指令<code>loop</code>不仅可以和并行指令<code>paralle</code>结合，还可以与核函数指令<code>kernels</code>结合，但某些循环指令的子句在并行指令和核函数指令下会有所不同。</p>
+<table>
+<colgroup>
+<col style="width: 13%">
+<col style="width: 43%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>子句</th>
+<th>并行指令下的行为</th>
+<th>核函数指令下的行为</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>collapse(int)</code></td>
+<td>指明循环指令适用于多重嵌套循环</td>
+<td>与并行指令下相同</td>
+</tr>
+<tr class="even">
+<td><code>gang(int)</code></td>
+<td>指明循环应通过<code>gang</code>划分到并行区域，<code>gang</code>数量由并行指令决定</td>
+<td>说明循环应通过<code>gang</code>进行划分，<code>gang</code>有选择的使用整型参数</td>
+</tr>
+<tr class="odd">
+<td><code>worker(int)</code></td>
+<td>指明循环应通过每个<code>gang</code>中的<code>worker</code>划分到并行区域，将每个<code>gang</code>由单一<code>worker</code>模式转换到<code>worker</code>分裂模式</td>
+<td>说明循环应通过每个<code>gang</code>中的<code>worker</code>划分到并行区域，<code>worker</code>有选择的使用整型参数</td>
+</tr>
+<tr class="even">
+<td><code>vector(int)</code></td>
+<td>指明循环应通过<code>vector</code>通道进行分配，是一个<code>worker</code>由单一<code>vector</code>模式转换到<code>vector</code>分裂模式</td>
+<td>说明循环应通过<code>vector</code>通道进行分配，<code>vector</code>有选择的使用整型参数</td>
+</tr>
+<tr class="odd">
+<td><code>seq</code></td>
+<td>为了按序执行，使用<code>seq</code>对循环进行标记</td>
+<td>与并行指令下相同</td>
+</tr>
+<tr class="even">
+<td><code>auto</code></td>
+<td>指明编译器应为相关的循环选择<code>gang</code>、<code>worker</code>或<code>vector</code>并行</td>
+<td>与并行指令下相同</td>
+</tr>
+<tr class="odd">
+<td><code>tile(int, ...)</code></td>
+<td>指明编译器应将嵌套循环中的每个循环拆分为两个循环：外层的<code>tile</code>循环和内层的<code>element</code>循环。内层循环次数为<code>tile_size</code>，外层循环次数取决于串行代码。若附加到多个紧密的嵌套循环中，<code>tile</code>可以使用多个<code>tile_size</code>，并自动将所有外部循环放在内部循环之外</td>
+<td>与并行指令下相同</td>
+</tr>
+<tr class="even">
+<td><code>device_type(type)</code></td>
+<td><code>type</code>是一个逗号分隔的列表，分隔不同设备类型的子句。所有子句都遵循<code>device_type</code>的设定，只有当循环在指定设备类型上执行时，才可能有指令结束，或在下一个<code>type</code>的设备上执行的情况。</td>
+<td>与并行指令下相同</td>
+</tr>
+<tr class="odd">
+<td><code>independent</code></td>
+<td>该子句声称被标记的循环为并行的且编译器分析高于一切</td>
+<td>与并行指令下相同</td>
+</tr>
+</tbody>
+</table>
+<h4 id="数据指令">数据指令</h4>
+<p><code>#pragma acc data</code>可以在主机和设备之间进行显式的数据传输。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc data copyin(A[0 : N], B[0 : N]) copyout(C[0 : N], D[0 : N])</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel</span><br>    {<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>        {<br>            C[i] = A[i] + B[i];<br>        }<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>        {<br>            D[i] = C[i] * A[i];<br>        }<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>上面的代码告知编译器，只有<code>A</code>和<code>B</code>应该被拷贝到设备，只有<code>C</code>和<code>D</code>应该被拷贝回主机。同时指明了数组的范围，某些情况下，编译器能够推断要复制的数组大小，可以将代码简化为下面的样子。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc data copyin(A, B) copyout(C, D)</span><br></code></pre></td></tr></table></figure>
+<p>除了上述指定代码块的方法，还可以使用<code>enter data</code>指令和<code>exit data</code>指令来标记在任意节点传入和传出设备的数组。<code>enter data</code>指明的数据会持续保留在设备端，直到遇到将其传回的<code>exit data</code>指令。这两个指令可以与<code>async</code>和<code>wait</code>子句结合发挥最大作用。</p>
+<blockquote>
+<p>注意，单纯的<code>data</code>指令不支持<code>async</code>和<code>wait</code>子句。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp">    <span class="hljs-built_in">init</span>(vec1);<br>    <span class="hljs-built_in">init</span>(vec2);<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc enter data copyin(vec1[0 : N], vec2[0 : N]) async(0)</span><br><br>	<span class="hljs-built_in">process</span>(vec3);<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc kernels wait(0) async(1)</span><br>    {<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++)<br>        {<br>            vec1[i] = <span class="hljs-built_in">do_something</span>(vec2[i]);<br>        }<br>    }<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc exit data copyout(vec1[0 : N]) wait(1) async(2)</span><br><br>    <span class="hljs-built_in">process</span>(vec4);<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc wait(2)</span><br></code></pre></td></tr></table></figure>
+<p>考虑如下代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc data copyin(A[0 : N], B[0 : N]) copyout(C[0 : N], D[0 : N])</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel</span><br>    {<br>		...<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<p>可以简写为下列形式。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel copyin(A[0 : N], B[0 : N]) copyout(C[0 : N], D[0 : N])</span><br>{<br>    ...<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/07_openacc_data.c">openacc_data.c</a>。</p>
+</blockquote>
+<p>数据指令支持的子句见下表。</p>
+<table>
+<colgroup>
+<col style="width: 23%">
+<col style="width: 45%">
+<col style="width: 7%">
+<col style="width: 12%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>子句</th>
+<th>行为</th>
+<th><code>data</code>支持</th>
+<th><code>enter data</code>支持</th>
+<th><code>exit data</code>支持</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>if(cond)</code></td>
+<td>若<code>cond</code>为<code>true</code>则执行数据搬移</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr class="even">
+<td><code>copy(var1, ...)</code></td>
+<td>在进入数据区域时将变量拷贝至设备端，离开数据区域时拷贝回主机端</td>
+<td>Y</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr class="odd">
+<td><code>copyin(var1, ...)</code></td>
+<td>指明变量只能被拷贝至设备端</td>
+<td>Y</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr class="even">
+<td><code>copyout(var1, ...)</code></td>
+<td>指明变量只能被拷贝回主机端</td>
+<td>Y</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+<tr class="odd">
+<td><code>create(var1, ...)</code></td>
+<td>指明列出的变量需要在设备端分配内存，但变量值不必传入或传出设备</td>
+<td>Y</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr class="even">
+<td><code>present(var1, ...)</code></td>
+<td>指明列出的变量已经在设备端了，不必再次传入。运行时，编译器会发现并使用这些已经存在于设备端的数据</td>
+<td>Y</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr class="odd">
+<td><code>present_or_copy(var1,...)</code></td>
+<td>若列出的变量已经在设备端了，则功能与<code>present</code>一致；若不在设备端，则功能与<code>copy</code>一致</td>
+<td>Y</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr class="even">
+<td><code>present_or_copyin(var1, ...)</code></td>
+<td>若列出的变量已经在设备端了，则功能与<code>present</code>一致；若不在设备端，则功能与<code>copyin</code>一致</td>
+<td>Y</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr class="odd">
+<td><code>present_or_copyout(var1, ...)</code></td>
+<td>若列出的变量已经在设备端了，则功能与<code>present</code>一致；若不在设备端，则功能与<code>copyout</code>一致</td>
+<td>Y</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr class="even">
+<td><code>present_or_create(var1, ...)</code></td>
+<td>若列出的变量已经在设备端了，则功能与<code>present</code>一致；若不在设备端，则功能与<code>create</code>一致</td>
+<td>Y</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr class="odd">
+<td><code>deviceptr(var1, ...)</code></td>
+<td>指明列出的变量是设备内存指针，不必再为该指针指向的数据分配空间，也不必在主机和设备之间传输。</td>
+<td>Y</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr class="even">
+<td><code>delete(var1, ...)</code></td>
+<td>可以与<code>exit data</code>结合使用，显式释放设备内存</td>
+<td>N</td>
+<td>N</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>更多指令和运行时API可以参考官方文档<a target="_blank" rel="noopener" href="https://www.openacc.org/specification">Specification | OpenACC</a>。</p>
+</blockquote>
+<h3 id="与cuda结合">与CUDA结合</h3>
+<p>要结合CUDA与OpenACC，需要通过<code>deviceptr</code>子句来实现CUDA和OpenACC之间的数据共享。核心代码如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc parallel loop gang deviceptr(d_A, d_B, d_C)</span><br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; M; i++)<br>{<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> acc loop worker vector</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>; j &lt; P; j++)<br>    {<br>        <span class="hljs-type">float</span> sum = <span class="hljs-number">0.0f</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> k = <span class="hljs-number">0</span>; k &lt; N; k++)<br>        {<br>            sum += d_A[i * N + k] * d_B[k * P + j];<br>        }<br>        d_C[i * P + j] = sum;<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>详细代码参考<a target="_blank" rel="noopener" href="https://github.com/Deleter-D/CUDA/blob/master/07_acceleration_library_and_OpenACC/08_cuda_openacc.cu">cuda_openacc.cu</a>。</p>
+</blockquote>
+</div><div class="article-licensing box"><div class="licensing-title"><p>CUDA编程——GPU加速库和OpenACC</p><p><a href="https://deleter-d.github.io/posts/9782/">https://deleter-d.github.io/posts/9782/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://deleter-d.github.io"><p>亦初</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-02-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-02-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/posts/53610/" target="_blank">CUDA编程——调整指令集原语</a><br></span><span>  2.<a class="is-size-6" href="/posts/4919/" target="_blank">CUDA编程——流和并发</a><br></span><span>  3.<a class="is-size-6" href="/posts/50255/" target="_blank">CUDA编程——性能分析工具</a><br></span><span>  4.<a class="is-size-6" href="/posts/38038/" target="_blank">CUDA编程——共享内存和常量内存</a><br></span><span>  5.<a class="is-size-6" href="/posts/47184/" target="_blank">CUDA编程——全局内存</a><br></span><span>  6.<a class="is-size-6" href="/posts/47225/" target="_blank">CUDA编程——执行模型</a><br></span><span>  7.<a class="is-size-6" href="/posts/50741/" target="_blank">CUDA编程——NVCC编译器</a><br></span><span>  8.<a class="is-size-6" href="/posts/57516/" target="_blank">CUDA编程模型概述</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/53610/"><span class="level-item">CUDA编程——调整指令集原语</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '441db59b5babd69811cb3d707626978c',
+            repo: 'Deleter-D.github.io',
+            owner: 'Deleter-D',
+            clientID: 'd087baa8a532e3b31fba',
+            clientSecret: 'faec4c1d7046247c200bca62c9930d0799ce58a5',
+            admin: ["Deleter-D"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cloudflare-cors-anywhere.wyp867909454.workers.dev/?https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cuda库概述"><span>CUDA库概述</span></a></li><li><a class="is-flex is-mobile" href="#cusparse库"><span>cuSPARSE库</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cusparse数据存储格式"><span>cuSPARSE数据存储格式</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#向量存储格式"><span>向量存储格式</span></a></li><li><a class="is-flex is-mobile" href="#压缩稀疏行compressed-sparse-row-csr"><span>压缩稀疏行Compressed Sparse Row (CSR)</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#具体示例"><span>具体示例</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#cublas库"><span>cuBLAS库</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cublas数据存储格式"><span>cuBLAS数据存储格式</span></a></li><li><a class="is-flex is-mobile" href="#具体示例-1"><span>具体示例</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#cufft库"><span>cuFFT库</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#cufft数据存储格式"><span>cuFFT数据存储格式</span></a></li><li><a class="is-flex is-mobile" href="#具体示例-2"><span>具体示例</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#curand库"><span>cuRAND库</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#具体示例-3"><span>具体示例</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#主机端api"><span>主机端API</span></a></li><li><a class="is-flex is-mobile" href="#设备端api"><span>设备端API</span></a></li></ul></li></ul></li><li><a class="is-flex is-mobile" href="#openacc"><span>OpenACC</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#基本概念"><span>基本概念</span></a></li><li><a class="is-flex is-mobile" href="#并行模式"><span>并行模式</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#gang冗余模式"><span>gang冗余模式</span></a></li><li><a class="is-flex is-mobile" href="#gang分裂模式"><span>gang分裂模式</span></a></li><li><a class="is-flex is-mobile" href="#worker分裂模式"><span>worker分裂模式</span></a></li><li><a class="is-flex is-mobile" href="#vector分裂模式"><span>vector分裂模式</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#基本用法"><span>基本用法</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#循环指令"><span>循环指令</span></a></li><li><a class="is-flex is-mobile" href="#数据指令"><span>数据指令</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#与cuda结合"><span>与CUDA结合</span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">亦初</p><p class="is-size-6 is-block">落霞与孤鹜齐飞，秋水共长天一色</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>冰岛</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">74</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">22</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">72</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/Deleter-D" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/Deleter-D"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:18735855248@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Telegram" href="https://t.me/GoldPancake687"><i class="fab fa-telegram"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:49:53.000Z">2024-02-20</time></p><p class="title"><a href="/posts/9782/">CUDA编程——GPU加速库和OpenACC</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:45:21.000Z">2024-02-20</time></p><p class="title"><a href="/posts/53610/">CUDA编程——调整指令集原语</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:36:28.000Z">2024-02-20</time></p><p class="title"><a href="/posts/4919/">CUDA编程——流和并发</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:29:56.000Z">2024-02-20</time></p><p class="title"><a href="/posts/50255/">CUDA编程——性能分析工具</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:22:30.000Z">2024-02-20</time></p><p class="title"><a href="/posts/38038/">CUDA编程——共享内存和常量内存</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Hexo/"><span class="level-start"><span class="level-item">Hexo</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java/"><span class="level-start"><span class="level-item">Java</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Linux/"><span class="level-start"><span class="level-item">Linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">15</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/Vue/"><span class="level-start"><span class="level-item">Vue</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/axios/"><span class="level-start"><span class="level-item">axios</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%8A%98%E8%85%BE/"><span class="level-start"><span class="level-item">折腾</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/"><span class="level-start"><span class="level-item">数学</span></span><span class="level-end"><span class="level-item tag">6</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="level-start"><span class="level-item">矩阵论</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2024/02/"><span class="level-start"><span class="level-item">二月 2024</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/12/"><span class="level-start"><span class="level-item">十二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/10/"><span class="level-start"><span class="level-item">十月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/08/"><span class="level-start"><span class="level-item">八月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/"><span class="tag">算法</span><span class="tag is-grey-lightest">11</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E8%AE%A1%E7%AE%97/"><span class="tag">异构计算</span><span class="tag is-grey-lightest">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CUDA/"><span class="tag">CUDA</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><span class="tag">机器学习</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%AF%95%E6%98%87%E7%BC%96%E8%AF%91%E5%99%A8/"><span class="tag">毕昇编译器</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/"><span class="tag">高性能计算</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Vue/"><span class="tag">Vue</span><span class="tag is-grey-lightest">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8A%9B%E6%89%A3/"><span class="tag">力扣</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E5%AD%A6/"><span class="tag">数学</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="tag">矩阵论</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><span class="tag">设计模式</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/axios/"><span class="tag">axios</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E7%BC%96%E7%A8%8B/"><span class="tag">异构编程</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/3D%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1/"><span class="tag">3D人体姿态估计</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Pytorch/"><span class="tag">Pytorch</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87/"><span class="tag">论文</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ITK/"><span class="tag">ITK</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><span class="tag">深度学习</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CVPR/"><span class="tag">CVPR</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Hexo/"><span class="tag">Hexo</span><span class="tag is-grey-lightest">2</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a><p class="size-small"><span>&copy; 2024 亦初</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作，如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2022/03/13 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="475747480" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>
