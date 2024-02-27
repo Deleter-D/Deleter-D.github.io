@@ -73,7 +73,7 @@ Neovim的配置全部是基于`lua`的，所以后面创建的所以脚本均为
 
 > Windows中配置文件放在`C:\Users\username\AppData\Local\nvim`下；
 >
-> Linux中放在``下
+> Linux中放在`~/.config/nvim`下
 
 ```lua
 vim.cmd("set expandtab") 	 -- 使用空格代替制表符，确保在不同的编辑环境中保持一致
