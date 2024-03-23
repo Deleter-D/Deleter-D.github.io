@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>CUDA编程——执行模型 - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-02-20T08:02:16.000Z"><meta property="article:modified_time" content="2024-02-27T09:37:44.297Z"><meta property="article:author" content="亦初"><meta property="article:tag" content="CUDA"><meta property="article:tag" content="高性能计算"><meta property="article:tag" content="异构计算"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/posts/47225/"},"headline":"亦初","image":[],"datePublished":"2024-02-20T08:02:16.000Z","dateModified":"2024-02-27T09:37:44.297Z","author":{"@type":"Person","name":"亦初"},"description":"很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"}</script><link rel="canonical" href="https://deleter-d.github.io/posts/47225/"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>CUDA编程——执行模型 - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-02-20T08:02:16.000Z"><meta property="article:modified_time" content="2024-03-23T06:07:19.369Z"><meta property="article:author" content="亦初"><meta property="article:tag" content="异构计算"><meta property="article:tag" content="CUDA"><meta property="article:tag" content="高性能计算"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/posts/47225/"},"headline":"亦初","image":[],"datePublished":"2024-02-20T08:02:16.000Z","dateModified":"2024-03-23T06:07:19.369Z","author":{"@type":"Person","name":"亦初"},"description":"很多人是参考《Professional CUDA C Programming》一书来入门CUDA的，这本书本身是很好的入门材料，但由于CUDA版本迭代非常快，导致书中的一些内容已经是过时的了。这也是笔者撰写本系列博客的初衷之一，这个系列参考了本书以及CUDA 12.x的官方文档，并在每个章节都附有详细的代码参考，并且代码是基于CUDA 12.x的，可以解决一些由于版本迭代带来的问题。本系列的博客由"}</script><link rel="canonical" href="https://deleter-d.github.io/posts/47225/"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
 
@@ -166,7 +166,28 @@ mjx-container[display="true"] + br {
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 线程束ID为偶数的执行if， 线程束ID为奇数的执行else</span><br><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">mathKernel2</span><span class="hljs-params">(<span class="hljs-type">float</span> *c)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> tid = blockIdx.x * blockDim.x + threadIdx.x;<br>    <span class="hljs-type">float</span> a, b;<br>    a = b = <span class="hljs-number">0.0f</span>;<br>    <span class="hljs-keyword">if</span> ((tid / warpSize) % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>)<br>        a = <span class="hljs-number">100.0f</span>;<br>    <span class="hljs-keyword">else</span><br>        b = <span class="hljs-number">200.0f</span>;<br>    c[tid] = a + b;<br>}<br></code></pre></td></tr></table></figure>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 线程ID为偶数的执行if，线程ID为奇数的执行另一个if</span><br><span class="hljs-function">__global__ <span class="hljs-type">void</span> <span class="hljs-title">mathKernel3</span><span class="hljs-params">(<span class="hljs-type">float</span> *c)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> tid = blockIdx.x * blockDim.x + threadIdx.x;<br>    <span class="hljs-type">float</span> a, b;<br>    a = b = <span class="hljs-number">0.0f</span>;<br>    <span class="hljs-type">bool</span> ipred = (tid % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">if</span> (ipred)<br>        a = <span class="hljs-number">100.0f</span>;<br>    <span class="hljs-keyword">if</span> (!ipred)<br>        b = <span class="hljs-number">200.0f</span>;<br>    c[tid] = a + b;<br>}<br></code></pre></td></tr></table></figure>
 <p>调用这三个核函数，使用<code>ncu</code>来统计分支效率，结果如下所示。</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gcode">											分支效率<br>mathKer<span class="hljs-symbol">nel1</span><span class="hljs-comment">(float *)</span> <span class="hljs-comment">(1, 1, 1)</span>x<span class="hljs-comment">(64, 1, 1)</span>	 <span class="hljs-number">80</span><span class="hljs-meta">%</span><br>mathKer<span class="hljs-symbol">nel2</span><span class="hljs-comment">(float *)</span> <span class="hljs-comment">(1, 1, 1)</span>x<span class="hljs-comment">(64, 1, 1)</span>	 <span class="hljs-number">100</span><span class="hljs-meta">%</span><br>mathKer<span class="hljs-symbol">nel3</span><span class="hljs-comment">(float *)</span> <span class="hljs-comment">(1, 1, 1)</span>x<span class="hljs-comment">(64, 1, 1)</span>	 <span class="hljs-number">71.43</span><span class="hljs-meta">%</span><br></code></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>分支效率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>mathKernel1(float *) (1, 1, 1)x(64, 1, 1)</code></td>
+<td>80%</td>
+</tr>
+<tr class="even">
+<td><code>mathKernel2(float *) (1, 1, 1)x(64, 1, 1)</code></td>
+<td>100%</td>
+</tr>
+<tr class="odd">
+<td><code>mathKernel3(float *) (1, 1, 1)x(64, 1, 1)</code></td>
+<td>71.43%</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>为了阅读方便，这里简化了<code>ncu</code>的输出信息，实际的输出比上述形式要丰富，后续的<code>ncu</code>分析结果也以同样的方式简化。</p>
 </blockquote>
@@ -264,7 +285,32 @@ mjx-container[display="true"] + br {
 <p>核函数耗时情况如下。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sumMatrixOnGPU2D</span> &lt;&lt;&lt;(<span class="hljs-number">512</span>, <span class="hljs-number">512</span>), (<span class="hljs-number">32</span>, <span class="hljs-number">32</span>)&gt;&gt;&gt; elapsed <span class="hljs-number">7</span>.<span class="hljs-number">0817</span> ms<br><span class="hljs-attribute">sumMatrixOnGPU2D</span> &lt;&lt;&lt;(<span class="hljs-number">512</span>, <span class="hljs-number">1024</span>), (<span class="hljs-number">32</span>, <span class="hljs-number">16</span>)&gt;&gt;&gt; elapsed <span class="hljs-number">7</span>.<span class="hljs-number">02669</span> ms<br><span class="hljs-attribute">sumMatrixOnGPU2D</span> &lt;&lt;&lt;(<span class="hljs-number">1024</span>, <span class="hljs-number">512</span>), (<span class="hljs-number">16</span>, <span class="hljs-number">32</span>)&gt;&gt;&gt; elapsed <span class="hljs-number">7</span>.<span class="hljs-number">03258</span> ms<br><span class="hljs-attribute">sumMatrixOnGPU2D</span> &lt;&lt;&lt;(<span class="hljs-number">1024</span>, <span class="hljs-number">1024</span>), (<span class="hljs-number">16</span>, <span class="hljs-number">16</span>)&gt;&gt;&gt; elapsed <span class="hljs-number">7</span>.<span class="hljs-number">03968</span> ms<br></code></pre></td></tr></table></figure>
 <p>占用率分析结果如下。</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gcode">												 占用率<br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(512, 512)</span>, <span class="hljs-comment">(32, 32)</span>&gt;&gt;&gt;		<span class="hljs-number">48.07</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(512, 1024)</span>, <span class="hljs-comment">(32, 16)</span>&gt;&gt;&gt;	<span class="hljs-number">59.31</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(1024, 512)</span>, <span class="hljs-comment">(16, 32)</span>&gt;&gt;&gt;	<span class="hljs-number">63.41</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(1024, 1024)</span>, <span class="hljs-comment">(16, 16)</span>&gt;&gt;&gt;	<span class="hljs-number">67.98</span><span class="hljs-meta">%</span><br></code></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>占用率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(512, 512), (32, 32)&gt;&gt;&gt;</code></td>
+<td>48.07%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(512, 1024), (32, 16)&gt;&gt;&gt;</code></td>
+<td>59.31%</td>
+</tr>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(1024, 512), (16, 32)&gt;&gt;&gt;</code></td>
+<td>63.41%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(1024, 1024), (16, 16)&gt;&gt;&gt;</code></td>
+<td>67.98%</td>
+</tr>
+</tbody>
+</table>
 <p>观察上述结果：</p>
 <ul>
 <li>情况二<code>(32, 16)</code>中的线程块比情况一<code>(32, 32)</code>更多，所以设备可以有更多活跃的线程束，是其占用率更高可能的原因之一；</li>
@@ -275,7 +321,37 @@ mjx-container[display="true"] + br {
 <blockquote>
 <p>全局加载效率指的是被请求的全局加载吞吐量占所需的全局加载吞吐量的比值，它衡量了程序的加载操作利用设备内存带宽的程度。</p>
 </blockquote>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gcode">												  内存读取效率	全局加载效率<br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(512, 512)</span>, <span class="hljs-comment">(32, 32)</span>&gt;&gt;&gt;		<span class="hljs-number">296.77</span> GB/s		  <span class="hljs-number">100</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(512, 1024)</span>, <span class="hljs-comment">(32, 16)</span>&gt;&gt;&gt;	<span class="hljs-number">297.72</span> GB/s		  <span class="hljs-number">100</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(1024, 512)</span>, <span class="hljs-comment">(16, 32)</span>&gt;&gt;&gt;	<span class="hljs-number">295.40</span> GB/s		  <span class="hljs-number">100</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(1024, 1024)</span>, <span class="hljs-comment">(16, 16)</span>&gt;&gt;&gt;	<span class="hljs-number">297.79</span> GB/s		  <span class="hljs-number">100</span><span class="hljs-meta">%</span><br></code></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>内存读取效率</th>
+<th>全局加载效率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(512, 512), (32, 32)&gt;&gt;&gt;</code></td>
+<td>296.77 GB/s</td>
+<td>100%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(512, 1024), (32, 16)&gt;&gt;&gt;</code></td>
+<td>297.72 GB/s</td>
+<td>100%</td>
+</tr>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(1024, 512), (16, 32)&gt;&gt;&gt;</code></td>
+<td>295.40 GB/s</td>
+<td>100%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(1024, 1024), (16, 16)&gt;&gt;&gt;</code></td>
+<td>297.79 GB/s</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
 <p>如果阅读过《CUDA C编程权威指南》一书中的相关介绍，会发现我们这里得到的分析结果与书中提到的截然不同。书中描述的情况三和情况四下，全局加载效率会有明显的下降。但这里不同的线程块设计并没有导致太大的内存操作性能波动，笔者推测是因为nvcc编译器在这方面做了比以前更多的优化，来保证线程在SM中的调度更加合理。</p>
 <p>根据书中的描述，在一节分析到的结果是，对网格和线程块的启发式算法来说，最内层的维数（<code>block.x</code>）应该是线程束大小的整倍数，这一结论还是有参考意义的。</p>
 <h3 id="增大并行性">增大并行性</h3>
@@ -289,7 +365,48 @@ mjx-container[display="true"] + br {
 <li>除了情况一、二、四外，其余情况的线程块数量均比最优情况少。故增大并行性是性能优化的一个重要因素。</li>
 </ul>
 <p>接下来分析上述各个情况的占用率，分析方法同之前的<a href="#检测活跃线程束">检测活跃线程束</a>。分析结果如下。</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs gcode">												 占用率<br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(256, 8192)</span>, <span class="hljs-comment">(64, 2)</span>&gt;&gt;&gt;		<span class="hljs-number">82.38</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(256, 4096)</span>, <span class="hljs-comment">(64, 4)</span>&gt;&gt;&gt;		<span class="hljs-number">73.27</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(256, 2048)</span>, <span class="hljs-comment">(64, 8)</span>&gt;&gt;&gt;		<span class="hljs-number">61.94</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(128, 8192)</span>, <span class="hljs-comment">(128, 2)</span>&gt;&gt;&gt; 	<span class="hljs-number">79.33</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(128, 4096)</span>, <span class="hljs-comment">(128, 4)</span>&gt;&gt;&gt;	<span class="hljs-number">64.16</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(128, 2048)</span>, <span class="hljs-comment">(128, 8)</span>&gt;&gt;&gt;	<span class="hljs-number">50.34</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(64, 8192)</span>, <span class="hljs-comment">(256, 2)</span>&gt;&gt;&gt;		<span class="hljs-number">73.05</span><span class="hljs-meta">%</span><br>sumMatrixO<span class="hljs-symbol">nGPU2</span>D &lt;&lt;&lt;<span class="hljs-comment">(64, 4096)</span>, <span class="hljs-comment">(256, 4)</span>&gt;&gt;&gt;		<span class="hljs-number">52.63</span><span class="hljs-meta">%</span><br></code></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>占用率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(256, 8192), (64, 2)&gt;&gt;&gt;</code></td>
+<td>82.38%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(256, 4096), (64, 4)&gt;&gt;&gt;</code></td>
+<td>73.27%</td>
+</tr>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(256, 2048), (64, 8)&gt;&gt;&gt;</code></td>
+<td>61.94%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(128, 8192), (128, 2)&gt;&gt;&gt;</code></td>
+<td>79.33%</td>
+</tr>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(128, 4096), (128, 4)&gt;&gt;&gt;</code></td>
+<td>64.16%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(128, 2048), (128, 8)&gt;&gt;&gt;</code></td>
+<td>50.34%</td>
+</tr>
+<tr class="odd">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(64, 8192), (256, 2)&gt;&gt;&gt;</code></td>
+<td>73.05%</td>
+</tr>
+<tr class="even">
+<td><code>sumMatrixOnGPU2D &lt;&lt;&lt;(64, 4096), (256, 4)&gt;&gt;&gt;</code></td>
+<td>52.63%</td>
+</tr>
+</tbody>
+</table>
 <p>书中描述的情况一<code>(64, 2)</code>是占用率最低的情况，因为线程块是最多的，触及到了书作者当时的硬件瓶颈。但在笔者的环境下，情况一反而占用率是最高的，这也体现了硬件进步带来的效果。</p>
 <p>虽然与书中描述的情况有所不同，但这也恰恰印证了提高并行性的重要程度，当硬件资源不再是限制和瓶颈的时候，更大的并行程度将带来更高的性能。</p>
 <p>经过上面一系列的分析我们能够发现，性能最好的线程块设计，既没有最高的占用率，也没有最高的加载吞吐量。<strong>可见，没有一个单独的指标可以直接优化性能，我们需要在几个相关的指标之间寻找一个平衡来获得全局最优性能。</strong></p>
@@ -327,7 +444,32 @@ mjx-container[display="true"] + br {
 <p>性能测试的表现如下所示。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Array</span> Size: <span class="hljs-number">16777216</span><br><span class="hljs-attribute">cpu</span> reduce      elapsed <span class="hljs-number">16</span>.<span class="hljs-number">167</span> ms       cpu_sum: <span class="hljs-number">206464799</span><br><span class="hljs-attribute">gpu</span> neighbored  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">67648</span> ms      gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">32768</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> neighboredL elapsed <span class="hljs-number">0</span>.<span class="hljs-number">424576</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">32768</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">Result</span> correct!<br></code></pre></td></tr></table></figure>
 <p>虽然在最后几轮还是会发生线程束分化，但依旧比不做任何处理快了1.6倍左右。我们可以利用<code>ncu</code>来分析每个线程束中执行的指令数量和内存读取效率来解释这种现象，分析结果如下所示。</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gradle">																			      每线程束执行指令数		内存读取效率<br>reduceNeighbored(<span class="hljs-keyword">int</span> *, <span class="hljs-keyword">int</span> *, unsigned <span class="hljs-keyword">int</span>) (<span class="hljs-number">32768</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)			<span class="hljs-number">341.94</span> inst<span class="hljs-regexp">/warp	690.98 GB/</span>s<br>reduceNeighboredLess(<span class="hljs-keyword">int</span> *, <span class="hljs-keyword">int</span> *, unsigned <span class="hljs-keyword">int</span>) (<span class="hljs-number">32768</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)		<span class="hljs-number">115.38</span> inst<span class="hljs-regexp">/warp	1.27 TB/</span>s<br></code></pre></td></tr></table></figure>
+<table>
+<colgroup>
+<col style="width: 66%">
+<col style="width: 20%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>每线程束执行指令数</th>
+<th>内存读取效率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>reduceNeighbored(int *, int *, unsigned int) (32768, 1, 1)x(512, 1, 1)</code></td>
+<td>341.94 inst/warp</td>
+<td>690.98 GB/s</td>
+</tr>
+<tr class="even">
+<td><code>reduceNeighboredLess(int *, int *, unsigned int) (32768, 1, 1)x(512, 1, 1)</code></td>
+<td>115.38 inst/warp</td>
+<td>1.27 TB/s</td>
+</tr>
+</tbody>
+</table>
 <p>可以观察到，在改善线程束分化后，每个线程束执行的指令数量大幅下降。而且拥有更大的加载吞吐量，因为虽然I/O操作数量相同，但耗时更短。</p>
 <h3 id="交错配对的归约">交错配对的归约</h3>
 <p>与相邻配对的方法相比，交错配对的方法反转了元素步长的变化，初始化为数据块大小的一半，然后每轮迭代减少一半。</p>
@@ -355,18 +497,68 @@ mjx-container[display="true"] + br {
 <p>可以观察到性能得到了进一步的提升，我们尝试进一步提高展开程度，性能测试结果如下。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Array</span> Size: <span class="hljs-number">16777216</span><br><span class="hljs-attribute">cpu</span> reduce      elapsed <span class="hljs-number">16</span>.<span class="hljs-number">0142</span> ms      cpu_sum: <span class="hljs-number">206464799</span><br><span class="hljs-attribute">gpu</span> interleaved elapsed <span class="hljs-number">0</span>.<span class="hljs-number">364608</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">32768</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> unrolling2  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">281024</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">16384</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> unrolling4  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">262944</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">8192</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> unrolling8  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">256736</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">4096</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">Result</span> correct!<br></code></pre></td></tr></table></figure>
 <p>可以观察到，在一个线程中有更多的独立内存操作会得到更好的性能，因为内存延迟可以得到很好的隐藏。我们利用<code>ncu</code>来分析设备内存读取吞吐量来解释性能提升的理由。</p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">																			设备内存读取吞吐量<br>reduce<span class="hljs-constructor">Interleaved(<span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">unsigned</span> <span class="hljs-params">int</span>)</span> (<span class="hljs-number">32768</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)		<span class="hljs-number">187.98</span> GB/s<br>reduce<span class="hljs-constructor">Unrolling2(<span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">unsigned</span> <span class="hljs-params">int</span>)</span> (<span class="hljs-number">16384</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)		<span class="hljs-number">293.78</span> GB/s<br>reduce<span class="hljs-constructor">Unrolling4(<span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">unsigned</span> <span class="hljs-params">int</span>)</span> (<span class="hljs-number">8192</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)		<span class="hljs-number">335.35</span> GB/s<br>reduce<span class="hljs-constructor">Unrolling8(<span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">int</span> <span class="hljs-operator">*</span>, <span class="hljs-params">unsigned</span> <span class="hljs-params">int</span>)</span> (<span class="hljs-number">4096</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)x(<span class="hljs-number">512</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)		<span class="hljs-number">342.42</span> GB/s<br></code></pre></td></tr></table></figure>
+<table>
+<colgroup>
+<col style="width: 76%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>设备内存读取吞吐量</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>reduceInterleaved(int *, int *, unsigned int) (32768, 1, 1)x(512, 1, 1)</code></td>
+<td>187.98 GB/s</td>
+</tr>
+<tr class="even">
+<td><code>reduceUnrolling2(int *, int *, unsigned int) (16384, 1, 1)x(512, 1, 1)</code></td>
+<td>293.78 GB/s</td>
+</tr>
+<tr class="odd">
+<td><code>reduceUnrolling4(int *, int *, unsigned int) (8192, 1, 1)x(512, 1, 1)</code></td>
+<td>335.35 GB/s</td>
+</tr>
+<tr class="even">
+<td><code>reduceUnrolling8(int *, int *, unsigned int) (4096, 1, 1)x(512, 1, 1)</code></td>
+<td>342.42 GB/s</td>
+</tr>
+</tbody>
+</table>
 <p>这里可以得到一个结论，归约的循环展开程度和设备读取吞吐量之间是成正比的。</p>
 <h3 id="展开线程的归约">展开线程的归约</h3>
 <p>上面提到过，当最后几轮迭代的时候，线程数量少于线程束大小时，线程束分化依旧会发生。由于线程束的执行时SIMT的模式，每条指令之后有隐式的线程束内同步。所以可以借助这一隐式同步，将最后几轮迭代用下列语句展开。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">if</span> (tid &lt; <span class="hljs-number">32</span>)<br>    {<br>        <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> *vmem = idata;<br>        vmem[tid] += vmem[tid + <span class="hljs-number">32</span>];<br>        vmem[tid] += vmem[tid + <span class="hljs-number">16</span>];<br>        vmem[tid] += vmem[tid + <span class="hljs-number">8</span>];<br>        vmem[tid] += vmem[tid + <span class="hljs-number">4</span>];<br>        vmem[tid] += vmem[tid + <span class="hljs-number">2</span>];<br>        vmem[tid] += vmem[tid + <span class="hljs-number">1</span>];<br>    }<br></code></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">if</span> (tid &lt; <span class="hljs-number">32</span>)<br>{<br>    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> *vmem = idata;<br>    vmem[tid] += vmem[tid + <span class="hljs-number">32</span>];<br>    vmem[tid] += vmem[tid + <span class="hljs-number">16</span>];<br>    vmem[tid] += vmem[tid + <span class="hljs-number">8</span>];<br>    vmem[tid] += vmem[tid + <span class="hljs-number">4</span>];<br>    vmem[tid] += vmem[tid + <span class="hljs-number">2</span>];<br>    vmem[tid] += vmem[tid + <span class="hljs-number">1</span>];<br>}<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：变量<code>vmem</code>是被<code>volatile</code>修饰符修饰的，它告诉编译器每次赋值时必须将<code>vmem[tid]</code>的值存回全局内存中。如果省略了<code>volatile</code>修饰符，编译器或缓存可能优化对全局或共享内存的读写。若位于全局或共享内存中的变量有<code>volatile</code>修饰符，则编译器会假定其值可以被其他线程在任何时间修改或使用。故任何带有<code>volatile</code>修饰符的变量会强制直接读写内存，而不是简单的读写缓存或寄存器。</p>
 </blockquote>
 <p>性能测试结果如下。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">gpu</span> unrolling8  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">22992</span> ms      gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">4096</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> unrolWarps8 elapsed <span class="hljs-number">0</span>.<span class="hljs-number">227296</span> ms     gpu_sum: <span class="hljs-number">206464799</span>      &lt;&lt;&lt;<span class="hljs-number">4096</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br></code></pre></td></tr></table></figure>
 <p>我们可以通过分析被阻塞线程束的占比来作证这个性能提升。</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gcode">																		   阻塞线程束占比<br>reduceU<span class="hljs-symbol">nrolling8</span><span class="hljs-comment">(int *, int *, unsigned int)</span> <span class="hljs-comment">(4096, 1, 1)</span>x<span class="hljs-comment">(512, 1, 1)</span>		<span class="hljs-number">20.83</span><span class="hljs-meta">%</span><br>reduceU<span class="hljs-symbol">nrollWarps8</span><span class="hljs-comment">(int *, int *, unsigned int)</span> <span class="hljs-comment">(4096, 1, 1)</span>x<span class="hljs-comment">(512, 1, 1)</span>		<span class="hljs-number">12.56</span><span class="hljs-meta">%</span><br></code></pre></td></tr></table></figure>
+<table>
+<colgroup>
+<col style="width: 81%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>阻塞线程束占比</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>reduceUnrolling8(int *, int *, unsigned int) (4096, 1, 1)x(512, 1, 1)</code></td>
+<td>20.83%</td>
+</tr>
+<tr class="even">
+<td><code>reduceUnrollWarps8(int *, int *, unsigned int) (4096, 1, 1)x(512, 1, 1)</code></td>
+<td>12.56%</td>
+</tr>
+</tbody>
+</table>
 <p>可以观察到，通过展开最后的线程束，被阻塞的线程束占比大幅度下降，所以进一步提升了性能。</p>
 <h3 id="完全展开的归约">完全展开的归约</h3>
 <p>由于当前计算能力的设备，每个线程块最大的线程束是1024，且上述的归约核函数中循环迭代次数是基于一维网格与一维线程块的，所以完全展开归约循环是可行的。</p>
@@ -520,7 +712,7 @@ mjx-container[display="true"] + br {
 <p>性能测试如下。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Array</span> size: <span class="hljs-number">524288</span><br><span class="hljs-attribute">Execution</span> Configuration: grid <span class="hljs-number">1024</span> block <span class="hljs-number">512</span><br><span class="hljs-attribute">cpu</span> reduce      elapsed <span class="hljs-number">0</span>.<span class="hljs-number">48291</span> ms      cpu_sum: <span class="hljs-number">6451596</span><br><span class="hljs-attribute">gpu</span> nested      elapsed <span class="hljs-number">76</span>.<span class="hljs-number">7643</span> ms      gpu_sum: <span class="hljs-number">6451596</span>        &lt;&lt;&lt;<span class="hljs-number">1024</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> nestedNosyn elapsed <span class="hljs-number">69</span>.<span class="hljs-number">8579</span> ms      gpu_sum: <span class="hljs-number">6451596</span>        &lt;&lt;&lt;<span class="hljs-number">1024</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> nested2     elapsed <span class="hljs-number">0</span>.<span class="hljs-number">082464</span> ms     gpu_sum: <span class="hljs-number">6451596</span>        &lt;&lt;&lt;<span class="hljs-number">1024</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">gpu</span> neighbored  elapsed <span class="hljs-number">0</span>.<span class="hljs-number">025632</span> ms     gpu_sum: <span class="hljs-number">6451596</span>        &lt;&lt;&lt;<span class="hljs-number">1024</span>, <span class="hljs-number">512</span>&gt;&gt;&gt;<br><span class="hljs-attribute">Result</span> correct!<br></code></pre></td></tr></table></figure>
 <p>虽然对比之前的嵌套归约提升很大，但其性能甚至不如之前实现的性能最差的相邻匹配的归约。</p>
-</div><div class="article-licensing box"><div class="licensing-title"><p>CUDA编程——执行模型</p><p><a href="https://deleter-d.github.io/posts/47225/">https://deleter-d.github.io/posts/47225/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://deleter-d.github.io"><p>亦初</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-02-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-02-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/posts/9782/" target="_blank">CUDA编程——GPU加速库和OpenACC</a><br></span><span>  2.<a class="is-size-6" href="/posts/53610/" target="_blank">CUDA编程——调整指令集原语</a><br></span><span>  3.<a class="is-size-6" href="/posts/4919/" target="_blank">CUDA编程——流和并发</a><br></span><span>  4.<a class="is-size-6" href="/posts/50255/" target="_blank">CUDA编程——性能分析工具</a><br></span><span>  5.<a class="is-size-6" href="/posts/38038/" target="_blank">CUDA编程——共享内存和常量内存</a><br></span><span>  6.<a class="is-size-6" href="/posts/47184/" target="_blank">CUDA编程——全局内存</a><br></span><span>  7.<a class="is-size-6" href="/posts/50741/" target="_blank">CUDA编程——NVCC编译器</a><br></span><span>  8.<a class="is-size-6" href="/posts/57516/" target="_blank">CUDA编程模型概述</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/47184/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">CUDA编程——全局内存</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/50741/"><span class="level-item">CUDA编程——NVCC编译器</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+</div><div class="article-licensing box"><div class="licensing-title"><p>CUDA编程——执行模型</p><p><a href="https://deleter-d.github.io/posts/47225/">https://deleter-d.github.io/posts/47225/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://deleter-d.github.io"><p>亦初</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-02-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-03-23</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/posts/9782/" target="_blank">CUDA编程——GPU加速库和OpenACC</a><br></span><span>  2.<a class="is-size-6" href="/posts/53610/" target="_blank">CUDA编程——调整指令集原语</a><br></span><span>  3.<a class="is-size-6" href="/posts/4919/" target="_blank">CUDA编程——流和并发</a><br></span><span>  4.<a class="is-size-6" href="/posts/50255/" target="_blank">CUDA编程——性能分析工具</a><br></span><span>  5.<a class="is-size-6" href="/posts/38038/" target="_blank">CUDA编程——共享内存和常量内存</a><br></span><span>  6.<a class="is-size-6" href="/posts/47184/" target="_blank">CUDA编程——全局内存</a><br></span><span>  7.<a class="is-size-6" href="/posts/50741/" target="_blank">CUDA编程——NVCC编译器</a><br></span><span>  8.<a class="is-size-6" href="/posts/57516/" target="_blank">CUDA编程模型概述</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/47184/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">CUDA编程——全局内存</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/50741/"><span class="level-item">CUDA编程——NVCC编译器</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
             var gitalk = new Gitalk({
             language:'zh-CN',
             id: 'daa95f3554c2779420c5910516ab94d0',
