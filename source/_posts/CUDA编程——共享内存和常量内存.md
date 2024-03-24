@@ -532,13 +532,12 @@ __shared__ int tile[N][N];
 
 利用`nsys`来分析其耗时，并利用`ncu`来分析它们的共享内存加载和存储事务来体现存储体冲突，结果如下。
 
-```
-                                                  耗时	 加载事务  存储事务
-writeRowReadRow(int *) (1, 1, 1)x(32, 32, 1)	1248 ns	  	  32	  32
-writeColReadCol(int *) (1, 1, 1)x(32, 32, 1)	1920 ns		1024	1024
-writeColReadRow(int *) (1, 1, 1)x(32, 32, 1)	1280 ns		  32	1024
-writeRowReadCol(int *) (1, 1, 1)x(32, 32, 1)	1280 ns		1024	  32
-```
+|                                                | 耗时 (ns) | 加载事务 | 存储事务 |
+| ---------------------------------------------- | --------- | -------- | -------- |
+| `writeRowReadRow(int *) (1, 1, 1)x(32, 32, 1)` | 1248      | 32       | 32       |
+| `writeColReadCol(int *) (1, 1, 1)x(32, 32, 1)` | 1920      | 1024     | 1024     |
+| `writeColReadRow(int *) (1, 1, 1)x(32, 32, 1)` | 1280      | 32       | 1024     |
+| `writeRowReadCol(int *) (1, 1, 1)x(32, 32, 1)` | 1280      | 1024     | 32       |
 
 可以看出行读行写的核函数性能最高，加载和存储事务最少，没有存储体冲突。不管是按列读还是写，都会存在存储体冲突，导致加载或存储事务大量增多。
 
@@ -548,10 +547,9 @@ writeRowReadCol(int *) (1, 1, 1)x(32, 32, 1)	1280 ns		1024	  32
 
 再测试其性能，结果如下。
 
-```
-                                                  		  耗时 	 加载事务  存储事务
-writeRowReadColDynamic(int *) (1, 1, 1)x(32, 32, 1)		1280 ns		1024	  32
-```
+|                                                       | 耗时 (ns) | 加载事务 | 存储事务 |
+| ----------------------------------------------------- | --------- | -------- | -------- |
+| `writeRowReadColDynamic(int *) (1, 1, 1)x(32, 32, 1)` | 1280      | 1024     | 32       |
 
 可以发现结果与`writeRowReadCol`相同。
 
@@ -559,10 +557,9 @@ writeRowReadColDynamic(int *) (1, 1, 1)x(32, 32, 1)		1280 ns		1024	  32
 
 使用前面提到的[内存填充](#内存填充)来解决存储体冲突，并测试其性能。
 
-```
-                                                  		  耗时 	加载事务  存储事务
-writeRowReadColPadding(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		32	  	32
-```
+|                                                       | 耗时 (ns) | 加载事务 | 存储事务 |
+| ----------------------------------------------------- | --------- | -------- | -------- |
+| `writeRowReadColPadding(int *) (1, 1, 1)x(32, 32, 1)` | 896       | 32       | 32       |
 
 可以发现，通过填充完美的解决了存储体冲突。
 
@@ -570,10 +567,9 @@ writeRowReadColPadding(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		32	  	32
 
 实现基于动态共享内存填充的核函数，并测试其性能。
 
-```
-                                                  		  耗时 	加载事务  存储事务
-writeRowReadColDynPad(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		32	  	32
-```
+|                                                      | 耗时 (ns) | 加载事务 | 存储事务 |
+| ---------------------------------------------------- | --------- | -------- | -------- |
+| `writeRowReadColDynPad(int *) (1, 1, 1)x(32, 32, 1)` | 896       | 32       | 32       |
 
 可以发现基于动态共享内存的填充也是有效的。
 
@@ -581,16 +577,15 @@ writeRowReadColDynPad(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		32	  	32
 
 将上述的方形共享内存推广到矩形这个更为一般的情况。实现与上述功能相同的几个核函数，并分析其性能。
 
-```
-                                                  		  耗时	 加载事务  存储事务
-writeRowReadRow(int *) (1, 1, 1)x(32, 32, 1)			1119 ns	  	  16	  16
-writeColReadCol(int *) (1, 1, 1)x(32, 32, 1)			1248 ns		 256	 256
-writeColReadRow(int *) (1, 1, 1)x(32, 32, 1)			 928 ns		  16	 256
-writeRowReadCol(int *) (1, 1, 1)x(32, 32, 1)			 992 ns		 256	  16
-writeRowReadColDynamic(int *) (1, 1, 1)x(32, 32, 1)		 960 ns		 256	  16
-writeRowReadColPadding(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		  16	  16
-writeRowReadColDynPad(int *) (1, 1, 1)x(32, 32, 1)		 896 ns		  16	  16
-```
+|                                                       | 耗时 (ns) | 加载事务 | 存储事务 |
+| ----------------------------------------------------- | --------- | -------- | -------- |
+| `writeRowReadRow(int *) (1, 1, 1)x(32, 32, 1)`        | 1119      | 16       | 16       |
+| `writeColReadCol(int *) (1, 1, 1)x(32, 32, 1)`        | 1248      | 256      | 256      |
+| `writeColReadRow(int *) (1, 1, 1)x(32, 32, 1)`        | 928       | 16       | 256      |
+| `writeRowReadCol(int *) (1, 1, 1)x(32, 32, 1)`        | 992       | 256      | 16       |
+| `writeRowReadColDynamic(int *) (1, 1, 1)x(32, 32, 1)` | 960       | 256      | 16       |
+| `writeRowReadColPadding(int *) (1, 1, 1)x(32, 32, 1)` | 896       | 16       | 16       |
+| `writeRowReadColDynPad(int *) (1, 1, 1)x(32, 32, 1)`  | 896       | 16       | 16       |
 
 > 详细代码参考[rectangle_shared_memory.cu](https://github.com/Deleter-D/CUDA/blob/master/04_shared_and_constant_memory/02_rectangle_shared_memory.cu)。
 
@@ -610,11 +605,10 @@ gpu Semm        elapsed 0.278624 ms     gpu_sum: 206464799      <<<131072, 128>>
 Result correct!
 ```
 
-```
-																		全局加载事务	全局存储事务
-reduceGmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)		8912896		4325376
-reduceSmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)		2097152		 131072
-```
+|                                                              | 全局加载事务 | 全局存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `reduceGmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)` | 8912896      | 4325376      |
+| `reduceSmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)` | 2097152      | 131072       |
 
 可以看到，通过使用共享内存代替全局内存的原地操作，大幅度减少了全局内存事务，从而提升了总体性能。
 
@@ -633,12 +627,11 @@ Result correct!
 
 分析其全局加载和存储事务。
 
-```
-																		全局加载事务	全局存储事务
-reduceGmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)		8912896		4325376
-reduceSmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)		2097152		 131072
-reduceSmemUnroll(int *, int *, unsigned int) (32768, 1, 1)x(128, 1, 1)	2097152		  32768
-```
+|                                                              | 全局加载事务 | 全局存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `reduceGmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)` | 8912896      | 4325376      |
+| `reduceSmem(int *, int *, unsigned int) (131072, 1, 1)x(128, 1, 1)` | 2097152      | 131072       |
+| `reduceSmemUnroll(int *, int *, unsigned int) (32768, 1, 1)x(128, 1, 1)` | 2097152      | 32768        |
 
 观察发现，虽然全局加载事务并没有减少，但全局存储事务却减少到了原来的1/4。
 
@@ -684,19 +677,17 @@ __global__ void copyGmem(float *out, float *in, const int rows, const int cols)
 
 这里使用$32\times16$的二维线程块来调用，经过测试，上面两个核函数的性能表现如下。
 
-```
-Kernel          Elapsed time    Effective bandwidth
-copyGmem        0.291488 ms     0.460457 GB/s
-naiveGmem       0.994176 ms     0.135004 GB/s
-```
+|             | 耗时 (ms) | 等效带宽 (GB/s) |
+| ----------- | --------- | --------------- |
+| `copyGmem`  | 0.291488  | 0.460457        |
+| `naiveGmem` | 0.994176  | 0.135004        |
 
 分析其每次请求中的全局内存事务数量，结果如下。
 
-```
-																全局加载事务	全局存储事务
-copyGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)		4			 4
-naiveGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)		4			32
-```
+|                                                              | 全局加载事务 | 全局存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `copyGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)` | 4            | 4            |
+| `naiveGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)` | 4            | 32           |
 
 可以发现，由于朴素转置的写操作是交叉访问的，所以每次请求中的全局存储事务要更多。
 
@@ -739,26 +730,23 @@ __global__ void transposeSmem(float *out, float *in, const int rows, const int c
 
 分析其性能与全局内存事务。
 
-```
-Kernel          Elapsed time    Effective bandwidth
-copyGmem        0.291072 ms     0.461115 GB/s
-naiveGmem       1.007616 ms     0.133203 GB/s
-transposeSmem   0.343520 ms     0.390713 GB/s
-```
+|                 | 耗时 (ms) | 等效带宽 (GB/s) |
+| --------------- | --------- | --------------- |
+| `copyGmem`      | 0.291072  | 0.461115        |
+| `naiveGmem`     | 1.007616  | 0.133203        |
+| `transposeSmem` | 0.343520  | 0.390713        |
 
-```
-																	全局加载事务	全局存储事务
-copyGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)			4			 4
-naiveGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)			4			32
-transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)		4			 4
-```
+|                                                              | 全局加载事务 | 全局存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `copyGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)` | 4            | 4            |
+| `naiveGmem(float *, float *, int, int) (256, 256, 1)x(16, 16, 1)` | 4            | 32           |
+| `transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 4            | 4            |
 
 上面提到了，这种方式虽然在共享内存中读取列的时候依然会发生存储体冲突，但这样的结果已经比直接对全局内存进行交叉写入要好的多。共享内存中的存储体冲突可以通过分析其共享内存事务数量来解释。
 
-```
-																	   共享加载事务	共享存储事务
-transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)		8460165		  533345
-```
+|                                                              | 共享加载事务 | 共享存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 8460165      | 533345       |
 
 ### 使用填充共享内存的矩阵转置
 
@@ -793,19 +781,17 @@ __global__ void transposeSmemPad(float *out, float *in, int rows, int cols)
 
 这里选择填充2个位置，这样可以完全消除共享内存的存储体冲突。可以通过分析其性能及共享内存事务来证明这一点。
 
-```
-Kernel				Elapsed time	Effective bandwidth
-copyGmem			0.292448 ms		0.458946 GB/s
-naiveGmem			0.987136 ms		0.135967 GB/s
-transposeSmem		0.404192 ms		0.332064 GB/s
-transposeSmemPad	0.326272 ms		0.411368 GB/s
-```
+|                    | 耗时 (ms) | 等效带宽 (GB/s) |
+| ------------------ | --------- | --------------- |
+| `copyGmem`         | 0.292448  | 0.458946        |
+| `naiveGmem`        | 0.987136  | 0.135967        |
+| `transposeSmem`    | 0.404192  | 0.332064        |
+| `transposeSmemPad` | 0.326272  | 0.411368        |
 
-```
-																	   共享加载事务	共享存储事务
-transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)		8460165		  533345
-transposeSmemPad(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)	 545540		  533686
-```
+|                                                              | 共享加载事务 | 共享存储事务 |
+| ------------------------------------------------------------ | ------------ | ------------ |
+| `transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 8460165      | 533345       |
+| `transposeSmemPad(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 545540       | 533686       |
 
 ### 使用展开的矩阵转置
 
@@ -846,24 +832,22 @@ __global__ void transposeSmemUnrollPad(float *out, float *in, int rows, int cols
 
 进行性能对比后发现，相比使用内存填充的核函数，有略微的提升。
 
-```
-Kernel					Elapsed time	Effective bandwidth
-copyGmem				0.292864 ms		0.458294 GB/s
-naiveGmem				0.987008 ms		0.135984 GB/s
-transposeSmem			0.377856 ms		0.355209 GB/s
-transposeSmemPad		0.326656 ms		0.410884 GB/s
-transposeSmemUnrollPad	0.322560 ms		0.416102 GB/s
-```
+|                          | 耗时 (ms) | 等效带宽 (GB/s) |
+| ------------------------ | --------- | --------------- |
+| `copyGmem`               | 0.292864  | 0.458294        |
+| `naiveGmem`              | 0.987008  | 0.135984        |
+| `transposeSmem`          | 0.377856  | 0.355209        |
+| `transposeSmemPad`       | 0.326656  | 0.410884        |
+| `transposeSmemUnrollPad` | 0.322560  | 0.416102        |
 
 使用展开技术使得更多的内存请求将同时处于运行状态，且会提高读写吞吐量。`ncu`分析设备内存的读写吞吐量可以佐证这一点。
 
-```
-																	   		 读吞吐量(GB/s)	  写吞吐量(GB/s)
-naiveGmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)					55.81			52.64
-transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)				193.00		 	177.18
-transposeSmemPad(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)	 		205.98		  	178.52
-transposeSmemUnrollPad(float *, float *, int, int) (64, 256, 1)x(32, 16, 1)		206.65			186.28
-```
+|                                                              | 读吞吐量 (GB/s) | 写吞吐量 (GB/s) |
+| ------------------------------------------------------------ | --------------- | --------------- |
+| `naiveGmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 55.81           | 52.64           |
+| `transposeSmem(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 193.00          | 177.18          |
+| `transposeSmemPad(float *, float *, int, int) (128, 256, 1)x(32, 16, 1)` | 205.98          | 178.52          |
+| `transposeSmemUnrollPad(float *, float *, int, int) (64, 256, 1)x(32, 16, 1)` | 206.65          | 186.28          |
 
 ## 常量内存
 
