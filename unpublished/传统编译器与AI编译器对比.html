@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>传统编译器与AI编译器对比 - 亦初</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="亦初"><meta name="msapplication-TileImage" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="亦初"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="摘要"><meta property="og:type" content="blog"><meta property="og:title" content="亦初"><meta property="og:url" content="https://deleter-d.github.io/"><meta property="og:site_name" content="亦初"><meta property="og:description" content="摘要"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta property="article:published_time" content="2024-03-26T03:30:55.000Z"><meta property="article:modified_time" content="2024-03-27T02:30:49.692Z"><meta property="article:author" content="亦初"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://deleter-d.github.io/unpublished/%E4%BC%A0%E7%BB%9F%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%8EAI%E7%BC%96%E8%AF%91%E5%99%A8%E5%AF%B9%E6%AF%94.html"},"headline":"亦初","image":[],"datePublished":"2024-03-26T03:30:55.000Z","dateModified":"2024-03-27T02:30:49.692Z","author":{"@type":"Person","name":"亦初"},"description":"摘要"}</script><link rel="canonical" href="https://deleter-d.github.io/unpublished/%E4%BC%A0%E7%BB%9F%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%8EAI%E7%BC%96%E8%AF%91%E5%99%A8%E5%AF%B9%E6%AF%94.html"><link rel="icon" href="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.4.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="亦初" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/music">音乐</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main"><!--!--><div class="card"><article class="card-content article" role="article"><h1 class="title is-3 is-size-4-mobile">传统编译器与AI编译器对比</h1><div class="content"><p>摘要</p>
+<span id="more"></span>
+<h2 id="基本概念">基本概念</h2>
+<h3 id="编译器与解析器">编译器与解析器</h3>
+<table>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 46%">
+<col style="width: 46%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Interpreter</th>
+<th>Compiler</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>程序步骤</td>
+<td>1. 创建代码<br>2. 没有文件链接或机器代码生成<br>3. 源语句在执行过程中逐步执行</td>
+<td>1. 创建代码<br>2. 解析或分析所有语言语句的正确性<br>3. 将源码转换为机器码<br>4. 链接到可执行程序<br>5. 运行程序</td>
+</tr>
+<tr class="even">
+<td>Input</td>
+<td>每次读取一行</td>
+<td>整个程序</td>
+</tr>
+<tr class="odd">
+<td>Output</td>
+<td>不产生任何中间代码</td>
+<td>生成中间目标代码</td>
+</tr>
+<tr class="even">
+<td>工作机制</td>
+<td>编译和执行同时进行</td>
+<td>编译在执行之前完成</td>
+</tr>
+<tr class="odd">
+<td>存储</td>
+<td>不保存任何机器代码</td>
+<td>在机器上存储编译后的机器代码</td>
+</tr>
+<tr class="even">
+<td>执行</td>
+<td>程序执行是解释过程的一部分，逐行执行</td>
+<td>程序执行与编译是分开的，在整个输出程序编译后执行</td>
+</tr>
+<tr class="odd">
+<td>生成程序</td>
+<td>不生成输出程序，每次执行过程都要评估源程序</td>
+<td>生成可以独立于源程序运行的输出程序</td>
+</tr>
+<tr class="even">
+<td>修改</td>
+<td>可以直接修改</td>
+<td>修改后需要重新编译</td>
+</tr>
+<tr class="odd">
+<td>运行速度</td>
+<td>较慢</td>
+<td>较快</td>
+</tr>
+<tr class="even">
+<td>内存</td>
+<td>所需内存较少，因为不创建中间代码</td>
+<td>由于要创建目标代码，所需内存更多</td>
+</tr>
+<tr class="odd">
+<td>错误</td>
+<td>解释器读取一条语句并显示错误，纠正后才能解释下一行</td>
+<td>编译器在编译时显示所有错误和警告，不修正就不能运行程序</td>
+</tr>
+<tr class="even">
+<td>错误监测</td>
+<td>较为容易</td>
+<td>较难</td>
+</tr>
+<tr class="odd">
+<td>编程语言</td>
+<td>PHP、Perl、Python、Ruby</td>
+<td>C、C++、C#、Scala、Java</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jit和aot编译方式">JIT和AOT编译方式</h3>
+<p>程序主要有两种运行方式：</p>
+<ul>
+<li>静态编译：程序在执行前全部被编译为机器码，称为AOT（Ahead of time），也就是提前编译；</li>
+<li>动态解释：程序一边编译一边运行，称为JIT（Just in time），也就是即时编译；</li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 3%">
+<col style="width: 48%">
+<col style="width: 48%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>JIT</th>
+<th>AOT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>优点</td>
+<td>1. 可以根据当前硬件情况实时编译生成最优机器指令<br>2. 可以根据当前程序的运行情况生成最优的机器指令序列<br>3. 当程序需要支持动态链接时，只能使用JIT<br>4. 可以根据进程中内存的实际情况调整代码，能够更充分的利用内存</td>
+<td>1. 程序运行前编译，可以避免运行时的编译性能消耗和内存消耗<br>2. 可以在程序运行初期就达到最高性能<br>3. 可以显著加快程序的启动</td>
+</tr>
+<tr class="even">
+<td>缺点</td>
+<td>1. 编译需要占用运行时资源<br>2. 编译占用运行时间，对某些代码编译优化不能完全支持，需要在流畅和时间之间权衡<br>3. 在编译准备和识别频繁使用的方法需要占用时间，初始编译不能达到最高性能</td>
+<td>1. 程序运行前编译会使程序安装时间增加<br>2. 牺牲高级语言的一致性问题<br>3. 将提前编译的内容保存会占用更多的外存</td>
+</tr>
+</tbody>
+</table>
+<p>一般在训练过程中使用JIT模式，离线推理过程中使用AOT模式。</p>
+<h3 id="pass和中间表达ir">Pass和中间表达IR</h3>
+<p>Pass是对源程序的一次完整扫描或处理，一次编译过程可能有多个Pass。</p>
+<p>IR（Intermediate representation）是编译器或虚拟机内部用来表示源代码的数据结构或代码。</p>
+<h2 id="传统编译器">传统编译器</h2>
+<h3 id="编译器基本构成">编译器基本构成</h3>
+<ul>
+<li>前端（Front-End）：负责词法和语法分析，将源代码转化为抽象语法树；</li>
+<li>优化器（Optimizer）：对前端得到的中间代码进行优化，使代码更加高效；</li>
+<li>后端（Back-End）：将优化过的中间代码转化为针对各自平台的机器代码。</li>
+</ul>
+<h3 id="gcc编译过程和原理">GCC编译过程和原理</h3>
+<p>GCC是一个可移植的编译器，支持多种硬件平台。它不仅仅是本地编译器，还能跨平台交叉编译。有多种语言前端，用于解析不同的语言。采用模块化设计，可以加入新的语言和新CPU架构支持。</p>
+<h4 id="编译过程">编译过程</h4>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/928e4caf-3a39-47ed-bd48-ae350f04fdf2"></p>
+<ul>
+<li>预处理</li>
+</ul>
+<p>包括宏定义、文件包含、条件编译三个部分。预处理过程读入源代码，检查包含预处理指令的语句和宏定义，并对其进行响应和替换。预处理过程会删除进程中的注释和多余空白字符。最后生成<code>.i</code>文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">gcc -E hello.c -o hello.i<br></code></pre></td></tr></table></figure>
+<ul>
+<li>编译</li>
+</ul>
+<p>编译器对<code>.i</code>文件进行语法分析并优化，然后生成对应的汇编代码<code>.s</code>文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">gcc -S hello.i -o hello.s<br></code></pre></td></tr></table></figure>
+<ul>
+<li>汇编</li>
+</ul>
+<p>汇编器将编译器生成的<code>.s</code>汇编程序汇编为机器语言或指令，也就是机器可以执行的二进制程序<code>.o</code>文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">gcc -c hello.s -o hello.o<br></code></pre></td></tr></table></figure>
+<ul>
+<li>链接</li>
+</ul>
+<p>连接器会链接程序运行所需要的目标文件，以及依赖的库文件，最后身成可执行文件，以二进制形式存在磁盘中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">gcc hello.o -o hello<br></code></pre></td></tr></table></figure>
+<h4 id="优缺点">优缺点</h4>
+<p>优点：</p>
+<ul>
+<li>支持Java、ADA、Fortran等多种语言；</li>
+<li>支持更多平台；</li>
+<li>更流行，使用范围更广，支持较为完备；</li>
+<li>GCC基于C，不需要C++编译器即可编译。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>GCC代码耦合度高，很难独立，若集成到IDE中，难以用模块化的方式调用GCC；</li>
+<li>GCC被构建成单一静态编译器，难以作为API集成到其他工具中；</li>
+<li>越后期的版本，代码质量越差，代码量约1500万行，过于庞大。</li>
+</ul>
+<h3 id="llvm架构和原理">LLVM架构和原理</h3>
+<p>LLVM的一大贡献就是提出了中间表达，将所有语言前端都对接到IR，以IR这种统一的方式对接到各种硬件。</p>
+<p>LLVM的一大理念就是Lib base，即基于库的实现。LLVM主要有以下库：</p>
+<ul>
+<li>LLVM Core：LLVM的核心库，主要是围绕LLVM中间代码的一些工具，提供了一个“源”和“目标”无关的优化器，以及几乎所有主流CPU类型的机器码生成器；</li>
+<li>Clang：LLVM的一个子项目，基于LLVM架构的轻量级编译器，负责编译C、C++、Objective-C语言，属于LLVM架构中的编译器前端；</li>
+<li>Compiler-RT：为硬件不支持的低级功能提供特定于目标的支持；</li>
+<li>LLDB：LLVM的原生调试器项目，提供丰富的流程控制和数据检测的调试功能；</li>
+<li>LLD：Clang/LLVM内置的连接器；</li>
+<li>Dragonegg：GCC插件，可以将GCC的优化和代码生成器替换为LLVM的相应工具；</li>
+<li>libc：C标准库实现；</li>
+<li>libcxx/libcxxabi：C++标准库实现；</li>
+<li>libclc：OpenCL标准库实现；</li>
+<li>OpenMP：提供OpenMP运行时，用于Clang中的OpenMP实现；</li>
+<li>polly：支持高级别的循环和数据本地化优化支持的LLVM框架，使用多面体模型实现一组缓存局部优化以及自动并行和矢量化；</li>
+<li>vmkit：基于LLVM的Java和.Net虚拟机实现；</li>
+<li>klee：基于LLVM编译基础设施的符号化虚拟机，使用一个定理证明器来尝试评估程序中的所有动态路径，以发现错误并证明函数的属性。klee的一个主要特征是它可以在检测到错误时生成测试用例；</li>
+<li>SAFECode：用于C/C++程序的内存安全编译器，通过运行时来检查代码，以便检测内存安全错误，可以用于保护软件免受安全攻击，也可用作Valgrind等内存安全错误调试工具。</li>
+</ul>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/22b71010-d4f1-481b-b56e-405055c9fb39"></p>
+<h4 id="编译过程-1">编译过程</h4>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/cd27efa0-7470-4204-88ed-8759c0c3b04d"></p>
+<ul>
+<li>预处理</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">clang -E -c hello.c -o hello.i<br></code></pre></td></tr></table></figure>
+<ul>
+<li>编译</li>
+</ul>
+<p>可以导出字节码文件<code>.bc</code>，即IR中间表示。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">clang -emit-llvm hello.i -c -o hello.bc<br></code></pre></td></tr></table></figure>
+<p>也可以导出可以识别的<code>.ll</code>文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">clang -emit-llvm hello.i -S -o hello.ll<br></code></pre></td></tr></table></figure>
+<ul>
+<li>优化Pass并生成汇编代码</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">llc hello.ll -o hello.s<br></code></pre></td></tr></table></figure>
+<ul>
+<li>汇编并生成目标文件</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">clang -c hello.s -o hello.o<br></code></pre></td></tr></table></figure>
+<ul>
+<li>链接</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">clang hello.o -o hello<br></code></pre></td></tr></table></figure>
+<h4 id="ir详解">IR详解</h4>
+<p>IR并不指一种固定的形态，LLVM架构下，编译器前端会将AST形式的IR传给优化器，优化器的每一个Pass之间都会有相同或者不同形式的IR，最后以DAG形式的IR传递给后端，后端可能再转变IR的形式进行优化。</p>
+<p>LLVM IR作为一种编译器IR，有两个基本原则指导核心库的开发：</p>
+<ul>
+<li>SSA表示，代码组织为三地址指令序列和无限寄存器，使优化能够快速进行；</li>
+<li>整个程序的IR存储到磁盘中，让链接时优化易于实现。</li>
+</ul>
+<blockquote>
+<p>SSA（Static single assignment）即静态单赋值形式，有两个重要特征：</p>
+<ul>
+<li>代码组织为三地址指令序列；</li>
+<li>寄存器数量无限制，是为了和硬件解耦。</li>
+</ul>
+</blockquote>
+<p>SSA程序的每个变量有且只有一个赋值语句，在LLVM IR中，每个变量都必须在使用前定义，且每个变量只能被赋值一次。使用SSA的好处是，每次使用一个值，可以立即向后追溯到给出其定义的唯一指令。还可以极大的简化优化，因为SSA形式建立了平凡的use-define链，也就是一个值到达使用处的定义的列表。</p>
+<h5 id="llvm-ir表示形式">LLVM IR表示形式</h5>
+<p>LLVM IR有三种具体表示形式，三种中间格式是完全等价的：</p>
+<ul>
+<li>在内存中的编译中间语言，例如无法通过文件的形式得到的指令类等；</li>
+<li>在硬盘上存储的二进制中间语言，格式为<code>.bc</code>；</li>
+<li>人类可读的代码语言，格式为<code>.ll</code>。</li>
+</ul>
+<h5 id="llvm-ir内存模型">LLVM IR内存模型</h5>
+<ul>
+<li>LLVM IR文件的基本单位称为module；</li>
+<li>一个module可以拥有多个顶层实体，如function和global variable；</li>
+<li>一个function define中至少有一个basicblock；</li>
+<li>每个basicblock中有若干instruction，并都以terminator instruction结尾。</li>
+</ul>
+<h4 id="llvm前端">LLVM前端</h4>
+<p>编译器前端将源代码转化为编译器的中间表示LLVM IR。</p>
+<ul>
+<li>词法分析：处理源代码的文本输入，将语言结构分解为一组单词和标记，去除注释、空白、制表符等。每个单词或标记必须属于语言子集，语言的保留字被变换为编译器内部表示；</li>
+<li>语法分析：分组标记以形成表达式、语句、函数体等。检查一组标记是否有意义，考虑代码物理布局，但并不分析代码含义，只保证语法正确性，并输出抽象语法树AST；</li>
+<li>语义分析：借助符号表检验代码是否违背了语言类型系统。符号表存储标识符和其各自的类型之间的映射，以及其它内容。类型检查的一种直觉的方法是，在解析之后遍历AST的同时从符号表中收集关于类型的信息；</li>
+</ul>
+<p>经过上述步骤后，生成LLVM IR，交给优化层进行优化。</p>
+<h4 id="llvm优化层">LLVM优化层</h4>
+<p>LLVM优化层的输入是LLVM前端生成的IR，具体表现为AST，输出也是IR，具体表现为DAG。</p>
+<p>优化层通过一个个的Pass对IR进行优化，Pass分为两类：</p>
+<ul>
+<li>分析Pass：负责发掘性能和优化的机会；</li>
+<li>转换Pass：生成必需的数据结构，为后续的Pass所使用。</li>
+</ul>
+<p>在转换Pass和分析Pass之间有两种主要依赖类型：</p>
+<ul>
+<li>显式依赖：转换Pass需要一种分析，则Pass管理器自动地安排它所依赖的分析Pass在它之前运行；</li>
+<li>隐式依赖：转换或分析Pass要求IR代码运用特定的表达式，需要手动地以正确的顺序将这个Pass加入到Pass队列中，可以通过命令行工具（<code>clang</code>或<code>opt</code>）或Pass管理器实现。</li>
+</ul>
+<p>Pass类是实现优化的主要资源，但并不会直接使用Pass，而是通过清楚的子类来使用它。当实现一个Pass时应该选择合适的Pass粒度，并使用该粒度下的子类。常见的子类有<code>ModulePass</code>、<code>FunctionPass</code>、<code>BasicblockPass</code>等。</p>
+<h4 id="llvm后端">LLVM后端</h4>
+<p>整个后端流水线用到了四种不同层次的指令表示：</p>
+<ul>
+<li>内存中的LLVM IR；</li>
+<li>SelectionDAG结点；</li>
+<li>MachineInstr；</li>
+<li>MCInst。</li>
+</ul>
+<p><img src="https://github.com/Deleter-D/Images/assets/56388518/04481211-3737-4ecc-b45c-a53e9628278a"></p>
+<p>上图中白色的Pass是非必要Pass，灰色的Pass是必须的Pass，也叫Super Pass。</p>
+<ul>
+<li>Instruction selection 指令选择</li>
+</ul>
+<p>该Pass将内存中LLVM IR变换为目标特定的Selection DAG结点，每个DAG能够表示单一基本块的计算，结点表示指令，而边编码了指令间的数据流依赖。该Pass使得LLVM代码生成程序库能够运用基于树的模式匹配指令选择算法。</p>
+<ul>
+<li>Instruction Scheduling (I) 指令调度</li>
+</ul>
+<p>这是第一次指令调度，也称为前寄存器分配（RA）调度。该Pass对指令进行排序，同时尝试发现尽可能多的指令层次的并行。然后指令被变换为MachineInstr三地址表示。</p>
+<ul>
+<li>Register Allocation 寄存器分配</li>
+</ul>
+<p>LLVM IR两个重要特性之一是寄存器集无限，这个性质会一直保持，直到寄存器分配Pass。该Pass将无限的虚拟寄存器引用转换为有限的目标特定的寄存器集合。当寄存器不够时会挤出到内存。</p>
+<ul>
+<li>Instruction Scheduling (II) 指令调度</li>
+</ul>
+<p>这是第二次指令调度，也称为后寄存器分配（RA）调度。此时可以获得真实的寄存器信息，某些类型的寄存器存在延迟，可以用来改进指令顺序。</p>
+<ul>
+<li>Code Emission 代码输出</li>
+</ul>
+<p>该Pass将指令从MachineInstr表示变换为MCInst实例。这种新的表示更适合汇编器和链接器，可以输出汇编代码或者输出二进制块特定目标代码格式。</p>
+<h2 id="ai编译器">AI编译器</h2>
+<p>AI编译器与传统编译器的关系如下：</p>
+<ul>
+<li>目标相同：通过自动化方式进行程序优化和代码生成，从而减少对不同硬件手工优化的工作量；</li>
+<li>优化方式类似：在编译优化层通过统一IR执行不同的Pass进行优化，从而提高执行性能；</li>
+<li>软件结构栈类似：分为前端、优化、后端三段式，IR解耦前端和后端使其能够模块化表示；</li>
+<li>AI编译器依赖于传统编译器：AI编译器对Graph IR优化之后，将优化后的IR转换成传统编译器IR，最后依赖传统编译器进行机器码生成。</li>
+</ul>
+<p>主要的区别如下：</p>
+<ul>
+<li>IR差异：AI编译器的IR与传统编译器IR所抽象出来的概念和意义不同；
+<ul>
+<li>AI编译器一般会有High-level IR，用来抽象描述深度学习模型中的运算，如卷积、Matmul等；</li>
+<li>传统编译器相对而言是Low-level IR，用于描述基本指令运算，如load、store等。</li>
+</ul></li>
+<li>优化策略：AI编译器面向AI领域，优化时会引入更多领域特定知识，从而进行更高级别、更激进的优化手段；
+<ul>
+<li>AI编译器在High-level执行算子融合，传统编译器执行类似操作时会更保守；</li>
+<li>AI编译器可以降低计算精度，因为深度学习对精度不那么敏感，但传统编译器一般不执行改变类型和精度等优化。</li>
+</ul></li>
+</ul>
+<p>AI编译器主要分为两个场景：</p>
+<ul>
+<li>推理场景：输入AI框架训练出来的模型文件，输出能够在不同硬件高效执行的程序；</li>
+<li>训练场景：输入高级语言表示的神经网络代码，输出能够在不同硬件高效执行的程序。</li>
+</ul>
+<h3 id="ai编译器架构发展">AI编译器架构发展</h3>
+</div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691384-1d4515ba-79ae-4e83-a485-bfaa5c64033e.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://user-images.githubusercontent.com/56388518/194691371-ad26d43d-b3b5-4fe5-9fc0-52a31333ca98.jpg" alt="微信"></span></a></div></div></div><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '2db19e754ebb5056e1f380326793e21a',
+            repo: 'Deleter-D.github.io',
+            owner: 'Deleter-D',
+            clientID: 'd087baa8a532e3b31fba',
+            clientSecret: 'faec4c1d7046247c200bca62c9930d0799ce58a5',
+            admin: ["Deleter-D"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cloudflare-cors-anywhere.wyp867909454.workers.dev/?https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="is-flex is-mobile" href="#基本概念"><span>基本概念</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#编译器与解析器"><span>编译器与解析器</span></a></li><li><a class="is-flex is-mobile" href="#jit和aot编译方式"><span>JIT和AOT编译方式</span></a></li><li><a class="is-flex is-mobile" href="#pass和中间表达ir"><span>Pass和中间表达IR</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#传统编译器"><span>传统编译器</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#编译器基本构成"><span>编译器基本构成</span></a></li><li><a class="is-flex is-mobile" href="#gcc编译过程和原理"><span>GCC编译过程和原理</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#编译过程"><span>编译过程</span></a></li><li><a class="is-flex is-mobile" href="#优缺点"><span>优缺点</span></a></li></ul></li><li><a class="is-flex is-mobile" href="#llvm架构和原理"><span>LLVM架构和原理</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#编译过程-1"><span>编译过程</span></a></li><li><a class="is-flex is-mobile" href="#llvm-ir内存模型"><span>LLVM IR内存模型</span></a></li><li><a class="is-flex is-mobile" href="#llvm前端"><span>LLVM前端</span></a></li><li><a class="is-flex is-mobile" href="#llvm优化层"><span>LLVM优化层</span></a></li><li><a class="is-flex is-mobile" href="#llvm后端"><span>LLVM后端</span></a></li></ul></li></ul></li><li><a class="is-flex is-mobile" href="#ai编译器"><span>AI编译器</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#ai编译器架构发展"><span>AI编译器架构发展</span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">亦初</p><p class="is-size-6 is-block">落霞与孤鹜齐飞，秋水共长天一色</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>冰岛</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">75</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">75</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/Deleter-D" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/Deleter-D"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:18735855248@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Telegram" href="https://t.me/GoldPancake687"><i class="fab fa-telegram"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-03-25T02:07:10.000Z">2024-03-25</time></p><p class="title"><a href="/posts/43333/">深度学习框架机制及分布式并行</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/AI%E7%B3%BB%E7%BB%9F/">AI系统</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:49:53.000Z">2024-02-20</time></p><p class="title"><a href="/posts/9782/">CUDA编程——GPU加速库和OpenACC</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:45:21.000Z">2024-02-20</time></p><p class="title"><a href="/posts/53610/">CUDA编程——调整指令集原语</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:36:28.000Z">2024-02-20</time></p><p class="title"><a href="/posts/4919/">CUDA编程——流和并发</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-02-20T08:29:56.000Z">2024-02-20</time></p><p class="title"><a href="/posts/50255/">CUDA编程——性能分析工具</a></p><p class="categories"><a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/">高性能计算</a> / <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/CUDA/">CUDA</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Hexo/"><span class="level-start"><span class="level-item">Hexo</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java/"><span class="level-start"><span class="level-item">Java</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Linux/"><span class="level-start"><span class="level-item">Linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">15</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/Vue/"><span class="level-start"><span class="level-item">Vue</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/axios/"><span class="level-start"><span class="level-item">axios</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%8A%98%E8%85%BE/"><span class="level-start"><span class="level-item">折腾</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/"><span class="level-start"><span class="level-item">数学</span></span><span class="level-end"><span class="level-item tag">6</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/%E6%95%B0%E5%AD%A6/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="level-start"><span class="level-item">矩阵论</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2024/03/"><span class="level-start"><span class="level-item">三月 2024</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2024/02/"><span class="level-start"><span class="level-item">二月 2024</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/12/"><span class="level-start"><span class="level-item">十二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/10/"><span class="level-start"><span class="level-item">十月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/"><span class="tag">算法</span><span class="tag is-grey-lightest">11</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E8%AE%A1%E7%AE%97/"><span class="tag">异构计算</span><span class="tag is-grey-lightest">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CUDA/"><span class="tag">CUDA</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><span class="tag">机器学习</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%AF%95%E6%98%87%E7%BC%96%E8%AF%91%E5%99%A8/"><span class="tag">毕昇编译器</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/"><span class="tag">高性能计算</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Vue/"><span class="tag">Vue</span><span class="tag is-grey-lightest">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8A%9B%E6%89%A3/"><span class="tag">力扣</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E5%AD%A6/"><span class="tag">数学</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%9F%A9%E9%98%B5%E8%AE%BA/"><span class="tag">矩阵论</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><span class="tag">设计模式</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/axios/"><span class="tag">axios</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%BC%82%E6%9E%84%E7%BC%96%E7%A8%8B/"><span class="tag">异构编程</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/3D%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1/"><span class="tag">3D人体姿态估计</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Pytorch/"><span class="tag">Pytorch</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87/"><span class="tag">论文</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ITK/"><span class="tag">ITK</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><span class="tag">深度学习</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/CVPR/"><span class="tag">CVPR</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Hexo/"><span class="tag">Hexo</span><span class="tag is-grey-lightest">2</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="https://user-images.githubusercontent.com/56388518/193990104-d040c2b4-1b96-4636-b410-b2ccd6360665.jpg" alt="亦初" height="28"></a><p class="size-small"><span>&copy; 2024 亦初</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作，如有侵权，请<a href="/message" target="_blank">留言</a>，笔者会立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2022/03/13 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="475747480" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('d087baa8a532e3b31fba','faec4c1d7046247c200bca62c9930d0799ce58a5','Deleter-D','Deleter-D.github.io',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>
