@@ -3,7 +3,7 @@ title: Vuex入门
 tags:
   - Vue
   - Vuex
-categories: [前端,Vue]
+categories: [Java,前端,Vue]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992384-179d45b4-705d-4a45-842a-512ad67d7b3d.png
 abbrlink: 33216

@@ -3,7 +3,7 @@ title: Vue-router路由（上）
 tags:
   - Vue
   - Vue-Router
-categories: [前端,Vue]
+categories: [Java,前端,Vue]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992250-d10a551b-e10e-4341-9cc7-3845ed4d93ec.png
 abbrlink: 14233

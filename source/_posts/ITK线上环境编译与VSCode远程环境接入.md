@@ -6,7 +6,7 @@ tags:
   - ITK
   - VS Code远程开发
   - 毕昇编译器
-categories: 项目
+categories: [高性能计算,项目]
 abbrlink: 51688
 date: 2023-04-17 20:32:05
 ---

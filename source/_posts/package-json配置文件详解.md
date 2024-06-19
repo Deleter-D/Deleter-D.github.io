@@ -3,7 +3,7 @@ title: package.json配置文件详解
 tags:
   - package.json
   - 配置文件
-categories: [前端,nodejs]
+categories: [Java,前端,nodejs]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991363-6b870c0a-7963-4c9a-b4da-51c65309efdd.png
 abbrlink: 49919

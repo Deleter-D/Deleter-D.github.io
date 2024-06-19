@@ -4,7 +4,7 @@ tags:
   - axios
   - promise
   - RESTFul
-categories: [前端,axios]
+categories: [Java,前端,axios]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991448-54f2eff8-11e0-404e-b1f7-7104725bcb52.png
 abbrlink: 4623

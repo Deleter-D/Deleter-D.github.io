@@ -5,7 +5,7 @@ mathjax: true
 tags:
   - 异构编程
   - 毕昇编译器
-categories: 项目
+categories: [高性能计算,项目]
 abbrlink: 27559
 date: 2023-12-05 16:01:50
 ---

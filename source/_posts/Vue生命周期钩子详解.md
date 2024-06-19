@@ -2,7 +2,7 @@
 title: Vue生命周期钩子详解
 tags:
   - Vue
-categories: [前端,Vue]
+categories: [Java,前端,Vue]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992164-23bf98cc-5c31-4a37-a916-0121cf40b31e.png
 abbrlink: 27624

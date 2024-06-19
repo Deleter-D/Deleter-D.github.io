@@ -2,7 +2,7 @@
 title: axios拦截器
 tags:
   - axios
-categories: [前端,axios]
+categories: [Java,前端,axios]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991654-a9e2f427-cb5f-49b7-8859-f2c2f32889c0.png
 abbrlink: 4512

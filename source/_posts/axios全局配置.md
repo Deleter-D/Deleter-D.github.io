@@ -3,7 +3,7 @@ title: axios全局配置
 tags:
   - axios
   - 配置文件
-categories: [前端,axios]
+categories: [Java,前端,axios]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991589-a181c95d-a206-4c02-b353-ab14c5f1846b.png
 abbrlink: 65179

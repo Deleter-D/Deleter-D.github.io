@@ -6,7 +6,7 @@ tags:
   - python
   - numpy
   - csv
-categories: 项目
+categories: [高性能计算,项目]
 abbrlink: 18632
 date: 2023-11-22 20:58:58
 ---

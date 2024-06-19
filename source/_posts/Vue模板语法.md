@@ -3,7 +3,7 @@ title: Vue模板语法
 tags:
   - Vue
   - v-指令
-categories: [前端,Vue]
+categories: [Java,前端,Vue]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991999-72eab280-1d5f-4681-8811-c22a7f97277b.png
 abbrlink: 37641

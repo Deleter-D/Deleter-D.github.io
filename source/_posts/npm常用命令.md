@@ -3,7 +3,7 @@ title: npm常用命令
 tags:
   - npm
   - node.js
-categories: [前端,nodejs]
+categories: [Java,前端,nodejs]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193991269-25bd57bf-12fb-41b1-bbde-1c6b56d3983d.png
 abbrlink: 34123

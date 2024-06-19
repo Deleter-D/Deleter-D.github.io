@@ -3,7 +3,7 @@ title: Vue组件化开发
 tags:
   - Vue
   - Vue组件
-categories: [前端,Vue]
+categories: [Java,前端,Vue]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193992093-afdfc04a-59e9-4f6e-8849-f56062508265.png
 abbrlink: 61428

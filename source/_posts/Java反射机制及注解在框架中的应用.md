@@ -4,7 +4,7 @@ tags:
   - Java
   - 反射
   - 注解
-categories: Java
+categories: [Java,语言特性]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193994323-beeddfc4-1a08-429e-95a5-232dc56ab02d.png
 abbrlink: 46441

@@ -7,7 +7,7 @@ tags:
   - 毕昇编译器
   - 机器学习
   - 深度学习
-categories: 项目
+categories: [高性能计算,项目]
 abbrlink: 15984
 date: 2023-07-31 16:10:00
 ---

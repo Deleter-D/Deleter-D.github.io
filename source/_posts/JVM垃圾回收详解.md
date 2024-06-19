@@ -4,7 +4,7 @@ tags:
   - Java
   - JVM
   - GC
-categories: Java
+categories: [Java,语言特性]
 toc: true
 cover: https://user-images.githubusercontent.com/56388518/193994409-97e175c3-bf7d-4295-900e-518632cac411.png
 abbrlink: 54227
